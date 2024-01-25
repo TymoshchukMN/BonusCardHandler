@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Test {
+namespace CardsHandler {
     
     
     /// <summary>
@@ -1129,7 +1129,7 @@ namespace Test {
         }
     }
 }
-namespace Test.CardsDatabaseDataSetTableAdapters {
+namespace CardsHandler.CardsDatabaseDataSetTableAdapters {
     
     
     /// <summary>
@@ -1302,7 +1302,7 @@ SELECT cardNubber, phoneNumber, expirationDate, ballance, isActive FROM Cards WH
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Test.Properties.Settings.Default.CardsDatabaseConnectionString;
+            this._connection.ConnectionString = global::CardsHandler.Properties.Settings.Default.CardsDatabaseConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1627,7 +1627,7 @@ SELECT phoneNumber, firstName, middleName, lastName FROM Clients WHERE (phoneNum
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SqlClient.SqlConnection();
-            this._connection.ConnectionString = global::Test.Properties.Settings.Default.CardsDatabaseConnectionString;
+            this._connection.ConnectionString = global::CardsHandler.Properties.Settings.Default.CardsDatabaseConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
-namespace Test
+namespace CardsHandler
 {
     public partial class FormHandlerCars : Form
     {
@@ -33,19 +33,39 @@ namespace Test
             tbLastName.Enabled = false;
         }
 
-        /// <summary>
-        /// Обработка элементов формы.
-        /// </summary>
-        private void ProcessFormItems()
-        {
-
-        }
-
         private void BtProcess_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(cbOperations.Text))
             {
                 UI.PrintErrorChoosedOperation();
+            }
+            else
+            {
+                switch (cbOperations.Text)
+                {
+                    case CreateCard:
+
+                        BL.CheckCreationCompliance(
+                            tbPhoneNumber,
+                            tbFirstName,
+                            tbMiddleName,
+                            tbLastName);
+
+                        UI.ErrorInPhoneNumber(ref tbResultForm);
+                        
+
+                        break;
+
+                    case FindCard:
+
+
+                        break;
+
+                    case Charge:
+
+
+                        break;
+                }
             }
         }
 
@@ -66,10 +86,12 @@ namespace Test
                     tbFirstName.Enabled = true;
                     tbMiddleName.Enabled = true;
                     tbLastName.Enabled = true;
+                    tbPhoneNumber.Enabled = true;
                     UI.PrintMessageCreationCard(ref tbResultForm);
                     UI.DryItems(tbFirstName, MarkerColor);
                     UI.DryItems(tbMiddleName, MarkerColor);
                     UI.DryItems(tbLastName, MarkerColor);
+                    UI.DryItems(tbPhoneNumber, MarkerColor);
 
                     break;
 

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Test
+namespace CardsHandler
 {
     internal class UI
     {
@@ -82,6 +82,12 @@ namespace Test
         public static void DryItems(ComboBox box, Color color)
         {
             box.BackColor = color;
+        }
+
+        public static void ErrorInPhoneNumber(ref RichTextBox box)
+        {
+            const string MessageErrorInNUmber = "Ошибка в номере телефона.\n" +
+                "формат ввода 380XXXXXXXXXX";
         }
     }
 }
