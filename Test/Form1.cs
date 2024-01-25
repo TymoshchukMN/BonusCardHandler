@@ -76,21 +76,10 @@ namespace CardsHandler
 
                     case FindCard:
 
-                        if (cbFindType.Text == SearchByPhone)
-                        {
-                            checkinfResult = BL.CheckSearchCompliance(
+                        checkinfResult = BL.CheckSearchCompliance(
                             cbFindType,
-                            tbPhoneNumber);
-                        }else
-                        {
-                            if (cbFindType.Text == SearchByCard)
-                            {
-                                checkinfResult = BL.CheckSearchCompliance(
-                                cbFindType,
-                                tbCardNumber);
-                            }
-                        }
-                       
+                            tbPhoneNumber,
+                            tbCardNumber);
 
                         switch (checkinfResult)
                         {
@@ -102,8 +91,8 @@ namespace CardsHandler
                                 UI.ErrorInPhoneNumber(ref tbResultForm);
                                 break;
 
-                            case WrongData.WrongName:
-                                UI.ErrorWrongName(ref tbResultForm);
+                            case WrongData.WrongCard:
+                                UI.ErrorWrongCard(ref tbResultForm);
                                 break;
 
                             case WrongData.None:

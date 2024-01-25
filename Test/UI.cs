@@ -100,6 +100,12 @@ namespace CardsHandler
             box.Text = MessageErrorInNUmber;
         }
 
+        public static void ErrorWrongCard(ref RichTextBox box)
+        {
+            const string MessageErrorInNUmber = "Не правильно указан номер карты. ";
+            box.Text = MessageErrorInNUmber;
+        }
+
         public static void ErrorEptyFields(ref RichTextBox box)
         {
             const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены";

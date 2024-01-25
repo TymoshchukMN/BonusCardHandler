@@ -81,21 +81,28 @@ namespace CardsHandler
         {
             WrongData statCompliante = WrongData.None;
 
-            if (choice.Text == "Телефону")
+            if (string.IsNullOrEmpty(phone.Text) &&
+                string.IsNullOrEmpty(card.Text))
             {
-
-                if (!IsPhoneCorrect(phone.Text))
-                {
-                    statCompliante = WrongData.WrongPhone;
-                }
+                statCompliante = WrongData.EmptyField;
             }
             else
             {
-                if (choice.Text == "Номеру карты")
+                if (choice.Text == "Телефону")
                 {
-                    if (!IsCardCorrect(card.Text))
+                    if (!IsPhoneCorrect(phone.Text))
                     {
-                        statCompliante = WrongData.WrongCard;
+                        statCompliante = WrongData.WrongPhone;
+                    }
+                }
+                else
+                {
+                    if (choice.Text == "Номеру карты")
+                    {
+                        if (!IsCardCorrect(card.Text))
+                        {
+                            statCompliante = WrongData.WrongCard;
+                        }
                     }
                 }
             }
@@ -103,6 +110,13 @@ namespace CardsHandler
             return statCompliante;
         }
 
+        /// <summary>
+        /// Проверка валидности номера.
+        /// </summary>
+        /// <param name="phoneNumber">
+        /// номер телефона.
+        /// </param>
+        /// <returns></returns>
         private static bool IsPhoneCorrect(string phoneNumber)
         {
             bool isCorrect = true;
@@ -161,10 +175,35 @@ namespace CardsHandler
             return isCorrect;
         }
 
-
+        /// <summary>
+        /// Проверка валидности карты.
+        /// </summary>
+        /// <param name="card">
+        /// номер карты.
+        /// </param>
+        /// <returns></returns>
         private static bool IsCardCorrect(string card)
         {
             bool isCorrect = true;
+
+            const ushort LenthCardNubber = 6;
+
+            if (card.Length != LenthCardNubber)
+            {
+                isCorrect = false;
+            }
+            else
+            {
+                for (ushort i = 0; i < card.Length; ++i)
+                {
+                    if (!char.IsDigit(card[i]))
+                    {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
             return isCorrect;
         }
     }
