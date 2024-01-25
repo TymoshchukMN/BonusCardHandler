@@ -41,23 +41,76 @@ namespace CardsHandler
             }
             else
             {
+                WrongData checkinfResult;
+
                 switch (cbOperations.Text)
                 {
                     case CreateCard:
-
-                        BL.CheckCreationCompliance(
+                        checkinfResult = BL.CheckCreationCompliance(
                             tbPhoneNumber,
                             tbFirstName,
                             tbMiddleName,
                             tbLastName);
 
-                        UI.ErrorInPhoneNumber(ref tbResultForm);
-                        
+                        switch (checkinfResult)
+                        {
+                            case WrongData.EmptyField:
+                                UI.ErrorEptyFields(ref tbResultForm);
+                                break;
+
+                            case WrongData.WrongPhone:
+                                UI.ErrorInPhoneNumber(ref tbResultForm);
+                                break;
+
+                            case WrongData.WrongName:
+                                UI.ErrorWrongName(ref tbResultForm);
+                                break;
+
+                            case WrongData.None:
+                                UI.PrintSuccess(ref tbResultForm);
+                                // создаем карту
+                                break;
+                        }
 
                         break;
 
                     case FindCard:
 
+                        if (cbFindType.Text == SearchByPhone)
+                        {
+                            checkinfResult = BL.CheckSearchCompliance(
+                            cbFindType,
+                            tbPhoneNumber);
+                        }else
+                        {
+                            if (cbFindType.Text == SearchByCard)
+                            {
+                                checkinfResult = BL.CheckSearchCompliance(
+                                cbFindType,
+                                tbCardNumber);
+                            }
+                        }
+                       
+
+                        switch (checkinfResult)
+                        {
+                            case WrongData.EmptyField:
+                                UI.ErrorEptyFields(ref tbResultForm);
+                                break;
+
+                            case WrongData.WrongPhone:
+                                UI.ErrorInPhoneNumber(ref tbResultForm);
+                                break;
+
+                            case WrongData.WrongName:
+                                UI.ErrorWrongName(ref tbResultForm);
+                                break;
+
+                            case WrongData.None:
+                                UI.PrintSuccess(ref tbResultForm);
+                                // создаем карту
+                                break;
+                        }
 
                         break;
 

@@ -34,13 +34,14 @@ namespace CardsHandler
 
         public static void PrintMessageEnterPhone(ref RichTextBox box)
         {
-            const string EnterPhoneMessage = "Введите номер телефона";
+            const string EnterPhoneMessage = "Введите номер телефона\nв формате 380XXXXXXXXXX";
             box.Text = EnterPhoneMessage;
         }
 
         public static void PrintMessageCreationCard(ref RichTextBox box)
         {
-            const string EnterPhoneMessage = "Для создания карты введите номер телефона и ФИО";
+            const string EnterPhoneMessage = "Для создания карты введите номер телефона и ФИО\n" +
+                "!!!!! телефон указывать в формате 380XXXXXXXXXX";
             box.Text = EnterPhoneMessage;
         }
 
@@ -88,6 +89,27 @@ namespace CardsHandler
         {
             const string MessageErrorInNUmber = "Ошибка в номере телефона.\n" +
                 "формат ввода 380XXXXXXXXXX";
+
+            box.Text = MessageErrorInNUmber;
+        }
+
+        public static void ErrorWrongName(ref RichTextBox box)
+        {
+            const string MessageErrorInNUmber = "Не правильное указано ФИО пользователя." +
+                "Должны быть только символы";
+            box.Text = MessageErrorInNUmber;
+        }
+
+        public static void ErrorEptyFields(ref RichTextBox box)
+        {
+            const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены";
+            box.Text = MessageErrorInNUmber;
+        }
+
+        public static void PrintSuccess(ref RichTextBox box)
+        {
+            const string MessageSuccess = "УСПЕХ";
+            box.Text = MessageSuccess;
         }
     }
 }

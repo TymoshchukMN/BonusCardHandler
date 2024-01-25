@@ -29,6 +29,11 @@ namespace CardsHandler
         /// <summary>
         /// Не верное имя.
         /// </summary>
-        WrongName
+        WrongName,
+
+        /// <summary>
+        /// Данные не заполнены.
+        /// </summary>
+        EmptyField,
     }
 }
