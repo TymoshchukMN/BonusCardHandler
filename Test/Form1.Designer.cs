@@ -37,8 +37,8 @@
             this.cbOperations = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbFindType = new System.Windows.Forms.ComboBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbSearch = new System.Windows.Forms.GroupBox();
+            this.gbCreation = new System.Windows.Forms.GroupBox();
             this.tbLastName = new System.Windows.Forms.TextBox();
             this.tbMiddleName = new System.Windows.Forms.TextBox();
             this.tbFirstName = new System.Windows.Forms.TextBox();
@@ -49,8 +49,8 @@
             this.tbChargeSum = new System.Windows.Forms.TextBox();
             this.lbChargeSum = new System.Windows.Forms.Label();
             this.tbResultForm = new System.Windows.Forms.RichTextBox();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.gbSearch.SuspendLayout();
+            this.gbCreation.SuspendLayout();
             this.gbCharge.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -137,33 +137,33 @@
             this.cbFindType.Name = "cbFindType";
             this.cbFindType.Size = new System.Drawing.Size(132, 21);
             this.cbFindType.TabIndex = 8;
-            this.cbFindType.SelectedIndexChanged += new System.EventHandler(this.cbFindType_SelectedIndexChanged);
+            this.cbFindType.SelectedIndexChanged += new System.EventHandler(this.CbFindType_SelectedIndexChanged);
             // 
-            // groupBox1
+            // gbSearch
             // 
-            this.groupBox1.Controls.Add(this.cbFindType);
-            this.groupBox1.Controls.Add(this.lbSearchType);
-            this.groupBox1.Location = new System.Drawing.Point(14, 119);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(241, 122);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Поиск";
+            this.gbSearch.Controls.Add(this.cbFindType);
+            this.gbSearch.Controls.Add(this.lbSearchType);
+            this.gbSearch.Location = new System.Drawing.Point(14, 119);
+            this.gbSearch.Name = "gbSearch";
+            this.gbSearch.Size = new System.Drawing.Size(241, 122);
+            this.gbSearch.TabIndex = 9;
+            this.gbSearch.TabStop = false;
+            this.gbSearch.Text = "Поиск";
             // 
-            // groupBox2
+            // gbCreation
             // 
-            this.groupBox2.Controls.Add(this.tbLastName);
-            this.groupBox2.Controls.Add(this.tbMiddleName);
-            this.groupBox2.Controls.Add(this.tbFirstName);
-            this.groupBox2.Controls.Add(this.lbLastName);
-            this.groupBox2.Controls.Add(this.lbMiddleName);
-            this.groupBox2.Controls.Add(this.lbFirstName);
-            this.groupBox2.Location = new System.Drawing.Point(279, 119);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(318, 122);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Создание";
+            this.gbCreation.Controls.Add(this.tbLastName);
+            this.gbCreation.Controls.Add(this.tbMiddleName);
+            this.gbCreation.Controls.Add(this.tbFirstName);
+            this.gbCreation.Controls.Add(this.lbLastName);
+            this.gbCreation.Controls.Add(this.lbMiddleName);
+            this.gbCreation.Controls.Add(this.lbFirstName);
+            this.gbCreation.Location = new System.Drawing.Point(279, 119);
+            this.gbCreation.Name = "gbCreation";
+            this.gbCreation.Size = new System.Drawing.Size(318, 122);
+            this.gbCreation.TabIndex = 10;
+            this.gbCreation.TabStop = false;
+            this.gbCreation.Text = "Создание";
             // 
             // tbLastName
             // 
@@ -257,8 +257,8 @@
             this.Controls.Add(this.tbCardNumber);
             this.Controls.Add(this.gbCharge);
             this.Controls.Add(this.lbCardNumber);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbCreation);
+            this.Controls.Add(this.gbSearch);
             this.Controls.Add(this.tbPhoneNumber);
             this.Controls.Add(this.lbPhoneNumber);
             this.Controls.Add(this.btProcess);
@@ -266,10 +266,10 @@
             this.Controls.Add(this.cbOperations);
             this.Name = "FormHandlerCars";
             this.Text = "Heandler cards";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gbSearch.ResumeLayout(false);
+            this.gbSearch.PerformLayout();
+            this.gbCreation.ResumeLayout(false);
+            this.gbCreation.PerformLayout();
             this.gbCharge.ResumeLayout(false);
             this.gbCharge.PerformLayout();
             this.ResumeLayout(false);
@@ -288,8 +288,8 @@
         private System.Windows.Forms.ComboBox cbOperations;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cbFindType;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbSearch;
+        private System.Windows.Forms.GroupBox gbCreation;
         private System.Windows.Forms.TextBox tbLastName;
         private System.Windows.Forms.TextBox tbMiddleName;
         private System.Windows.Forms.TextBox tbFirstName;

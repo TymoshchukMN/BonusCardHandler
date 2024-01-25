@@ -19,6 +19,8 @@ namespace Test
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
 
+        readonly Color MarkerColor = Color.FromArgb(214, 254, 216);
+
         public FormHandlerCars()
         {
             InitializeComponent();
@@ -51,38 +53,86 @@ namespace Test
             object sender,
             EventArgs e)
         {
+            tbCardNumber.BackColor = Color.White;
+            tbPhoneNumber.BackColor = Color.White;
+
             switch (cbOperations.Text)
             {
                 case CreateCard:
                     cbFindType.Enabled = false;
+                    gbCreation.Enabled = true;
+                    gbSearch.Enabled = false;
+                    gbCharge.Enabled = false;
+                    tbFirstName.Enabled = true;
+                    tbMiddleName.Enabled = true;
+                    tbLastName.Enabled = true;
+                    UI.PrintMessageCreationCard(ref tbResultForm);
+                    UI.DryItems(tbFirstName, MarkerColor);
+                    UI.DryItems(tbMiddleName, MarkerColor);
+                    UI.DryItems(tbLastName, MarkerColor);
+
                     break;
 
                 case FindCard:
                     cbFindType.Enabled = true;
+                    gbSearch.Enabled = true;
+                    gbCreation.Enabled = false;
+                    gbCharge.Enabled = false;
+                    tbFirstName.Enabled = false;
+                    tbMiddleName.Enabled = false;
+                    tbLastName.Enabled = false;
+                    UI.DryItems(tbFirstName, Color.White);
+                    UI.DryItems(tbMiddleName, Color.White);
+                    UI.DryItems(tbLastName, Color.White);
+                    UI.DryItems(tbCardNumber, Color.White);
+                    UI.DryItems(tbChargeSum, Color.White);
+                    UI.DryItems(cbFindType, MarkerColor);
+                    UI.PrintMessageSearchingCard(ref tbResultForm);
+
                     break;
 
                 case Charge:
+                    tbCardNumber.Enabled = true;
+                    gbCharge.Enabled = true;
+                    tbChargeSum.Enabled = true;
                     cbFindType.Enabled = false;
+                    gbCreation.Enabled = false;
+                    gbSearch.Enabled = false;
+                    tbFirstName.Enabled = false;
+                    tbMiddleName.Enabled = false;
+                    tbLastName.Enabled = false;
+                    UI.DryItems(cbFindType, Color.White);
+                    UI.DryItems(tbFirstName, Color.White);
+                    UI.DryItems(tbMiddleName, Color.White);
+                    UI.DryItems(tbLastName, Color.White);
+                    UI.DryItems(tbCardNumber, MarkerColor);
+                    UI.DryItems(tbChargeSum, MarkerColor);
+                    UI.PrintMessageCharhingCard(ref tbResultForm);
+
                     break;
             }
         }
 
-        private void cbFindType_SelectedIndexChanged(object sender, EventArgs e)
+        private void CbFindType_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (cbFindType.Text)
             {
                 case SearchByPhone:
                     tbCardNumber.Enabled = false;
                     tbPhoneNumber.Enabled = true;
-                    tbPhoneNumber.BackColor = Color.FromArgb(214,254,216);
-                    tbCardNumber.BackColor = Color.White;
+                    UI.DryItems(tbPhoneNumber, Color.FromArgb(214, 254, 216));
+                    UI.DryItems(tbCardNumber, Color.White);
+                    UI.PrintMessageEnterPhone(ref tbResultForm);
+                    UI.DryItems(cbFindType, Color.White);
                     break;
 
                 case SearchByCard:
                     tbPhoneNumber.Enabled = false;
                     tbCardNumber.Enabled = true;
-                    tbCardNumber.BackColor = Color.FromArgb(214, 254, 216);
-                    tbPhoneNumber.BackColor = Color.White;
+                    UI.DryItems(tbCardNumber, Color.FromArgb(214, 254, 216));
+                    UI.DryItems(tbPhoneNumber, Color.White);
+                    UI.PrintMessageEnterCard(ref tbResultForm);
+                    UI.DryItems(cbFindType, Color.White);
                     break;
             }
         }
