@@ -2,7 +2,7 @@
 // Author : Tymoshchuk Maksym
 // Created On : 26/01/202
 // Last Modified On :
-// Description: class for describing a card object
+// Description: Класс карты
 // Project: CardsHandler
 //////////////////////////////////////////////////
 
@@ -55,8 +55,11 @@ namespace CardsHandler
         /// <param name="number">номер карты.</param>
         /// <param name="phone">номер телефона.</param>
         /// <param name="date">Дата истечения срока карты.</param>
-        /// <param name="ballance">баланс.</param>
-        /// <param name="isActive">флаг актуальности.</param>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="middleName">отчество.</param>
+        /// <param name="lasName">Фамилия.</param>
+        /// <param name="date">Дата истечения срока.</param>
+        /// <param name="balance">Баланс.</param>
         public Card(
              int number,
              long phone,

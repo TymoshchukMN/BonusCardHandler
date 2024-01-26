@@ -6,26 +6,21 @@ using System.Threading.Tasks;
 
 namespace CardsHandler.Enums
 {
-    public enum CardsOperation
+    public enum BonusOperations
     {
         /// <summary>
-        /// Значение по умолчанию.
+        /// Дефолт.
         /// </summary>
         None,
 
         /// <summary>
-        /// Операция создания карты.
+        /// Добавить бонусы.
         /// </summary>
-        Create,
+        Add,
 
         /// <summary>
-        /// Поиск карты.
+        /// Списать.
         /// </summary>
-        Find,
-
-        /// <summary>
-        /// Списание с карты.
-        /// </summary>
-        Change,
+        Remove,
     }
 }

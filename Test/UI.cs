@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿///////////////////////////////
+// Author : Tymoshchuk Maksym
+// Created On : 26/01/202
+// Last Modified On :
+// Description: Messages for user.
+// Project: CardsHandler
+//////////////////////////////
+
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CardsHandler.Database;
 using CardsHandler.Enums;
@@ -253,6 +256,10 @@ namespace CardsHandler
                     break;
                 case ResultOperations.NegativeDigit:
                     message = "Введено отрицательное число";
+                    break;
+                case ResultOperations.CardExpired:
+                    message = "Списание не возможно. " +
+                        "Срок действия карты истек.";
                     break;
             }
 

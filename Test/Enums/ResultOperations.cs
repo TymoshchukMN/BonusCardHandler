@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿///////////////////////////////////////////////////
+// Author : Tymoshchuk Maksym
+// Created On : 26/01/202
+// Last Modified On :
+// Description: Перечисления с результатом операций.
+// Project: CardsHandler
+///////////////////////////////////////////////////
 
 namespace CardsHandler
 {
@@ -50,5 +52,10 @@ namespace CardsHandler
         /// Отрицательное число.
         /// </summary>
         NegativeDigit,
+
+        /// <summary>
+        /// Срок действия карты истек.
+        /// </summary>
+        CardExpired,
     }
 }

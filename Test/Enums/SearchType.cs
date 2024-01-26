@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿///////////////////////////////
+// Author : Tymoshchuk Maksym
+// Created On : 26/01/202
+// Last Modified On :
+// Description: Типы поиска карты
+// Project: CardsHandler
+//////////////////////////////
 
 namespace CardsHandler.Enums
 {

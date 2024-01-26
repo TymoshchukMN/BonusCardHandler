@@ -46,6 +46,8 @@
             this.lbMiddleName = new System.Windows.Forms.Label();
             this.lbFirstName = new System.Windows.Forms.Label();
             this.gbCharge = new System.Windows.Forms.GroupBox();
+            this.rbAddBonuses = new System.Windows.Forms.RadioButton();
+            this.rbRemoveBonuses = new System.Windows.Forms.RadioButton();
             this.tbChargeSum = new System.Windows.Forms.TextBox();
             this.lbChargeSum = new System.Windows.Forms.Label();
             this.tbResultForm = new System.Windows.Forms.RichTextBox();
@@ -111,7 +113,7 @@
             this.cbOperations.Items.AddRange(new object[] {
             "Создать",
             "Найти",
-            "Списать бонусы"});
+            "Изменить бонусы"});
             this.cbOperations.Location = new System.Drawing.Point(144, 12);
             this.cbOperations.Name = "cbOperations";
             this.cbOperations.Size = new System.Drawing.Size(132, 21);
@@ -145,7 +147,7 @@
             this.gbSearch.Controls.Add(this.lbSearchType);
             this.gbSearch.Location = new System.Drawing.Point(14, 119);
             this.gbSearch.Name = "gbSearch";
-            this.gbSearch.Size = new System.Drawing.Size(287, 66);
+            this.gbSearch.Size = new System.Drawing.Size(318, 66);
             this.gbSearch.TabIndex = 9;
             this.gbSearch.TabStop = false;
             this.gbSearch.Text = "Поиск";
@@ -158,7 +160,7 @@
             this.gbCreation.Controls.Add(this.lbLastName);
             this.gbCreation.Controls.Add(this.lbMiddleName);
             this.gbCreation.Controls.Add(this.lbFirstName);
-            this.gbCreation.Location = new System.Drawing.Point(332, 124);
+            this.gbCreation.Location = new System.Drawing.Point(14, 194);
             this.gbCreation.Name = "gbCreation";
             this.gbCreation.Size = new System.Drawing.Size(318, 143);
             this.gbCreation.TabIndex = 10;
@@ -215,18 +217,44 @@
             // 
             // gbCharge
             // 
+            this.gbCharge.Controls.Add(this.rbAddBonuses);
+            this.gbCharge.Controls.Add(this.rbRemoveBonuses);
             this.gbCharge.Controls.Add(this.tbChargeSum);
             this.gbCharge.Controls.Add(this.lbChargeSum);
-            this.gbCharge.Location = new System.Drawing.Point(11, 202);
+            this.gbCharge.Location = new System.Drawing.Point(355, 119);
             this.gbCharge.Name = "gbCharge";
-            this.gbCharge.Size = new System.Drawing.Size(290, 65);
+            this.gbCharge.Size = new System.Drawing.Size(290, 218);
             this.gbCharge.TabIndex = 11;
             this.gbCharge.TabStop = false;
-            this.gbCharge.Text = "Списание";
+            this.gbCharge.Text = "Операции с бонусами";
+            // 
+            // rbAddBonuses
+            // 
+            this.rbAddBonuses.AutoSize = true;
+            this.rbAddBonuses.Location = new System.Drawing.Point(20, 49);
+            this.rbAddBonuses.Name = "rbAddBonuses";
+            this.rbAddBonuses.Size = new System.Drawing.Size(84, 17);
+            this.rbAddBonuses.TabIndex = 21;
+            this.rbAddBonuses.TabStop = true;
+            this.rbAddBonuses.Text = "Зачислисть";
+            this.rbAddBonuses.UseVisualStyleBackColor = true;
+            this.rbAddBonuses.CheckedChanged += new System.EventHandler(this.rbAddBonuses_CheckedChanged);
+            // 
+            // rbRemoveBonuses
+            // 
+            this.rbRemoveBonuses.AutoSize = true;
+            this.rbRemoveBonuses.Location = new System.Drawing.Point(20, 23);
+            this.rbRemoveBonuses.Name = "rbRemoveBonuses";
+            this.rbRemoveBonuses.Size = new System.Drawing.Size(67, 17);
+            this.rbRemoveBonuses.TabIndex = 20;
+            this.rbRemoveBonuses.TabStop = true;
+            this.rbRemoveBonuses.Text = "Списать";
+            this.rbRemoveBonuses.UseVisualStyleBackColor = true;
+            this.rbRemoveBonuses.CheckedChanged += new System.EventHandler(this.rbRemoveBonuses_CheckedChanged);
             // 
             // tbChargeSum
             // 
-            this.tbChargeSum.Location = new System.Drawing.Point(107, 13);
+            this.tbChargeSum.Location = new System.Drawing.Point(82, 97);
             this.tbChargeSum.Name = "tbChargeSum";
             this.tbChargeSum.Size = new System.Drawing.Size(155, 20);
             this.tbChargeSum.TabIndex = 17;
@@ -234,11 +262,11 @@
             // lbChargeSum
             // 
             this.lbChargeSum.AutoSize = true;
-            this.lbChargeSum.Location = new System.Drawing.Point(6, 21);
+            this.lbChargeSum.Location = new System.Drawing.Point(17, 104);
             this.lbChargeSum.Name = "lbChargeSum";
-            this.lbChargeSum.Size = new System.Drawing.Size(95, 13);
+            this.lbChargeSum.Size = new System.Drawing.Size(41, 13);
             this.lbChargeSum.TabIndex = 16;
-            this.lbChargeSum.Text = "Сумма списания:";
+            this.lbChargeSum.Text = "Сумма";
             // 
             // tbResultForm
             // 
@@ -252,7 +280,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(712, 560);
+            this.ClientSize = new System.Drawing.Size(699, 557);
             this.Controls.Add(this.tbResultForm);
             this.Controls.Add(this.tbCardNumber);
             this.Controls.Add(this.gbCharge);
@@ -300,6 +328,8 @@
         private System.Windows.Forms.TextBox tbChargeSum;
         private System.Windows.Forms.Label lbChargeSum;
         private System.Windows.Forms.RichTextBox tbResultForm;
+        private System.Windows.Forms.RadioButton rbAddBonuses;
+        private System.Windows.Forms.RadioButton rbRemoveBonuses;
     }
 }
 

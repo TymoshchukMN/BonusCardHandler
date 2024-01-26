@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CardsHandler.Database;
 using CardsHandler.Enums;
@@ -17,12 +11,13 @@ namespace CardsHandler
     {
         private const string CreateCard = "Создать";
         private const string FindCard = "Найти";
-        private const string Charge = "Списать бонусы";
+        private const string Charge = "Изменить бонусы";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
         private readonly Color markerColor = Color.FromArgb(214, 254, 216);
         private SearchType searchType;
         private CardsOperation cardsOperation;
+        private BonusOperations bonusOperations;
 
         public FormHandlerCars()
         {
@@ -44,7 +39,7 @@ namespace CardsHandler
             }
             else
             {
-                ResultOperations checkinfResult;
+                ResultOperations chargeResult;
 
                 PostgresDB pgDB;
 
@@ -53,13 +48,13 @@ namespace CardsHandler
                     #region СОЗДАНИЕ КАРТЫ
 
                     case CardsOperation.Create:
-                        checkinfResult = BL.CheckCreationCompliance(
+                        chargeResult = BL.CheckCreationCompliance(
                             tbPhoneNumber.Text,
                             tbFirstName.Text,
                             tbMiddleName.Text,
                             tbLastName.Text);
 
-                        switch (checkinfResult)
+                        switch (chargeResult)
                         {
                             case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
@@ -113,12 +108,12 @@ namespace CardsHandler
 
                     case CardsOperation.Find:
 
-                        checkinfResult = BL.CheckSearchCompliance(
+                        chargeResult = BL.CheckSearchCompliance(
                             cbFindType.Text,
                             tbPhoneNumber.Text,
                             tbCardNumber.Text);
 
-                        switch (checkinfResult)
+                        switch (chargeResult)
                         {
                             case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
@@ -197,7 +192,7 @@ namespace CardsHandler
 
                     #region СПИСАНИЕ
 
-                    case CardsOperation.Charge:
+                    case CardsOperation.Change:
 
                         ResultOperations result =
                             BL.IsSummCorrect(tbChargeSum.Text);
@@ -223,7 +218,7 @@ namespace CardsHandler
 
                                 int.TryParse(
                                     tbChargeSum.Text,
-                                    out int chargeSumm);
+                                    out int changeSum);
 
                                 pgDB = CreatePostrgesInstance();
                                 int.TryParse(
@@ -236,26 +231,52 @@ namespace CardsHandler
                                 {
                                     Card card = pgDB.FindCardByCard(cardnumber);
 
-                                    checkinfResult = pgDB.Charge(
-                                        card,
-                                        chargeSumm);
-
-                                    switch (checkinfResult)
+                                    switch (bonusOperations)
                                     {
-                                        case ResultOperations.ChargeError:
-                                            UI.PrintErrorCardDoesntExist(
-                                                ref tbResultForm,
-                                                searchType,
-                                                cardnumber);
+                                        case BonusOperations.Add:
 
-                                            break;
-                                        case ResultOperations.None:
+                                            pgDB.AddBonus(card, changeSum);
+
                                             // снова запрашиваем карту
                                             // для просмотра результатов спания.
                                             card = pgDB.FindCardByCard(cardnumber);
                                             UI.PrintCardElements(
                                                 ref tbResultForm,
                                                 card);
+                                            break;
+                                        case BonusOperations.Remove:
+                                            chargeResult = pgDB.Charge(
+                                               card,
+                                               changeSum);
+
+                                            switch (chargeResult)
+                                            {
+                                                case ResultOperations.ChargeError:
+
+                                                    UI.PrintErrorCardDoesntExist(
+                                                        ref tbResultForm,
+                                                        searchType,
+                                                        cardnumber);
+
+                                                    break;
+                                                case ResultOperations.CardExpired:
+
+                                                    UI.PrintinputedSummError(
+                                                        ref tbResultForm,
+                                                        chargeResult);
+                                                    break;
+
+                                                case ResultOperations.None:
+
+                                                    // снова запрашиваем карту
+                                                    // для просмотра результатов спания.
+                                                    card = pgDB.FindCardByCard(cardnumber);
+                                                    UI.PrintCardElements(
+                                                        ref tbResultForm,
+                                                        card);
+                                                    break;
+                                            }
+
                                             break;
                                     }
                                 }
@@ -314,7 +335,7 @@ namespace CardsHandler
                     UI.DryItems(tbMiddleName, markerColor);
                     UI.DryItems(tbLastName, markerColor);
                     UI.DryItems(tbPhoneNumber, markerColor);
-
+                    bonusOperations = BonusOperations.None;
                     break;
 
                 case FindCard:
@@ -333,11 +354,12 @@ namespace CardsHandler
                     UI.DryItems(tbChargeSum, Color.White);
                     UI.DryItems(cbFindType, markerColor);
                     UI.PrintMessageSearchingCard(ref tbResultForm);
+                    bonusOperations = BonusOperations.None;
 
                     break;
 
                 case Charge:
-                    cardsOperation = CardsOperation.Charge;
+                    cardsOperation = CardsOperation.Change;
                     searchType = SearchType.None;
                     tbCardNumber.Enabled = true;
                     gbCharge.Enabled = true;
@@ -386,6 +408,16 @@ namespace CardsHandler
                     UI.DryItems(cbFindType, Color.White);
                     break;
             }
+        }
+
+        private void rbRemoveBonuses_CheckedChanged(object sender, EventArgs e)
+        {
+            bonusOperations = BonusOperations.Remove;
+        }
+
+        private void rbAddBonuses_CheckedChanged(object sender, EventArgs e)
+        {
+            bonusOperations = BonusOperations.Add;
         }
     }
 }

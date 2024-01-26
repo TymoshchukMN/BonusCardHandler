@@ -81,25 +81,6 @@ namespace CardsHandler.Database
 
         #region METHODS
 
-        public void Get(NpgsqlConnection connection)
-        {
-            NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-            npgsqlCommand.CommandText =
-                @"
-                    BEGIN;
-                    TRUNCATE oldTitles;
-
-
-                    INSERT INTO oldTitles
-                    SELECT titles.samaccountname ,
-                           titles.title
-                    FROM titles;
-
-                    COMMIT;
-                ";
-            npgsqlCommand.ExecuteNonQuery();
-        }
-
         /// <summary>
         /// Проверяем естьли карты с таким номером.
         /// </summary>
@@ -370,10 +351,11 @@ namespace CardsHandler.Database
         }
 
         /// <summary>
-        /// Списание с карты.
+        /// >
         /// </summary>
-        /// <param name="card">карта для списания.</param>
-        /// <param name="summ">к списани.</param>
+        /// <param name="card">объект карты.</param>
+        /// <param name="summ">Сумма к списанию.</param>
+        /// <returns>ResultOperations.</returns>
         public ResultOperations Charge(Card card, int summ)
         {
             ResultOperations result = ResultOperations.None;
@@ -400,10 +382,12 @@ namespace CardsHandler.Database
                 NpgsqlDataReader data;
                 data = npgsqlCommand.ExecuteReader();
 
-                DataTable isAccessExist = new DataTable();
-                isAccessExist.Load(data);
+                DataTable dateVol = new DataTable();
+                dateVol.Load(data);
 
-                int currentBalance = (int)isAccessExist.Rows[0].ItemArray[0];
+                int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
+
+                data.Close();
 
                 if ((currentBalance - summ) < 0)
                 {
@@ -411,17 +395,82 @@ namespace CardsHandler.Database
                 }
                 else
                 {
-                    currentBalance -= summ;
-                    npgsqlCommand.CommandText = $"" +
-                        $"UPDATE CARDS " +
-                        $"SET ballance = {currentBalance} " +
-                        $"WHERE cardnumber = {card.Number} ;";
+                    npgsqlCommand.CommandText =
+                       $"SELECT \"expirationDate\"  " +
+                       $"FROM CARDS " +
+                       $"WHERE cardnumber = {card.Number}; ";
 
-                    npgsqlCommand.ExecuteReader();
+                    dateVol = new DataTable();
+                    dateVol.Load(data);
+
+                    data = npgsqlCommand.ExecuteReader();
+                    dateVol.Load(data);
+
+                    DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
+
+                    if (expirationDate < DateTime.Today)
+                    {
+                        result = ResultOperations.CardExpired;
+                    }
+                    else
+                    {
+                        currentBalance -= summ;
+                        npgsqlCommand.CommandText = $"" +
+                            $"UPDATE CARDS " +
+                            $"SET ballance = {currentBalance} " +
+                            $"WHERE cardnumber = {card.Number} ;";
+
+                        npgsqlCommand.ExecuteReader();
+                    }
                 }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Начисление бонусов.
+        /// </summary>
+        /// <param name="card">объект карты.</param>
+        /// <param name="summ">Сумма к списанию.</param>
+        public void AddBonus(Card card, int summ)
+        {
+            using (NpgsqlConnection connection
+                     = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText =
+                    $"SELECT ballance " +
+                    $"FROM CARDS " +
+                    $"WHERE cardnumber = {card.Number}; ";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                DataTable dateVol = new DataTable();
+                dateVol.Load(data);
+
+                int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
+
+                currentBalance += summ;
+                npgsqlCommand.CommandText = $"" +
+                    $"UPDATE CARDS " +
+                    $"SET ballance = {currentBalance} " +
+                    $"WHERE cardnumber = {card.Number} ;";
+
+                npgsqlCommand.ExecuteReader();
+                data.Close();
+            }
         }
 
         #endregion METHODS

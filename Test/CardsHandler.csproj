@@ -120,6 +120,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="Database\DBConfig.cs" />
     <Compile Include="Database\PostgresDB.cs" />
+    <Compile Include="Enums\BonusOperations.cs" />
     <Compile Include="Enums\CardsOperation.cs" />
     <Compile Include="Enums\SearchType.cs" />
     <Compile Include="Form1.cs">
