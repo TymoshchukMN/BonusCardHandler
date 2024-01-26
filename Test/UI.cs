@@ -125,7 +125,8 @@ namespace CardsHandler
 
         public static void ErrorEptyFields(ref RichTextBox box)
         {
-            const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены";
+            const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены.\n" +
+                "Нужное поле подсвечено зеленым цветом.";
             box.Text = MessageErrorInNUmber;
         }
 

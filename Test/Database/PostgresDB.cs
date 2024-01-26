@@ -302,6 +302,73 @@ namespace CardsHandler.Database
                     ballance);
             }
         }
+
+        /// <summary>
+        /// Поиск карты.
+        /// </summary>
+        /// <param name="number">карты.</param>
+        /// <returns>Объект карты.</returns>
+        public Card FindCardByCard(int number)
+        {
+            using (NpgsqlConnection connection
+                  = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText =
+                    $"SELECT cl.\"phoneNumber\"," +
+                    $"      cl.\"firstName\"," +
+                    $"      cl.\"middleName\"," +
+                    $"      cl.\"lastName\"," +
+                    $"      cd.cardnumber," +
+                    $"      cd.ballance," +
+                    $"      cd.\"expirationDate\"" +
+                    $" FROM clients AS cl " +
+                    $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\"  " +
+                    $" WHERE cd.cardnumber = {number};";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                long phoneNumber = 0;
+                string firstName = string.Empty;
+                string middleName = string.Empty;
+                string lastName = string.Empty;
+                int cardnumber = 0;
+                int ballance = 0;
+                DateTime expirationDate = DateTime.Now;
+
+                while (data.Read())
+                {
+                    phoneNumber = (long)data["phoneNumber"];
+                    firstName = (string)data["firstName"];
+                    middleName = (string)data["middleName"];
+                    lastName = (string)data["lastName"];
+                    cardnumber = (int)data["cardnumber"];
+                    ballance = (int)data["ballance"];
+                    expirationDate = (DateTime)data["expirationDate"];
+                }
+
+                return new Card(
+                    cardnumber,
+                    phoneNumber,
+                    firstName,
+                    middleName,
+                    lastName,
+                    expirationDate,
+                    ballance);
+            }
+        }
+
         #endregion METHODS
     }
 }

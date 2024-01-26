@@ -172,7 +172,8 @@ namespace CardsHandler
 
                                         if (isCardExist)
                                         {
-
+                                            Card card = pgDB.FindCardByCard(cardNumber);
+                                            UI.PrintCardElrmrnts(ref tbResultForm, card);
                                         }
                                         else
                                         {
@@ -294,6 +295,7 @@ namespace CardsHandler
                 case SearchByPhone:
                     searchType = SearchType.ByPhone;
                     tbCardNumber.Enabled = false;
+                    tbCardNumber.Text = string.Empty;
                     tbPhoneNumber.Enabled = true;
                     UI.DryItems(tbPhoneNumber, Color.FromArgb(214, 254, 216));
                     UI.DryItems(tbCardNumber, Color.White);
@@ -304,6 +306,7 @@ namespace CardsHandler
                 case SearchByCard:
                     searchType = SearchType.ByCard;
                     tbPhoneNumber.Enabled = false;
+                    tbPhoneNumber.Text = string.Empty;
                     tbCardNumber.Enabled = true;
                     UI.DryItems(tbCardNumber, Color.FromArgb(214, 254, 216));
                     UI.DryItems(tbPhoneNumber, Color.White);
