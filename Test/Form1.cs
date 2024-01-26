@@ -46,6 +46,8 @@ namespace CardsHandler
             {
                 ResultOperations checkinfResult;
 
+                PostgresDB pgDB;
+
                 switch (cardsOperation)
                 {
                     #region СОЗДАНИЕ КАРТЫ
@@ -73,9 +75,9 @@ namespace CardsHandler
 
                             case ResultOperations.None:
 
-                                PostgresDB pgDB = CreatePostrgesInstance();
+                                pgDB = CreatePostrgesInstance();
 
-                                bool isCardExist = true;
+                                bool isCardExist;
                                 int newCardNumber;
 
                                 // проверка, существует ли в БД карта с таким номером.
@@ -132,7 +134,7 @@ namespace CardsHandler
 
                             case ResultOperations.None:
 
-                                PostgresDB pgDB = CreatePostrgesInstance();
+                                pgDB = CreatePostrgesInstance();
 
                                 switch (searchType)
                                 {
@@ -148,7 +150,7 @@ namespace CardsHandler
                                         if (isPhoneExist)
                                         {
                                             Card card = pgDB.FindCardByPhone(phoneNumber);
-                                            UI.PrintCardElrmrnts(ref tbResultForm, card);
+                                            UI.PrintCardElements(ref tbResultForm, card);
                                         }
                                         else
                                         {
@@ -173,7 +175,7 @@ namespace CardsHandler
                                         if (isCardExist)
                                         {
                                             Card card = pgDB.FindCardByCard(cardNumber);
-                                            UI.PrintCardElrmrnts(ref tbResultForm, card);
+                                            UI.PrintCardElements(ref tbResultForm, card);
                                         }
                                         else
                                         {
@@ -186,7 +188,6 @@ namespace CardsHandler
                                         break;
                                 }
 
-                                // ищем карту
                                 break;
                         }
 
@@ -197,6 +198,77 @@ namespace CardsHandler
                     #region СПИСАНИЕ
 
                     case CardsOperation.Charge:
+
+                        ResultOperations result =
+                            BL.IsSummCorrect(tbChargeSum.Text);
+
+                        switch (result)
+                        {
+                            case ResultOperations.WrongSumm:
+
+                                UI.PrintinputedSummError(
+                                    ref tbResultForm,
+                                    result);
+
+                                break;
+
+                            case ResultOperations.NegativeDigit:
+
+                                UI.PrintinputedSummError(
+                                   ref tbResultForm,
+                                   result);
+                                break;
+
+                            case ResultOperations.None:
+
+                                int.TryParse(
+                                    tbChargeSum.Text,
+                                    out int chargeSumm);
+
+                                pgDB = CreatePostrgesInstance();
+                                int.TryParse(
+                                    tbCardNumber.Text,
+                                    out int cardnumber);
+
+                                // проверка, существует ли в БД карта с
+                                // таким номером.
+                                if (pgDB.CheckIfCardExist(cardnumber))
+                                {
+                                    Card card = pgDB.FindCardByCard(cardnumber);
+
+                                    checkinfResult = pgDB.Charge(
+                                        card,
+                                        chargeSumm);
+
+                                    switch (checkinfResult)
+                                    {
+                                        case ResultOperations.ChargeError:
+                                            UI.PrintErrorCardDoesntExist(
+                                                ref tbResultForm,
+                                                searchType,
+                                                cardnumber);
+
+                                            break;
+                                        case ResultOperations.None:
+                                            // снова запрашиваем карту
+                                            // для просмотра результатов спания.
+                                            card = pgDB.FindCardByCard(cardnumber);
+                                            UI.PrintCardElements(
+                                                ref tbResultForm,
+                                                card);
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    UI.PrintErrorCardDoesntExist(
+                                        ref tbResultForm,
+                                        searchType,
+                                        cardnumber);
+                                }
+
+                                break;
+                        }
 
                         break;
 

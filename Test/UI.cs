@@ -28,6 +28,10 @@ namespace CardsHandler
                   MessageBoxIcon.Warning);
         }
 
+        /// <summary>
+        /// Вывод ошибки подключения к БД.
+        /// </summary>
+        /// <param name="pgInstance">Экземпляр объекта БД.</param>
         public static void PrintErrorConnectionToDB(PostgresDB pgInstance)
         {
             string message =
@@ -43,18 +47,30 @@ namespace CardsHandler
                   MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Запрос ввода карты.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void PrintMessageEnterCard(ref RichTextBox box)
         {
             const string EnterCardMessage = "Введите номер карты";
             box.Text = EnterCardMessage;
         }
 
+        /// <summary>
+        /// Запрос ввода телефона.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void PrintMessageEnterPhone(ref RichTextBox box)
         {
             const string EnterPhoneMessage = "Введите номер телефона\nв формате 380XXXXXXXXXX";
             box.Text = EnterPhoneMessage;
         }
 
+        /// <summary>
+        /// Запрос данных для создания карты.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void PrintMessageCreationCard(ref RichTextBox box)
         {
             const string EnterPhoneMessage = "Для создания карты введите номер телефона и ФИО\n" +
@@ -62,12 +78,20 @@ namespace CardsHandler
             box.Text = EnterPhoneMessage;
         }
 
+        /// <summary>
+        /// Запрос критериев поиска карты.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void PrintMessageSearchingCard(ref RichTextBox box)
         {
             const string EnterPhoneMessage = "Выберите критерий поиска карты";
             box.Text = EnterPhoneMessage;
         }
 
+        /// <summary>
+        /// Запрос ввода суммы для списания..
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void PrintMessageCharhingCard(ref RichTextBox box)
         {
             const string EnterPhoneMessage = "Укажите сумму для списания бонусов и номер карты";
@@ -102,6 +126,10 @@ namespace CardsHandler
             box.BackColor = color;
         }
 
+        /// <summary>
+        /// Ошибка введен не правильный номер.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void ErrorInPhoneNumber(ref RichTextBox box)
         {
             const string MessageErrorInNUmber = "Ошибка в номере телефона.\n" +
@@ -110,19 +138,31 @@ namespace CardsHandler
             box.Text = MessageErrorInNUmber;
         }
 
+        /// <summary>
+        /// Ошибка ввода имени.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void ErrorWrongName(ref RichTextBox box)
         {
             const string MessageErrorInNUmber = "Не правильное указано ФИО пользователя." +
-                "Должны быть только символы";
+                "Должны быть только БУКВЫ";
             box.Text = MessageErrorInNUmber;
         }
 
+        /// <summary>
+        /// Ошибка ввода карты.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void ErrorWrongCard(ref RichTextBox box)
         {
             const string MessageErrorInNUmber = "Не правильно указан номер карты. ";
             box.Text = MessageErrorInNUmber;
         }
 
+        /// <summary>
+        /// Ошибка ввода полей. Указано пустое поле.
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
         public static void ErrorEptyFields(ref RichTextBox box)
         {
             const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены.\n" +
@@ -140,8 +180,8 @@ namespace CardsHandler
         /// Вывод ошибки об отсутствии карты в базе.
         /// </summary>
         /// <param name="box">Окно вывода результата.</param>
-        /// <param name="searchType">тип поиска</param>
-        /// <param name="number">номер карты или телефона</param>
+        /// <param name="searchType">тип поиска.</param>
+        /// <param name="number">номер карты или телефона.</param>
         public static void PrintErrorCardDoesntExist(
             ref RichTextBox box,
             SearchType searchType,
@@ -163,6 +203,11 @@ namespace CardsHandler
             box.Text = messageSuccess;
         }
 
+        /// <summary>
+        /// Печать ошибки "Телефон не существует".
+        /// </summary>
+        /// <param name="box">окно вывода результата.</param>
+        /// <param name="number">телефон.</param>
         public static void PrintErrorPhoneDoesntExist(
             ref RichTextBox box,
             long number)
@@ -177,13 +222,39 @@ namespace CardsHandler
         /// </summary>
         /// <param name="box">Окнов вывода.</param>
         /// <param name="card">Карта.</param>
-        public static void PrintCardElrmrnts(ref RichTextBox box, Card card)
+        public static void PrintCardElements(ref RichTextBox box, Card card)
         {
             string message = $"Номер карты:\t{card.Number}\n" +
                 $"Баланс:\t\t{card.Ballance}\n" +
                 $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
                 $"Владелец:\t{card.OwnerLastName} {card.OwnerFirstName} {card.OwnerMiddleName}\n" +
                 $"Номер телефона:\t{card.PhoneNumber}\n";
+
+            box.Text = message;
+        }
+
+        /// <summary>
+        /// Печать ошибки о не верной сумме к списанию.
+        /// </summary>
+        /// <param name="box">окно для вывода результата.</param>
+        /// <param name="result">Результат операции.</param>
+        public static void PrintinputedSummError(
+            ref RichTextBox box,
+            ResultOperations result)
+        {
+            string message = string.Empty;
+            switch (result)
+            {
+                case ResultOperations.WrongSumm:
+                    message = "Не венрно указана сумма к списанию.";
+                    break;
+                case ResultOperations.ChargeError:
+                    message = "Нельзя списать такое количество бонусов.";
+                    break;
+                case ResultOperations.NegativeDigit:
+                    message = "Введено отрицательное число";
+                    break;
+            }
 
             box.Text = message;
         }

@@ -12,6 +12,7 @@ namespace CardsHandler
 {
     internal class Card
     {
+        private const int DefaultSumm = 1000;
         /// <summary>
         /// Номер карты.
         /// </summary>
@@ -68,7 +69,7 @@ namespace CardsHandler
             _number = number;
             _phoneNumber = phone;
             _expirationDate = date;
-            _ballance = 0;
+            _ballance = DefaultSumm;
             _ownerFirstName = firstName;
             _ownerMiddleName = middleName;
             _ownerLastName = lasName;
@@ -94,7 +95,7 @@ namespace CardsHandler
             _number = number;
             _phoneNumber = phone;
             _expirationDate = DateTime.Today;
-            _ballance = 0;
+            _ballance = DefaultSumm;
             _ownerFirstName = firstName;
             _ownerMiddleName = middleName;
             _ownerLastName = lasName;

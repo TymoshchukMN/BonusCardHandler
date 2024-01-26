@@ -41,5 +41,14 @@ namespace CardsHandler
         /// </summary>
         WrongSumm,
 
+        /// <summary>
+        /// Ошибка списания.
+        /// </summary>
+        ChargeError,
+
+        /// <summary>
+        /// Отрицательное число.
+        /// </summary>
+        NegativeDigit,
     }
 }

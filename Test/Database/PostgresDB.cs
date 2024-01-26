@@ -369,6 +369,61 @@ namespace CardsHandler.Database
             }
         }
 
+        /// <summary>
+        /// Списание с карты.
+        /// </summary>
+        /// <param name="card">карта для списания.</param>
+        /// <param name="summ">к списани.</param>
+        public ResultOperations Charge(Card card, int summ)
+        {
+            ResultOperations result = ResultOperations.None;
+
+            using (NpgsqlConnection connection
+                     = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText =
+                    $"SELECT ballance " +
+                    $"FROM CARDS " +
+                    $"WHERE cardnumber = {card.Number}; ";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                DataTable isAccessExist = new DataTable();
+                isAccessExist.Load(data);
+
+                int currentBalance = (int)isAccessExist.Rows[0].ItemArray[0];
+
+                if ((currentBalance - summ) < 0)
+                {
+                    result = ResultOperations.ChargeError;
+                }
+                else
+                {
+                    currentBalance -= summ;
+                    npgsqlCommand.CommandText = $"" +
+                        $"UPDATE CARDS " +
+                        $"SET ballance = {currentBalance} " +
+                        $"WHERE cardnumber = {card.Number} ;";
+
+                    npgsqlCommand.ExecuteReader();
+                }
+            }
+
+            return result;
+        }
+
         #endregion METHODS
     }
 }

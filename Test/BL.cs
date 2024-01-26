@@ -154,6 +154,11 @@ namespace CardsHandler
             return dbConfigJSON;
         }
 
+        /// <summary>
+        /// Генерация нромера карты.
+        /// </summary>
+        /// <param name="number">номер карты.</param>
+        /// <returns>номер карты.</returns>
         public static int GenerateCardNumber(out int number)
         {
             number = 0;
@@ -161,6 +166,32 @@ namespace CardsHandler
             number = random.Next(99999, 1000000);
 
             return number;
+        }
+
+        /// <summary>
+        /// Проверка правильности указанной суммы для списания.
+        /// </summary>
+        /// <param name="sum">Сумма для списания.</param>
+        /// <returns>
+        /// bool.
+        /// </returns>
+        public static ResultOperations IsSummCorrect(string sum)
+        {
+            ResultOperations result = ResultOperations.None;
+
+            if (int.TryParse(sum, out int res))
+            {
+                if (res <= 0)
+                {
+                    result = ResultOperations.NegativeDigit;
+                }
+            }
+            else
+            {
+                result = ResultOperations.WrongSumm;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -259,7 +290,5 @@ namespace CardsHandler
 
             return isCorrect;
         }
-
-        
     }
 }
