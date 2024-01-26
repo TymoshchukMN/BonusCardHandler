@@ -1,5 +1,4 @@
-﻿using CardsHandler.JSON;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CardsHandler.Database;
+using CardsHandler.JSON;
 
 namespace CardsHandler
 {
@@ -69,8 +70,39 @@ namespace CardsHandler
                                 break;
 
                             case WrongData.None:
-                                UI.PrintSuccess(ref tbResultForm);
+
                                 DBConfigJSON dBConfig = BL.GetDBConfig();
+
+                                PostgresDB pgDB = new PostgresDB(
+                                   dBConfig.DBConfig.Server,
+                                   dBConfig.DBConfig.UserName,
+                                   dBConfig.DBConfig.DBname,
+                                   dBConfig.DBConfig.Port);
+
+
+                                bool isCardExist = false;
+                                int newCardNumber;
+
+                                // проверка, существует ли в БД карта с таким номером.
+                                do
+                                {
+                                    BL.GenerateCardNumber(out newCardNumber);
+                                    isCardExist = pgDB.CheckIfCardExist(tbCardNumber.Text);
+
+                                } while (!isCardExist);
+
+                                long.TryParse(tbPhoneNumber.Text, out long phoneNumber);
+
+                                Card card = new Card(
+                                    newCardNumber,
+                                    phoneNumber,
+                                    tbFirstName.Text,
+                                    tbMiddleName.Text,
+                                    tbLastName.Text);
+
+                                pgDB.CreateCard(card);
+
+                                UI.PrintSuccess(ref tbResultForm);
 
                                 // создаем карту
                                 break;

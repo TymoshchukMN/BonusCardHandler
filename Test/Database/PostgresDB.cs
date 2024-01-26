@@ -20,6 +20,8 @@ namespace CardsHandler.Database
         #region FIELDS
 
         private string _connectionString;
+        private string _server;
+        private string _dbName;
 
         #endregion FIELDS
 
@@ -37,6 +39,8 @@ namespace CardsHandler.Database
                     $"Database={dataBase};" +
                     $"Port={port};" +
                     $"Password={string.Empty}");
+            _server = server;
+            _dbName = dataBase;
         }
 
         #endregion CTORs
@@ -51,11 +55,23 @@ namespace CardsHandler.Database
             }
         }
 
+        public string Server
+        {
+            get { return _server; }
+            private set { _server = value; }
+        }
+
+        public string DBname
+        {
+            get { return _dbName; }
+            set { _dbName = value; }
+        }
+
         #endregion PROPERTIES
 
         #region METHODS
 
-        public void ProcessingOldTitles(NpgsqlConnection connection)
+        public void Get(NpgsqlConnection connection)
         {
             NpgsqlCommand npgsqlCommand = connection.CreateCommand();
             npgsqlCommand.CommandText =
@@ -72,6 +88,31 @@ namespace CardsHandler.Database
                     COMMIT;
                 ";
             npgsqlCommand.ExecuteNonQuery();
+        }
+
+        public bool CheckIfCardExist(string card)
+        {
+            return true;
+        }
+
+        public void CreateCard(Card card)
+        {
+            using (NpgsqlConnection connection
+                    = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception ex)
+                {
+
+                    return;
+                }
+
+                NpgsqlDataReader data;
+
+            }
         }
 
         #endregion METHODS

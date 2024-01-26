@@ -20,7 +20,7 @@ namespace CardsHandler
         /// <summary>
         /// Номер телефона.
         /// </summary>
-        private int _phoneNumber;
+        private long _phoneNumber;
 
         /// <summary>
         /// Срок действия карты.
@@ -58,7 +58,7 @@ namespace CardsHandler
         /// <param name="isActive">флаг актуальности.</param>
         public Card(
             int number,
-            int phone,
+            long phone,
             DateTime date,
             int ballance)
         {
@@ -72,17 +72,19 @@ namespace CardsHandler
         /// Initializes a new instance of the <see cref="Card"/> class.
         /// Конструктор, для создания карыт и помещения в БД.
         /// </summary>
+        /// <param name="number">номер карты.</param>
         /// <param name="phone">номер телефона.</param>
         /// <param name="firstName">имя клиента.</param>
         /// <param name="middleName">отчетство клиента.</param>
         /// <param name="lasName">фамилия клиента.</param>
         public Card(
-            int phone,
+            int number,
+            long phone,
             string firstName,
             string middleName,
             string lasName)
         {
-            _number = GenerateCardNumber();
+            _number = number;
             _phoneNumber = phone;
             _expirationDate = DateTime.Today;
             _ballance = 0;
@@ -131,15 +133,6 @@ namespace CardsHandler
         {
             get { return _ownerLastName; }
             private set { _ownerLastName = value; }
-        }
-
-        private static int GenerateCardNumber()
-        {
-            int number = 0;
-
-            Random random = new Random();
-            number = random.Next(99999, 1000000);
-            return number;
         }
     }
 }
