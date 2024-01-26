@@ -1,4 +1,12 @@
-﻿using System;
+﻿///////////////////////////////
+// Author : Tymoshchuk Maksym
+// Created On : 26/01/202
+// Last Modified On :
+// Description: logic class.
+// Project: CardsHandler
+//////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -117,7 +125,7 @@ namespace CardsHandler
             WrongData statCompliante = WrongData.None;
 
             // проверка на коректность введенной суммы
-            if (!int.TryParse(summ, out decimal _))
+            if (!int.TryParse(summ, out int _))
             {
                 statCompliante = WrongData.WrongSumm;
             }
@@ -132,10 +140,9 @@ namespace CardsHandler
             return statCompliante;
         }
 
-
         private static bool IsCardExist(string card)
-        { 
-        
+        {
+            return true;
         }
 
         /// <summary>
@@ -209,7 +216,7 @@ namespace CardsHandler
         /// <param name="card">
         /// номер карты.
         /// </param>
-        /// <returns></returns>
+        /// <returns>bool.</returns>
         private static bool IsCardCorrect(string card)
         {
             bool isCorrect = true;

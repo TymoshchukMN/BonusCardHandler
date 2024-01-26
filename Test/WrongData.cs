@@ -35,5 +35,10 @@ namespace CardsHandler
         /// Данные не заполнены.
         /// </summary>
         EmptyField,
+
+        /// <summary>
+        /// Не верная сумма.
+        /// </summary>
+        WrongSumm,
     }
 }
