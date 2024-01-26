@@ -57,15 +57,22 @@ namespace CardsHandler
         /// <param name="ballance">баланс.</param>
         /// <param name="isActive">флаг актуальности.</param>
         public Card(
-            int number,
-            long phone,
-            DateTime date,
-            int ballance)
+             int number,
+             long phone,
+             string firstName,
+             string middleName,
+             string lasName,
+             DateTime date,
+             int balance)
         {
             _number = number;
             _phoneNumber = phone;
             _expirationDate = date;
-            _ballance = ballance;
+            _ballance = 0;
+            _ownerFirstName = firstName;
+            _ownerMiddleName = middleName;
+            _ownerLastName = lasName;
+            _ballance = balance;
         }
 
         /// <summary>

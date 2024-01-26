@@ -138,16 +138,17 @@ namespace CardsHandler
                                 {
                                     case SearchType.ByPhone:
 
-                                        int.TryParse(
+                                        long.TryParse(
                                             tbPhoneNumber.Text,
-                                            out int phoneNumber);
+                                            out long phoneNumber);
 
                                         bool isPhoneExist =
                                             pgDB.CheckIfPhone(phoneNumber);
 
                                         if (isPhoneExist)
                                         {
-
+                                            Card card = pgDB.FindCardByPhone(phoneNumber);
+                                            UI.PrintCardElrmrnts(ref tbResultForm, card);
                                         }
                                         else
                                         {
@@ -158,14 +159,15 @@ namespace CardsHandler
 
                                         break;
                                     case SearchType.ByCard:
+
                                         // поиск по номеру карты
-                                        bool isCardExist = true;
                                         int.TryParse(
                                             tbCardNumber.Text,
                                             out int cardNumber);
 
-                                        // проверка, существует ли в БД карта с таким номером.
-                                        isCardExist =
+                                        // проверка, существует ли в БД карта с
+                                        // таким номером.
+                                        bool isCardExist =
                                             pgDB.CheckIfCardExist(cardNumber);
 
                                         if (isCardExist)

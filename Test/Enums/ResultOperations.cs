@@ -40,5 +40,6 @@ namespace CardsHandler
         /// Не верная сумма.
         /// </summary>
         WrongSumm,
+
     }
 }

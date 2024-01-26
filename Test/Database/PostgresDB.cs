@@ -12,6 +12,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CardsHandler.Enums;
 using Npgsql;
 
 namespace CardsHandler.Database
@@ -23,6 +24,7 @@ namespace CardsHandler.Database
         private string _connectionString;
         private string _server;
         private string _dbName;
+        private int _port;
 
         #endregion FIELDS
 
@@ -42,6 +44,7 @@ namespace CardsHandler.Database
                     $"Password={string.Empty}");
             _server = server;
             _dbName = dataBase;
+            _port = port;
         }
 
         #endregion CTORs
@@ -65,7 +68,13 @@ namespace CardsHandler.Database
         public string DBname
         {
             get { return _dbName; }
-            set { _dbName = value; }
+            private set { _dbName = value; }
+        }
+
+        public int Port
+        {
+            get { return _port; }
+            private set { _port = value; }
         }
 
         #endregion PROPERTIES
@@ -146,7 +155,7 @@ namespace CardsHandler.Database
         /// <returns>
         /// bool.
         /// </returns>
-        public bool CheckIfPhone(int phoneNumber)
+        public bool CheckIfPhone(long phoneNumber)
         {
             bool isExist = false;
             using (NpgsqlConnection connection
@@ -231,14 +240,68 @@ namespace CardsHandler.Database
         /// <summary>
         /// Поиск карты.
         /// </summary>
-        /// <param name="cardNumber"></param>
-        /// <returns></returns>
-        /*public Card FindCard(int cardNumber, string searchType)
+        /// <param name="number">номер телефона/карты.</param>
+        /// <returns>Объект карты.</returns>
+        public Card FindCardByPhone(long number)
         {
-            const string SearchByPhone = "Телефону";
-            const string SearchByCard = "Номеру карты";
-            return new Card;
-        }*/
+            using (NpgsqlConnection connection
+                  = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText =
+                    $"SELECT cl.\"phoneNumber\"," +
+                    $"      cl.\"firstName\"," +
+                    $"      cl.\"middleName\"," +
+                    $"      cl.\"lastName\"," +
+                    $"      cd.cardnumber," +
+                    $"      cd.ballance," +
+                    $"      cd.\"expirationDate\"" +
+                    $" FROM clients AS cl " +
+                    $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
+                    $" WHERE cl.\"phoneNumber\" = {number};";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                long phoneNumber = 0;
+                string firstName = string.Empty;
+                string middleName = string.Empty;
+                string lastName = string.Empty;
+                int cardnumber = 0;
+                int ballance = 0;
+                DateTime expirationDate = DateTime.Now;
+
+                while (data.Read())
+                {
+                    phoneNumber = (long)data["phoneNumber"];
+                    firstName = (string)data["firstName"];
+                    middleName = (string)data["middleName"];
+                    lastName = (string)data["lastName"];
+                    cardnumber = (int)data["cardnumber"];
+                    ballance = (int)data["ballance"];
+                    expirationDate = (DateTime)data["expirationDate"];
+                }
+
+                return new Card(
+                    cardnumber,
+                    phoneNumber,
+                    firstName,
+                    middleName,
+                    lastName,
+                    expirationDate,
+                    ballance);
+            }
+        }
         #endregion METHODS
     }
 }

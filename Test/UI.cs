@@ -1,12 +1,12 @@
-﻿using CardsHandler.Database;
-using CardsHandler.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CardsHandler.Database;
+using CardsHandler.Enums;
 
 namespace CardsHandler
 {
@@ -32,7 +32,8 @@ namespace CardsHandler
         {
             string message =
                        $"Не удается подключиться к БД {pgInstance.Server}\n" +
-                       $"база {pgInstance.DBname}";
+                       $"база {pgInstance.DBname}\n" +
+                       $"порт:{pgInstance.Port}";
             const string CAPTION = "Attention";
 
             MessageBox.Show(
@@ -163,10 +164,26 @@ namespace CardsHandler
 
         public static void PrintErrorPhoneDoesntExist(
             ref RichTextBox box,
-            int number)
+            long number)
         {
             string message = $"В базе нет клиентов с номером телефона " +
                 $"{number}";
+            box.Text = message;
+        }
+
+        /// <summary>
+        /// Вывод информации о карте.
+        /// </summary>
+        /// <param name="box">Окнов вывода.</param>
+        /// <param name="card">Карта.</param>
+        public static void PrintCardElrmrnts(ref RichTextBox box, Card card)
+        {
+            string message = $"Номер карты:\t{card.Number}\n" +
+                $"Баланс:\t\t{card.Ballance}\n" +
+                $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
+                $"Владелец:\t{card.OwnerLastName} {card.OwnerFirstName} {card.OwnerMiddleName}\n" +
+                $"Номер телефона:\t{card.PhoneNumber}\n";
+
             box.Text = message;
         }
     }
