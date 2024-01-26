@@ -144,9 +144,23 @@ namespace CardsHandler
             return statCompliante;
         }
 
-        private static bool IsCardExist(string card)
+        public static DBConfigJSON GetDBConfig()
         {
-            return true;
+            // const string ConfFilePathDB = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\DBconfigFile.json";
+            const string ConfFilePathDB = "..\\..\\JSON\\DBconfigFile.json";
+            string dbConfigFile = File.ReadAllText(ConfFilePathDB);
+            DBConfigJSON dbConfigJSON = JsonConvert.DeserializeObject<DBConfigJSON>(dbConfigFile);
+
+            return dbConfigJSON;
+        }
+
+        public static int GenerateCardNumber(out int number)
+        {
+            number = 0;
+            Random random = new Random();
+            number = random.Next(99999, 1000000);
+
+            return number;
         }
 
         /// <summary>
@@ -246,21 +260,6 @@ namespace CardsHandler
             return isCorrect;
         }
 
-        public static void GetDBConfig()
-        {
-            const string ConfFilePathDB = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\DBconfigFile.json";
-            const string ConfFilePathMail = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\MailConfigFile.json";
-
-            string dbConfigFile = File.ReadAllText(ConfFilePathDB);
-            DBConfigJSON dbConfigJSON = JsonConvert.DeserializeObject<DBConfigJSON>(dbConfigFile);
-
-
-            PostgresDB pgDB = new PostgresDB(
-                dbConfigJSON.DBConfig.Server,
-                dbConfigJSON.DBConfig.UserName,
-                dbConfigJSON.DBConfig.DBname,
-                dbConfigJSON.DBConfig.Port);
-        }
-    
+        
     }
 }

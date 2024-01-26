@@ -99,7 +99,7 @@ namespace CardsHandler
             private set { _number = value; }
         }
 
-        public int PhoneNumber
+        public long PhoneNumber
         {
             get { return _phoneNumber; }
             set { _phoneNumber = value; }

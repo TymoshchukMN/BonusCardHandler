@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CardsHandler.Database;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -24,6 +25,20 @@ namespace CardsHandler
                   CAPTION,
                   MessageBoxButtons.OK,
                   MessageBoxIcon.Warning);
+        }
+
+        public static void PrintErrorConnectionToDB(PostgresDB pgInstance)
+        {
+            string message =
+                       $"Не удается подключиться к БД {pgInstance.Server}\n" +
+                       $"база {pgInstance.DBname}";
+            const string CAPTION = "Attention";
+
+            MessageBox.Show(
+                  message,
+                  CAPTION,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Error);
         }
 
         public static void PrintMessageEnterCard(ref RichTextBox box)

@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -90,9 +91,50 @@ namespace CardsHandler.Database
             npgsqlCommand.ExecuteNonQuery();
         }
 
-        public bool CheckIfCardExist(string card)
+        /// <summary>
+        /// Проверяем естьли карты с таким номером.
+        /// </summary>
+        /// <param name="cardNumber">
+        /// Номер карты.
+        /// </param>
+        /// <returns>
+        /// bool.
+        /// </returns>
+        public bool CheckIfCardExist(int cardNumber)
         {
-            return true;
+            bool isExist = false;
+            using (NpgsqlConnection connection
+                   = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText =
+                    $"SELECT EXISTS(" +
+                    $"  SELECT cardnumber " +
+                    $"  FROM cards " +
+                    $"  WHERE cardnumber = {cardNumber});";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                DataTable isAccessExist = new DataTable();
+                isAccessExist.Load(data);
+
+                isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
+
+                data.Close();
+            }
+
+            return isExist;
         }
 
         public void CreateCard(Card card)
@@ -104,14 +146,34 @@ namespace CardsHandler.Database
                 {
                     connection.Open();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-
+                    UI.PrintErrorConnectionToDB(this);
                     return;
                 }
 
-                NpgsqlDataReader data;
+                string expirationDate
+                    = DateTime.Today.AddMonths(12).Date.ToString("dd.MM.yyyy");
 
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+                npgsqlCommand.CommandText =
+
+                    $"INSERT INTO public.cards(" +
+                    $" cardnumber, \"phoneNumber\", \"expirationDate\", ballance) " +
+                    $" VALUES({card.Number}, " +
+                    $" {card.PhoneNumber}, " +
+                    $" \'{expirationDate}\'," +
+                    $" {card.Ballance});" +
+                    $"INSERT INTO public.clients(" +
+                    $"  \"phoneNumber\", \"firstName\", \"middleName\", \"lastName\")" +
+                    $"  VALUES({card.PhoneNumber}," +
+                    $"  \'{card.OwnerFirstName}\'," +
+                    $"  \'{card.OwnerMiddleName}\'," +
+                    $"  \'{card.OwnerLastName}\'); ";
+
+                npgsqlCommand.ExecuteNonQuery();
+
+                // NpgsqlDataReader data;
             }
         }
 

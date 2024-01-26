@@ -79,17 +79,16 @@ namespace CardsHandler
                                    dBConfig.DBConfig.DBname,
                                    dBConfig.DBConfig.Port);
 
-
-                                bool isCardExist = false;
+                                bool isCardExist = true;
                                 int newCardNumber;
 
                                 // проверка, существует ли в БД карта с таким номером.
                                 do
                                 {
                                     BL.GenerateCardNumber(out newCardNumber);
-                                    isCardExist = pgDB.CheckIfCardExist(tbCardNumber.Text);
-
-                                } while (!isCardExist);
+                                    isCardExist = pgDB.CheckIfCardExist(newCardNumber);
+                                }
+                                while (isCardExist);
 
                                 long.TryParse(tbPhoneNumber.Text, out long phoneNumber);
 
