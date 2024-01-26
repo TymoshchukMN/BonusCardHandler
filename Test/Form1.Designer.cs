@@ -133,9 +133,9 @@
             this.cbFindType.Items.AddRange(new object[] {
             "Телефону",
             "Номеру карты"});
-            this.cbFindType.Location = new System.Drawing.Point(69, 23);
+            this.cbFindType.Location = new System.Drawing.Point(104, 23);
             this.cbFindType.Name = "cbFindType";
-            this.cbFindType.Size = new System.Drawing.Size(132, 21);
+            this.cbFindType.Size = new System.Drawing.Size(155, 21);
             this.cbFindType.TabIndex = 8;
             this.cbFindType.SelectedIndexChanged += new System.EventHandler(this.CbFindType_SelectedIndexChanged);
             // 
@@ -145,7 +145,7 @@
             this.gbSearch.Controls.Add(this.lbSearchType);
             this.gbSearch.Location = new System.Drawing.Point(14, 119);
             this.gbSearch.Name = "gbSearch";
-            this.gbSearch.Size = new System.Drawing.Size(241, 122);
+            this.gbSearch.Size = new System.Drawing.Size(287, 66);
             this.gbSearch.TabIndex = 9;
             this.gbSearch.TabStop = false;
             this.gbSearch.Text = "Поиск";
@@ -158,30 +158,30 @@
             this.gbCreation.Controls.Add(this.lbLastName);
             this.gbCreation.Controls.Add(this.lbMiddleName);
             this.gbCreation.Controls.Add(this.lbFirstName);
-            this.gbCreation.Location = new System.Drawing.Point(279, 119);
+            this.gbCreation.Location = new System.Drawing.Point(332, 124);
             this.gbCreation.Name = "gbCreation";
-            this.gbCreation.Size = new System.Drawing.Size(318, 122);
+            this.gbCreation.Size = new System.Drawing.Size(318, 143);
             this.gbCreation.TabIndex = 10;
             this.gbCreation.TabStop = false;
             this.gbCreation.Text = "Создание";
             // 
             // tbLastName
             // 
-            this.tbLastName.Location = new System.Drawing.Point(120, 75);
+            this.tbLastName.Location = new System.Drawing.Point(120, 90);
             this.tbLastName.Name = "tbLastName";
             this.tbLastName.Size = new System.Drawing.Size(192, 20);
             this.tbLastName.TabIndex = 15;
             // 
             // tbMiddleName
             // 
-            this.tbMiddleName.Location = new System.Drawing.Point(120, 46);
+            this.tbMiddleName.Location = new System.Drawing.Point(120, 61);
             this.tbMiddleName.Name = "tbMiddleName";
             this.tbMiddleName.Size = new System.Drawing.Size(192, 20);
             this.tbMiddleName.TabIndex = 14;
             // 
             // tbFirstName
             // 
-            this.tbFirstName.Location = new System.Drawing.Point(120, 18);
+            this.tbFirstName.Location = new System.Drawing.Point(120, 33);
             this.tbFirstName.Name = "tbFirstName";
             this.tbFirstName.Size = new System.Drawing.Size(192, 20);
             this.tbFirstName.TabIndex = 13;
@@ -189,7 +189,7 @@
             // lbLastName
             // 
             this.lbLastName.AutoSize = true;
-            this.lbLastName.Location = new System.Drawing.Point(6, 78);
+            this.lbLastName.Location = new System.Drawing.Point(6, 93);
             this.lbLastName.Name = "lbLastName";
             this.lbLastName.Size = new System.Drawing.Size(56, 13);
             this.lbLastName.TabIndex = 12;
@@ -198,7 +198,7 @@
             // lbMiddleName
             // 
             this.lbMiddleName.AutoSize = true;
-            this.lbMiddleName.Location = new System.Drawing.Point(6, 49);
+            this.lbMiddleName.Location = new System.Drawing.Point(6, 64);
             this.lbMiddleName.Name = "lbMiddleName";
             this.lbMiddleName.Size = new System.Drawing.Size(54, 13);
             this.lbMiddleName.TabIndex = 11;
@@ -207,7 +207,7 @@
             // lbFirstName
             // 
             this.lbFirstName.AutoSize = true;
-            this.lbFirstName.Location = new System.Drawing.Point(6, 20);
+            this.lbFirstName.Location = new System.Drawing.Point(6, 35);
             this.lbFirstName.Name = "lbFirstName";
             this.lbFirstName.Size = new System.Drawing.Size(29, 13);
             this.lbFirstName.TabIndex = 9;
@@ -217,7 +217,7 @@
             // 
             this.gbCharge.Controls.Add(this.tbChargeSum);
             this.gbCharge.Controls.Add(this.lbChargeSum);
-            this.gbCharge.Location = new System.Drawing.Point(14, 256);
+            this.gbCharge.Location = new System.Drawing.Point(11, 202);
             this.gbCharge.Name = "gbCharge";
             this.gbCharge.Size = new System.Drawing.Size(290, 65);
             this.gbCharge.TabIndex = 11;

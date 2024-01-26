@@ -18,28 +18,28 @@ namespace CardsHandler
         /// <param name="lastName">Фамилия.</param>
         /// <returns>номер ошибки.</returns>
         public static WrongData CheckCreationCompliance(
-            TextBox phone,
-            TextBox firstName,
-            TextBox middleName,
-            TextBox lastName)
+            string phone,
+            string firstName,
+            string middleName,
+            string lastName)
         {
             WrongData statCompliante = WrongData.None;
 
-            if (string.IsNullOrEmpty(phone.Text) ||
-                string.IsNullOrEmpty(firstName.Text) ||
-                string.IsNullOrEmpty(firstName.Text) ||
-                string.IsNullOrEmpty(firstName.Text))
+            if (string.IsNullOrEmpty(phone) ||
+                string.IsNullOrEmpty(firstName) ||
+                string.IsNullOrEmpty(firstName) ||
+                string.IsNullOrEmpty(firstName))
             {
                 return WrongData.EmptyField;
             }
 
-            if (IsPhoneCorrect(phone.Text))
+            if (IsPhoneCorrect(phone))
             {
-                if (IsNameCorrect(firstName.Text))
+                if (IsNameCorrect(firstName))
                 {
-                    if (IsNameCorrect(middleName.Text))
+                    if (IsNameCorrect(middleName))
                     {
-                        if (!IsNameCorrect(lastName.Text))
+                        if (!IsNameCorrect(lastName))
                         {
                             return WrongData.WrongName;
                         }
@@ -63,7 +63,7 @@ namespace CardsHandler
         }
 
         /// <summary>
-        /// Метод для проверки валидности введенных данных на ПОИСК карты. 
+        /// Метод для проверки валидности введенных данных на ПОИСК карты.
         /// </summary>
         /// <param name="choice">
         /// Поле с Типом поиска.
@@ -75,31 +75,31 @@ namespace CardsHandler
         /// Поле с номером карты.</param>
         /// <returns>номер ошибки.</returns>
         public static WrongData CheckSearchCompliance(
-           ComboBox choice,
-           TextBox phone,
-           TextBox card)
+           string choice,
+           string phone,
+           string card)
         {
             WrongData statCompliante = WrongData.None;
 
-            if (string.IsNullOrEmpty(phone.Text) &&
-                string.IsNullOrEmpty(card.Text))
+            if (string.IsNullOrEmpty(phone) &&
+                string.IsNullOrEmpty(card))
             {
                 statCompliante = WrongData.EmptyField;
             }
             else
             {
-                if (choice.Text == "Телефону")
+                if (choice == "Телефону")
                 {
-                    if (!IsPhoneCorrect(phone.Text))
+                    if (!IsPhoneCorrect(phone))
                     {
                         statCompliante = WrongData.WrongPhone;
                     }
                 }
                 else
                 {
-                    if (choice.Text == "Номеру карты")
+                    if (choice == "Номеру карты")
                     {
-                        if (!IsCardCorrect(card.Text))
+                        if (!IsCardCorrect(card))
                         {
                             statCompliante = WrongData.WrongCard;
                         }
@@ -110,13 +110,41 @@ namespace CardsHandler
             return statCompliante;
         }
 
+        public static WrongData ChechChargeCompliance(
+            string summ,
+            string card)
+        {
+            WrongData statCompliante = WrongData.None;
+
+            // проверка на коректность введенной суммы
+            if (!int.TryParse(summ, out decimal _))
+            {
+                statCompliante = WrongData.WrongSumm;
+            }
+            else
+            {
+                if (!IsCardCorrect(card))
+                {
+                    statCompliante = WrongData.WrongCard;
+                }
+            }
+
+            return statCompliante;
+        }
+
+
+        private static bool IsCardExist(string card)
+        { 
+        
+        }
+
         /// <summary>
         /// Проверка валидности номера.
         /// </summary>
         /// <param name="phoneNumber">
         /// номер телефона.
         /// </param>
-        /// <returns></returns>
+        /// <returns>true/false.</returns>
         private static bool IsPhoneCorrect(string phoneNumber)
         {
             bool isCorrect = true;

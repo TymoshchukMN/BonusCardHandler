@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
 namespace CardsHandler
 {
     public partial class FormHandlerCars : Form
@@ -19,7 +18,7 @@ namespace CardsHandler
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
 
-        readonly Color MarkerColor = Color.FromArgb(214, 254, 216);
+        private readonly Color markerColor = Color.FromArgb(214, 254, 216);
 
         public FormHandlerCars()
         {
@@ -47,10 +46,10 @@ namespace CardsHandler
                 {
                     case CreateCard:
                         checkinfResult = BL.CheckCreationCompliance(
-                            tbPhoneNumber,
-                            tbFirstName,
-                            tbMiddleName,
-                            tbLastName);
+                            tbPhoneNumber.Text,
+                            tbFirstName.Text,
+                            tbMiddleName.Text,
+                            tbLastName.Text);
 
                         switch (checkinfResult)
                         {
@@ -68,6 +67,7 @@ namespace CardsHandler
 
                             case WrongData.None:
                                 UI.PrintSuccess(ref tbResultForm);
+
                                 // создаем карту
                                 break;
                         }
@@ -77,9 +77,9 @@ namespace CardsHandler
                     case FindCard:
 
                         checkinfResult = BL.CheckSearchCompliance(
-                            cbFindType,
-                            tbPhoneNumber,
-                            tbCardNumber);
+                            cbFindType.Text,
+                            tbPhoneNumber.Text,
+                            tbCardNumber.Text);
 
                         switch (checkinfResult)
                         {
@@ -97,6 +97,7 @@ namespace CardsHandler
 
                             case WrongData.None:
                                 UI.PrintSuccess(ref tbResultForm);
+
                                 // создаем карту
                                 break;
                         }
@@ -104,7 +105,6 @@ namespace CardsHandler
                         break;
 
                     case Charge:
-
 
                         break;
                 }
@@ -130,10 +130,10 @@ namespace CardsHandler
                     tbLastName.Enabled = true;
                     tbPhoneNumber.Enabled = true;
                     UI.PrintMessageCreationCard(ref tbResultForm);
-                    UI.DryItems(tbFirstName, MarkerColor);
-                    UI.DryItems(tbMiddleName, MarkerColor);
-                    UI.DryItems(tbLastName, MarkerColor);
-                    UI.DryItems(tbPhoneNumber, MarkerColor);
+                    UI.DryItems(tbFirstName, markerColor);
+                    UI.DryItems(tbMiddleName, markerColor);
+                    UI.DryItems(tbLastName, markerColor);
+                    UI.DryItems(tbPhoneNumber, markerColor);
 
                     break;
 
@@ -150,7 +150,7 @@ namespace CardsHandler
                     UI.DryItems(tbLastName, Color.White);
                     UI.DryItems(tbCardNumber, Color.White);
                     UI.DryItems(tbChargeSum, Color.White);
-                    UI.DryItems(cbFindType, MarkerColor);
+                    UI.DryItems(cbFindType, markerColor);
                     UI.PrintMessageSearchingCard(ref tbResultForm);
 
                     break;
@@ -169,8 +169,8 @@ namespace CardsHandler
                     UI.DryItems(tbFirstName, Color.White);
                     UI.DryItems(tbMiddleName, Color.White);
                     UI.DryItems(tbLastName, Color.White);
-                    UI.DryItems(tbCardNumber, MarkerColor);
-                    UI.DryItems(tbChargeSum, MarkerColor);
+                    UI.DryItems(tbCardNumber, markerColor);
+                    UI.DryItems(tbChargeSum, markerColor);
                     UI.PrintMessageCharhingCard(ref tbResultForm);
 
                     break;
