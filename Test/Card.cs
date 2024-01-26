@@ -33,11 +33,6 @@ namespace CardsHandler
         private int _ballance;
 
         /// <summary>
-        /// Активность карты.
-        /// </summary>
-        private bool _isActive;
-
-        /// <summary>
         /// Имя владельца карты.
         /// </summary>
         private string _ownerFirstName;
@@ -65,31 +60,35 @@ namespace CardsHandler
             int number,
             int phone,
             DateTime date,
-            int ballance,
-            bool isActive)
+            int ballance)
         {
             _number = number;
             _phoneNumber = phone;
             _expirationDate = date;
             _ballance = ballance;
-            _isActive = isActive;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Card"/> class.
         /// Конструктор, для создания карыт и помещения в БД.
         /// </summary>
-        /// <param name="number">номер карты.</param>
         /// <param name="phone">номер телефона.</param>
+        /// <param name="firstName">имя клиента.</param>
+        /// <param name="middleName">отчетство клиента.</param>
+        /// <param name="lasName">фамилия клиента.</param>
         public Card(
-            int number,
-            int phone)
+            int phone,
+            string firstName,
+            string middleName,
+            string lasName)
         {
-            _number = number;
+            _number = GenerateCardNumber();
             _phoneNumber = phone;
             _expirationDate = DateTime.Today;
             _ballance = 0;
-            _isActive = true;
+            _ownerFirstName = firstName;
+            _ownerMiddleName = middleName;
+            _ownerLastName = lasName;
         }
 
         public int Number
@@ -116,12 +115,6 @@ namespace CardsHandler
             set { _ballance = value; }
         }
 
-        public bool IsActive
-        {
-            get { return _isActive; }
-            set { _isActive = value; }
-        }
-
         public string OwnerFirstName
         {
             get { return _ownerFirstName; }
@@ -138,6 +131,15 @@ namespace CardsHandler
         {
             get { return _ownerLastName; }
             private set { _ownerLastName = value; }
+        }
+
+        private static int GenerateCardNumber()
+        {
+            int number = 0;
+
+            Random random = new Random();
+            number = random.Next(99999, 1000000);
+            return number;
         }
     }
 }

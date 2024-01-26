@@ -8,10 +8,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CardsHandler.Database;
+using CardsHandler.JSON;
+using Newtonsoft.Json;
 
 namespace CardsHandler
 {
@@ -241,5 +245,22 @@ namespace CardsHandler
 
             return isCorrect;
         }
+
+        public static void GetDBConfig()
+        {
+            const string ConfFilePathDB = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\DBconfigFile.json";
+            const string ConfFilePathMail = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\MailConfigFile.json";
+
+            string dbConfigFile = File.ReadAllText(ConfFilePathDB);
+            DBConfigJSON dbConfigJSON = JsonConvert.DeserializeObject<DBConfigJSON>(dbConfigFile);
+
+
+            PostgresDB pgDB = new PostgresDB(
+                dbConfigJSON.DBConfig.Server,
+                dbConfigJSON.DBConfig.UserName,
+                dbConfigJSON.DBConfig.DBname,
+                dbConfigJSON.DBConfig.Port);
+        }
+    
     }
 }

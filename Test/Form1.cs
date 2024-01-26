@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CardsHandler.JSON;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -44,6 +45,8 @@ namespace CardsHandler
 
                 switch (cbOperations.Text)
                 {
+                    #region СОЗДАНИЕ КАРТЫ
+
                     case CreateCard:
                         checkinfResult = BL.CheckCreationCompliance(
                             tbPhoneNumber.Text,
@@ -67,12 +70,17 @@ namespace CardsHandler
 
                             case WrongData.None:
                                 UI.PrintSuccess(ref tbResultForm);
+                                DBConfigJSON dBConfig = BL.GetDBConfig();
 
                                 // создаем карту
                                 break;
                         }
 
                         break;
+
+                    #endregion СОЗДАНИЕ КАРТЫ
+
+                    #region ПОИСК КАРТЫ
 
                     case FindCard:
 
@@ -98,15 +106,21 @@ namespace CardsHandler
                             case WrongData.None:
                                 UI.PrintSuccess(ref tbResultForm);
 
-                                // создаем карту
+                                // ищем карту
                                 break;
                         }
 
                         break;
 
+                    #endregion ПОИСК КАРТЫ
+
+                    #region СПИСАНИЕ
+
                     case Charge:
 
                         break;
+
+                    #endregion СПИСАНИЕ
                 }
             }
         }
