@@ -137,6 +137,57 @@ namespace CardsHandler.Database
             return isExist;
         }
 
+        /// <summary>
+        /// Проверяем естьли карты с таким номером.
+        /// </summary>
+        /// <param name="phoneNumber">
+        /// Номер карты.
+        /// </param>
+        /// <returns>
+        /// bool.
+        /// </returns>
+        public bool CheckIfPhone(int phoneNumber)
+        {
+            bool isExist = false;
+            using (NpgsqlConnection connection
+                   = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText = $"SELECT EXISTS(" +
+                    $"SELECT \"phoneNumber\" " +
+                    $"FROM clients " +
+                    $"WHERE \"phoneNumber\" = {phoneNumber})";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+                DataTable isAccessExist = new DataTable();
+                isAccessExist.Load(data);
+
+                isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
+
+                data.Close();
+            }
+
+            return isExist;
+        }
+
+        /// <summary>
+        /// Создание карты.
+        /// </summary>
+        /// <param name="card">
+        /// объект класса бонусной карты.
+        /// </param>
         public void CreateCard(Card card)
         {
             using (NpgsqlConnection connection
@@ -177,6 +228,17 @@ namespace CardsHandler.Database
             }
         }
 
+        /// <summary>
+        /// Поиск карты.
+        /// </summary>
+        /// <param name="cardNumber"></param>
+        /// <returns></returns>
+        /*public Card FindCard(int cardNumber, string searchType)
+        {
+            const string SearchByPhone = "Телефону";
+            const string SearchByCard = "Номеру карты";
+            return new Card;
+        }*/
         #endregion METHODS
     }
 }

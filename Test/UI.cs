@@ -1,4 +1,5 @@
 ﻿using CardsHandler.Database;
+using CardsHandler.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -131,6 +132,42 @@ namespace CardsHandler
         {
             const string MessageSuccess = "УСПЕХ";
             box.Text = MessageSuccess;
+        }
+
+        /// <summary>
+        /// Вывод ошибки об отсутствии карты в базе.
+        /// </summary>
+        /// <param name="box">Окно вывода результата.</param>
+        /// <param name="searchType">тип поиска</param>
+        /// <param name="number">номер карты или телефона</param>
+        public static void PrintErrorCardDoesntExist(
+            ref RichTextBox box,
+            SearchType searchType,
+            int number)
+        {
+            string messageSuccess = string.Empty;
+            switch (searchType)
+            {
+                case SearchType.ByPhone:
+                    messageSuccess = $"В базе нет карты привязанных к номеру {number}.\n" +
+                        $"Проверьте правильность ввода";
+                    break;
+                case SearchType.ByCard:
+                    messageSuccess = $"В базе нет карты с номером {number}.\n" +
+                      $"Проверьте правильность ввода";
+                    break;
+            }
+
+            box.Text = messageSuccess;
+        }
+
+        public static void PrintErrorPhoneDoesntExist(
+            ref RichTextBox box,
+            int number)
+        {
+            string message = $"В базе нет клиентов с номером телефона " +
+                $"{number}";
+            box.Text = message;
         }
     }
 }

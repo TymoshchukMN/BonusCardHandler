@@ -29,20 +29,20 @@ namespace CardsHandler
         /// <param name="middleName">Отчество.</param>
         /// <param name="lastName">Фамилия.</param>
         /// <returns>номер ошибки.</returns>
-        public static WrongData CheckCreationCompliance(
+        public static ResultOperations CheckCreationCompliance(
             string phone,
             string firstName,
             string middleName,
             string lastName)
         {
-            WrongData statCompliante = WrongData.None;
+            ResultOperations statCompliante = ResultOperations.None;
 
             if (string.IsNullOrEmpty(phone) ||
                 string.IsNullOrEmpty(firstName) ||
                 string.IsNullOrEmpty(firstName) ||
                 string.IsNullOrEmpty(firstName))
             {
-                return WrongData.EmptyField;
+                return ResultOperations.EmptyField;
             }
 
             if (IsPhoneCorrect(phone))
@@ -53,22 +53,22 @@ namespace CardsHandler
                     {
                         if (!IsNameCorrect(lastName))
                         {
-                            return WrongData.WrongName;
+                            return ResultOperations.WrongName;
                         }
                     }
                     else
                     {
-                        return WrongData.WrongName;
+                        return ResultOperations.WrongName;
                     }
                 }
                 else
                 {
-                    return WrongData.WrongName;
+                    return ResultOperations.WrongName;
                 }
             }
             else
             {
-                return WrongData.WrongPhone;
+                return ResultOperations.WrongPhone;
             }
 
             return statCompliante;
@@ -86,17 +86,17 @@ namespace CardsHandler
         /// <param name="card">
         /// Поле с номером карты.</param>
         /// <returns>номер ошибки.</returns>
-        public static WrongData CheckSearchCompliance(
+        public static ResultOperations CheckSearchCompliance(
            string choice,
            string phone,
            string card)
         {
-            WrongData statCompliante = WrongData.None;
+            ResultOperations statCompliante = ResultOperations.None;
 
             if (string.IsNullOrEmpty(phone) &&
                 string.IsNullOrEmpty(card))
             {
-                statCompliante = WrongData.EmptyField;
+                statCompliante = ResultOperations.EmptyField;
             }
             else
             {
@@ -104,7 +104,7 @@ namespace CardsHandler
                 {
                     if (!IsPhoneCorrect(phone))
                     {
-                        statCompliante = WrongData.WrongPhone;
+                        statCompliante = ResultOperations.WrongPhone;
                     }
                 }
                 else
@@ -113,7 +113,7 @@ namespace CardsHandler
                     {
                         if (!IsCardCorrect(card))
                         {
-                            statCompliante = WrongData.WrongCard;
+                            statCompliante = ResultOperations.WrongCard;
                         }
                     }
                 }
@@ -122,22 +122,22 @@ namespace CardsHandler
             return statCompliante;
         }
 
-        public static WrongData ChechChargeCompliance(
+        public static ResultOperations ChechChargeCompliance(
             string summ,
             string card)
         {
-            WrongData statCompliante = WrongData.None;
+            ResultOperations statCompliante = ResultOperations.None;
 
             // проверка на коректность введенной суммы
             if (!int.TryParse(summ, out int _))
             {
-                statCompliante = WrongData.WrongSumm;
+                statCompliante = ResultOperations.WrongSumm;
             }
             else
             {
                 if (!IsCardCorrect(card))
                 {
-                    statCompliante = WrongData.WrongCard;
+                    statCompliante = ResultOperations.WrongCard;
                 }
             }
 

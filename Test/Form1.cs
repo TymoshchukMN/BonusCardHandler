@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CardsHandler.Database;
+using CardsHandler.Enums;
 using CardsHandler.JSON;
 
 namespace CardsHandler
@@ -19,8 +20,9 @@ namespace CardsHandler
         private const string Charge = "Списать бонусы";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
-
         private readonly Color markerColor = Color.FromArgb(214, 254, 216);
+        private SearchType searchType;
+        private CardsOperation cardsOperation;
 
         public FormHandlerCars()
         {
@@ -42,13 +44,13 @@ namespace CardsHandler
             }
             else
             {
-                WrongData checkinfResult;
+                ResultOperations checkinfResult;
 
-                switch (cbOperations.Text)
+                switch (cardsOperation)
                 {
                     #region СОЗДАНИЕ КАРТЫ
 
-                    case CreateCard:
+                    case CardsOperation.Create:
                         checkinfResult = BL.CheckCreationCompliance(
                             tbPhoneNumber.Text,
                             tbFirstName.Text,
@@ -57,27 +59,21 @@ namespace CardsHandler
 
                         switch (checkinfResult)
                         {
-                            case WrongData.EmptyField:
+                            case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
                                 break;
 
-                            case WrongData.WrongPhone:
+                            case ResultOperations.WrongPhone:
                                 UI.ErrorInPhoneNumber(ref tbResultForm);
                                 break;
 
-                            case WrongData.WrongName:
+                            case ResultOperations.WrongName:
                                 UI.ErrorWrongName(ref tbResultForm);
                                 break;
 
-                            case WrongData.None:
+                            case ResultOperations.None:
 
-                                DBConfigJSON dBConfig = BL.GetDBConfig();
-
-                                PostgresDB pgDB = new PostgresDB(
-                                   dBConfig.DBConfig.Server,
-                                   dBConfig.DBConfig.UserName,
-                                   dBConfig.DBConfig.DBname,
-                                   dBConfig.DBConfig.Port);
+                                PostgresDB pgDB = CreatePostrgesInstance();
 
                                 bool isCardExist = true;
                                 int newCardNumber;
@@ -113,7 +109,7 @@ namespace CardsHandler
 
                     #region ПОИСК КАРТЫ
 
-                    case FindCard:
+                    case CardsOperation.Find:
 
                         checkinfResult = BL.CheckSearchCompliance(
                             cbFindType.Text,
@@ -122,20 +118,70 @@ namespace CardsHandler
 
                         switch (checkinfResult)
                         {
-                            case WrongData.EmptyField:
+                            case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
                                 break;
 
-                            case WrongData.WrongPhone:
+                            case ResultOperations.WrongPhone:
                                 UI.ErrorInPhoneNumber(ref tbResultForm);
                                 break;
 
-                            case WrongData.WrongCard:
+                            case ResultOperations.WrongCard:
                                 UI.ErrorWrongCard(ref tbResultForm);
                                 break;
 
-                            case WrongData.None:
-                                UI.PrintSuccess(ref tbResultForm);
+                            case ResultOperations.None:
+
+                                PostgresDB pgDB = CreatePostrgesInstance();
+
+                                switch (searchType)
+                                {
+                                    case SearchType.ByPhone:
+
+                                        int.TryParse(
+                                            tbPhoneNumber.Text,
+                                            out int phoneNumber);
+
+                                        bool isPhoneExist =
+                                            pgDB.CheckIfPhone(phoneNumber);
+
+                                        if (isPhoneExist)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            UI.PrintErrorPhoneDoesntExist(
+                                                ref tbResultForm,
+                                                phoneNumber);
+                                        }
+
+                                        break;
+                                    case SearchType.ByCard:
+                                        // поиск по номеру карты
+                                        bool isCardExist = true;
+                                        int.TryParse(
+                                            tbCardNumber.Text,
+                                            out int cardNumber);
+
+                                        // проверка, существует ли в БД карта с таким номером.
+                                        isCardExist =
+                                            pgDB.CheckIfCardExist(cardNumber);
+
+                                        if (isCardExist)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            UI.PrintErrorCardDoesntExist(
+                                                ref tbResultForm,
+                                                searchType,
+                                                cardNumber);
+                                        }
+
+                                        break;
+                                }
 
                                 // ищем карту
                                 break;
@@ -147,12 +193,24 @@ namespace CardsHandler
 
                     #region СПИСАНИЕ
 
-                    case Charge:
+                    case CardsOperation.Charge:
 
                         break;
 
                     #endregion СПИСАНИЕ
                 }
+            }
+
+            PostgresDB CreatePostrgesInstance()
+            {
+                DBConfigJSON dBConfig = BL.GetDBConfig();
+
+                PostgresDB pgDB = new PostgresDB(
+                   dBConfig.DBConfig.Server,
+                   dBConfig.DBConfig.UserName,
+                   dBConfig.DBConfig.DBname,
+                   dBConfig.DBConfig.Port);
+                return pgDB;
             }
         }
 
@@ -166,6 +224,8 @@ namespace CardsHandler
             switch (cbOperations.Text)
             {
                 case CreateCard:
+                    cardsOperation = CardsOperation.Create;
+                    searchType = SearchType.None;
                     cbFindType.Enabled = false;
                     gbCreation.Enabled = true;
                     gbSearch.Enabled = false;
@@ -183,6 +243,7 @@ namespace CardsHandler
                     break;
 
                 case FindCard:
+                    cardsOperation = CardsOperation.Find;
                     cbFindType.Enabled = true;
                     gbSearch.Enabled = true;
                     gbCreation.Enabled = false;
@@ -201,6 +262,8 @@ namespace CardsHandler
                     break;
 
                 case Charge:
+                    cardsOperation = CardsOperation.Charge;
+                    searchType = SearchType.None;
                     tbCardNumber.Enabled = true;
                     gbCharge.Enabled = true;
                     tbChargeSum.Enabled = true;
@@ -227,6 +290,7 @@ namespace CardsHandler
             switch (cbFindType.Text)
             {
                 case SearchByPhone:
+                    searchType = SearchType.ByPhone;
                     tbCardNumber.Enabled = false;
                     tbPhoneNumber.Enabled = true;
                     UI.DryItems(tbPhoneNumber, Color.FromArgb(214, 254, 216));
@@ -236,6 +300,7 @@ namespace CardsHandler
                     break;
 
                 case SearchByCard:
+                    searchType = SearchType.ByCard;
                     tbPhoneNumber.Enabled = false;
                     tbCardNumber.Enabled = true;
                     UI.DryItems(tbCardNumber, Color.FromArgb(214, 254, 216));

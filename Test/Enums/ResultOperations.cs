@@ -9,7 +9,7 @@ namespace CardsHandler
     /// <summary>
     /// Ошибки.
     /// </summary>
-    internal enum WrongData : ushort
+    internal enum ResultOperations : ushort
     {
         /// <summary>
         /// Значение по умолчанию.
