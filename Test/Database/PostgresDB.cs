@@ -9,9 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using CardsHandler.Enums;
 using Npgsql;
 
@@ -161,10 +163,10 @@ namespace CardsHandler.Database
                 NpgsqlDataReader data;
                 data = npgsqlCommand.ExecuteReader();
 
-                DataTable isAccessExist = new DataTable();
-                isAccessExist.Load(data);
+                DataTable isPhoneExist = new DataTable();
+                isPhoneExist.Load(data);
 
-                isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
+                isExist = (bool)isPhoneExist.Rows[0].ItemArray[0];
 
                 data.Close();
             }
@@ -472,6 +474,60 @@ namespace CardsHandler.Database
                 data.Close();
             }
         }
+
+        public DataTable GetAllCards()
+        {
+            List<string> resultSet = new List<string>();
+            DataTable dataTable = new DataTable();
+            using (NpgsqlConnection connection
+                 = new NpgsqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                }
+                catch (Exception)
+                {
+                    UI.PrintErrorConnectionToDB(this);
+                }
+
+                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                npgsqlCommand.CommandText = $"" +
+                    $"SELECT cd.cardnumber," +
+                    $"  cl.\"phoneNumber\"," +
+                    $"  cl.\"firstName\"," +
+                    $"  cl.\"middleName\"," +
+                    $"  cl.\"lastName\"," +
+                    $"  cd.ballance," +
+                    $"  cd.\"expirationDate\"" +
+                    $" FROM clients AS cl " +
+                    $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" ;";
+
+                NpgsqlDataReader data;
+                data = npgsqlCommand.ExecuteReader();
+
+              
+                dataTable.Load(data);
+                
+
+                /*while (data.Read())
+                {
+                    string line = $"{data["phoneNumber"]};" +
+                        $"{data["firstName"]};" +
+                        $"{data["middleName"]};" +
+                        $"{data["lastName"]};" +
+                        $"{data["cardnumber"]};" +
+                        $"{data["ballance"]};" +
+                        $"{data["expirationDate"]}";
+
+                    resultSet.Add(line);
+                }*/
+            }
+
+            return dataTable;
+        }
+
 
         #endregion METHODS
     }

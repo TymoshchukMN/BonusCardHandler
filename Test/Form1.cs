@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using CardsHandler.Database;
@@ -322,18 +324,18 @@ namespace CardsHandler
                     #endregion СПИСАНИЕ
                 }
             }
+        }
 
-            PostgresDB CreatePostrgesInstance()
-            {
-                DBConfigJSON dBConfig = BL.GetDBConfig();
+        private static PostgresDB CreatePostrgesInstance()
+        {
+            DBConfigJSON dBConfig = BL.GetDBConfig();
 
-                PostgresDB pgDB = new PostgresDB(
-                   dBConfig.DBConfig.Server,
-                   dBConfig.DBConfig.UserName,
-                   dBConfig.DBConfig.DBname,
-                   dBConfig.DBConfig.Port);
-                return pgDB;
-            }
+            PostgresDB pgDB = new PostgresDB(
+               dBConfig.DBConfig.Server,
+               dBConfig.DBConfig.UserName,
+               dBConfig.DBConfig.DBname,
+               dBConfig.DBConfig.Port);
+            return pgDB;
         }
 
         private void CbOperations_SelectedIndexChanged(
@@ -445,6 +447,16 @@ namespace CardsHandler
         private void rbAddBonuses_CheckedChanged(object sender, EventArgs e)
         {
             bonusOperations = BonusOperations.Add;
+        }
+
+        private void btGetAllCards_Click(object sender, EventArgs e)
+        {
+            dataGridView.Rows.Clear();
+            dataGridView.Refresh();
+
+            PostgresDB pgDB = CreatePostrgesInstance();
+            DataTable data = pgDB.GetAllCards();
+            dataGridView.DataSource = data;
         }
     }
 }
