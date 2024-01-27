@@ -57,5 +57,10 @@ namespace CardsHandler
         /// Срок действия карты истек.
         /// </summary>
         CardExpired,
+
+        /// <summary>
+        /// Не выбрано что сделать.
+        /// </summary>
+        NotChangedWhatToDo,
     }
 }

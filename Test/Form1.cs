@@ -14,6 +14,7 @@ namespace CardsHandler
         private const string CreateCard = "Создать";
         private const string FindCard = "Найти";
         private const string Charge = "Изменить бонусы";
+        private const string SeeBalance = "Помотреть баланс";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
         private readonly Color markerColor = Color.FromArgb(214, 254, 216);
@@ -31,6 +32,18 @@ namespace CardsHandler
             tbFirstName.Enabled = false;
             tbMiddleName.Enabled = false;
             tbLastName.Enabled = false;
+        }
+
+        private static PostgresDB CreatePostrgesInstance()
+        {
+            DBConfigJSON dBConfig = BL.GetDBConfig();
+
+            PostgresDB pgDB = new PostgresDB(
+               dBConfig.DBConfig.Server,
+               dBConfig.DBConfig.UserName,
+               dBConfig.DBConfig.DBname,
+               dBConfig.DBConfig.Port);
+            return pgDB;
         }
 
         private void BtProcess_Click(object sender, EventArgs e)
@@ -113,7 +126,6 @@ namespace CardsHandler
 
                                     UI.PrintCardElements(ref tbResultForm, card);
                                     UI.PrintSuccess(cardsOperation);
-
                                 }
 
                                 break;
@@ -123,7 +135,7 @@ namespace CardsHandler
 
                     #endregion СОЗДАНИЕ КАРТЫ
 
-                    #region ПОИСК КАРТЫ
+                    #region ПОИСК КАРТЫ/БАЛАНС на карте
 
                     case CardsOperation.Find:
 
@@ -177,29 +189,7 @@ namespace CardsHandler
                                         break;
                                     case SearchType.ByCard:
 
-                                        // поиск по номеру карты
-                                        int.TryParse(
-                                            tbCardNumber.Text,
-                                            out int cardNumber);
-
-                                        // проверка, существует ли в БД карта с
-                                        // таким номером.
-                                        bool isCardExist =
-                                            pgDB.CheckIfCardExist(cardNumber);
-
-                                        if (isCardExist)
-                                        {
-                                            Card card = pgDB.FindCardByCard(cardNumber);
-                                            UI.PrintCardElements(ref tbResultForm, card);
-                                            UI.PrintSuccess(cardsOperation);
-                                        }
-                                        else
-                                        {
-                                            UI.PrintErrorCardDoesntExist(
-                                                ref tbResultForm,
-                                                searchType,
-                                                cardNumber);
-                                        }
+                                        SearchCard(pgDB);
 
                                         break;
                                 }
@@ -208,33 +198,69 @@ namespace CardsHandler
                         }
 
                         break;
-
                     #endregion ПОИСК КАРТЫ
 
-                    #region СПИСАНИЕ
+                    #region ПРОСМОТР БАЛАНСА
+
+                    case CardsOperation.SeeBalance:
+                        operResult = BL.CheckKardCompliance(tbCardNumber.Text);
+
+                        switch (operResult)
+                        {
+                            case ResultOperations.None:
+                                pgDB = CreatePostrgesInstance();
+                                UI.PrintProcessing(ref tbResultForm);
+                                SearchCard(pgDB);
+
+                                break;
+                            case ResultOperations.WrongCard:
+                                UI.ErrorWrongCard(ref tbResultForm);
+                                break;
+                            case ResultOperations.EmptyField:
+                                UI.ErrorEptyFields(ref tbResultForm);
+                                break;
+                        }
+
+                        break;
+
+                    #endregion ПРОСМОТР БАЛАНСА
+
+                    #region ИЗМЕНЕНИЕ БАЛАНСА
 
                     case CardsOperation.Change:
 
                         ResultOperations result =
-                            BL.IsSummCorrect(tbChargeSum.Text);
+                            BL.CheckChargeCompliance(
+                                tbChargeSum.Text,
+                                rbRemoveBonuses,
+                                rbAddBonuses);
 
                         switch (result)
                         {
                             case ResultOperations.WrongSumm:
 
-                                UI.PrintinputedSummError(
+                                UI.PrintErrorProcessCard(
                                     ref tbResultForm,
                                     result);
-
                                 break;
 
+                            case ResultOperations.EmptyField:
+
+                                UI.PrintErrorProcessCard(
+                                    ref tbResultForm,
+                                    result);
+                                break;
                             case ResultOperations.NegativeDigit:
 
-                                UI.PrintinputedSummError(
+                                UI.PrintErrorProcessCard(
                                    ref tbResultForm,
                                    result);
                                 break;
-
+                            case ResultOperations.NotChangedWhatToDo:
+                                UI.PrintErrorProcessCard(
+                                  ref tbResultForm,
+                                  result);
+                                break;
                             case ResultOperations.None:
 
                                 UI.PrintProcessing(ref tbResultForm);
@@ -258,7 +284,26 @@ namespace CardsHandler
                                     {
                                         case BonusOperations.Add:
 
-                                            pgDB.AddBonus(card, changeSum);
+                                            operResult = pgDB.AddBonus(card, changeSum);
+
+                                            switch (operResult)
+                                            {
+                                                case ResultOperations.None:
+
+                                                    card = pgDB.FindCardByCard(cardnumber);
+                                                    UI.PrintCardElements(
+                                                        ref tbResultForm,
+                                                        card);
+
+                                                    UI.PrintSuccess(cardsOperation);
+                                                    break;
+
+                                                case ResultOperations.CardExpired:
+                                                    UI.PrintErrorProcessCard(
+                                                       ref tbResultForm,
+                                                       operResult);
+                                                    break;
+                                            }
 
                                             // снова запрашиваем карту
                                             // для просмотра результатов спания.
@@ -266,8 +311,6 @@ namespace CardsHandler
                                             UI.PrintCardElements(
                                                 ref tbResultForm,
                                                 card);
-
-                                            UI.PrintSuccess(cardsOperation);
 
                                             break;
                                         case BonusOperations.Remove:
@@ -287,7 +330,7 @@ namespace CardsHandler
                                                     break;
                                                 case ResultOperations.CardExpired:
 
-                                                    UI.PrintinputedSummError(
+                                                    UI.PrintErrorProcessCard(
                                                         ref tbResultForm,
                                                         operResult);
                                                     break;
@@ -321,21 +364,35 @@ namespace CardsHandler
 
                         break;
 
-                    #endregion СПИСАНИЕ
+                        #endregion ИЗМЕНЕНИЕ БАЛАНСА
                 }
             }
         }
 
-        private static PostgresDB CreatePostrgesInstance()
+        private void SearchCard(PostgresDB pgDB)
         {
-            DBConfigJSON dBConfig = BL.GetDBConfig();
+            int.TryParse(
+                tbCardNumber.Text,
+                out int cardNumber);
 
-            PostgresDB pgDB = new PostgresDB(
-               dBConfig.DBConfig.Server,
-               dBConfig.DBConfig.UserName,
-               dBConfig.DBConfig.DBname,
-               dBConfig.DBConfig.Port);
-            return pgDB;
+            // проверка, существует ли в БД карта с
+            // таким номером.
+            bool isCardExist =
+                pgDB.CheckIfCardExist(cardNumber);
+
+            if (isCardExist)
+            {
+                Card card = pgDB.FindCardByCard(cardNumber);
+                UI.PrintCardElements(ref tbResultForm, card);
+                UI.PrintSuccess(cardsOperation);
+            }
+            else
+            {
+                UI.PrintErrorCardDoesntExist(
+                    ref tbResultForm,
+                    searchType,
+                    cardNumber);
+            }
         }
 
         private void CbOperations_SelectedIndexChanged(
@@ -408,6 +465,27 @@ namespace CardsHandler
                     UI.PrintMessageCharhingCard(ref tbResultForm);
 
                     break;
+
+                case SeeBalance:
+                    cardsOperation = CardsOperation.SeeBalance;
+                    cbFindType.Enabled = false;
+                    gbSearch.Enabled = true;
+                    gbCreation.Enabled = false;
+                    gbCharge.Enabled = false;
+                    tbFirstName.Enabled = false;
+                    tbMiddleName.Enabled = false;
+                    tbPhoneNumber.Enabled = false;
+                    tbCardNumber.Enabled = true;
+                    UI.DryItems(tbFirstName, Color.White);
+                    UI.DryItems(tbMiddleName, Color.White);
+                    UI.DryItems(tbLastName, Color.White);
+                    UI.DryItems(tbCardNumber, Color.White);
+                    UI.DryItems(tbChargeSum, Color.White);
+                    UI.DryItems(tbCardNumber, markerColor);
+                    UI.PrintMessageEnterCard(ref tbResultForm);
+                    bonusOperations = BonusOperations.None;
+
+                    break;
             }
         }
 
@@ -439,19 +517,18 @@ namespace CardsHandler
             }
         }
 
-        private void rbRemoveBonuses_CheckedChanged(object sender, EventArgs e)
+        private void RbRemoveBonuses_CheckedChanged(object sender, EventArgs e)
         {
             bonusOperations = BonusOperations.Remove;
         }
 
-        private void rbAddBonuses_CheckedChanged(object sender, EventArgs e)
+        private void RbAddBonuses_CheckedChanged(object sender, EventArgs e)
         {
             bonusOperations = BonusOperations.Add;
         }
 
-        private void btGetAllCards_Click(object sender, EventArgs e)
+        private void BtGetAllCards_Click(object sender, EventArgs e)
         {
-            dataGridView.Rows.Clear();
             dataGridView.Refresh();
 
             PostgresDB pgDB = CreatePostrgesInstance();

@@ -108,12 +108,13 @@
             // 
             // btProcess
             // 
+            this.btProcess.BackColor = System.Drawing.Color.Lime;
             this.btProcess.Location = new System.Drawing.Point(365, 21);
             this.btProcess.Name = "btProcess";
             this.btProcess.Size = new System.Drawing.Size(125, 65);
             this.btProcess.TabIndex = 7;
             this.btProcess.Text = "Обработать";
-            this.btProcess.UseVisualStyleBackColor = true;
+            this.btProcess.UseVisualStyleBackColor = false;
             this.btProcess.Click += new System.EventHandler(this.BtProcess_Click);
             // 
             // cbOperations
@@ -122,7 +123,8 @@
             this.cbOperations.Items.AddRange(new object[] {
             "Создать",
             "Найти",
-            "Изменить бонусы"});
+            "Изменить бонусы",
+            "Помотреть баланс"});
             this.cbOperations.Location = new System.Drawing.Point(154, 21);
             this.cbOperations.Name = "cbOperations";
             this.cbOperations.Size = new System.Drawing.Size(132, 21);
@@ -154,7 +156,7 @@
             // 
             this.gbSearch.Controls.Add(this.cbFindType);
             this.gbSearch.Controls.Add(this.lbSearchType);
-            this.gbSearch.Location = new System.Drawing.Point(24, 128);
+            this.gbSearch.Location = new System.Drawing.Point(22, 126);
             this.gbSearch.Name = "gbSearch";
             this.gbSearch.Size = new System.Drawing.Size(337, 66);
             this.gbSearch.TabIndex = 9;
@@ -247,7 +249,7 @@
             this.rbAddBonuses.TabStop = true;
             this.rbAddBonuses.Text = "Зачислисть";
             this.rbAddBonuses.UseVisualStyleBackColor = true;
-            this.rbAddBonuses.CheckedChanged += new System.EventHandler(this.rbAddBonuses_CheckedChanged);
+            this.rbAddBonuses.CheckedChanged += new System.EventHandler(this.RbAddBonuses_CheckedChanged);
             // 
             // rbRemoveBonuses
             // 
@@ -259,7 +261,7 @@
             this.rbRemoveBonuses.TabStop = true;
             this.rbRemoveBonuses.Text = "Списать";
             this.rbRemoveBonuses.UseVisualStyleBackColor = true;
-            this.rbRemoveBonuses.CheckedChanged += new System.EventHandler(this.rbRemoveBonuses_CheckedChanged);
+            this.rbRemoveBonuses.CheckedChanged += new System.EventHandler(this.RbRemoveBonuses_CheckedChanged);
             // 
             // tbChargeSum
             // 
@@ -297,7 +299,7 @@
             // 
             // tabSingleOper
             // 
-            this.tabSingleOper.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabSingleOper.BackColor = System.Drawing.Color.WhiteSmoke;
             this.tabSingleOper.Controls.Add(this.gbCharge);
             this.tabSingleOper.Controls.Add(this.tbResultForm);
             this.tabSingleOper.Controls.Add(this.cbOperations);
@@ -332,11 +334,11 @@
             // 
             this.btGetAllCards.Location = new System.Drawing.Point(6, 16);
             this.btGetAllCards.Name = "btGetAllCards";
-            this.btGetAllCards.Size = new System.Drawing.Size(143, 23);
+            this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
             this.btGetAllCards.TabIndex = 0;
-            this.btGetAllCards.Text = "Получить все карты";
+            this.btGetAllCards.Text = "Получить все карты базе";
             this.btGetAllCards.UseVisualStyleBackColor = true;
-            this.btGetAllCards.Click += new System.EventHandler(this.btGetAllCards_Click);
+            this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
             // 
             // dataGridView
             // 

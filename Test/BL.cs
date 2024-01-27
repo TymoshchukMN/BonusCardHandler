@@ -118,6 +118,25 @@ namespace CardsHandler
             return statCompliante;
         }
 
+        public static ResultOperations CheckKardCompliance(string cardNumber)
+        {
+            ResultOperations statCompliante = ResultOperations.None;
+
+            if (string.IsNullOrEmpty(cardNumber))
+            {
+                statCompliante = ResultOperations.EmptyField;
+            }
+            else
+            {
+                if (!IsCardCorrect(cardNumber))
+                {
+                    statCompliante = ResultOperations.WrongCard;
+                }
+            }
+
+            return statCompliante;
+        }
+
         public static ResultOperations ChechChargeCompliance(
             string summ,
             string card)
@@ -172,20 +191,31 @@ namespace CardsHandler
         /// <returns>
         /// bool.
         /// </returns>
-        public static ResultOperations IsSummCorrect(string sum)
+        public static ResultOperations CheckChargeCompliance(
+            string sum,
+            RadioButton rem,
+            RadioButton add)
         {
             ResultOperations result = ResultOperations.None;
 
-            if (int.TryParse(sum, out int res))
+            if (string.IsNullOrEmpty(sum))
             {
-                if (res <= 0)
-                {
-                    result = ResultOperations.NegativeDigit;
-                }
+                return ResultOperations.EmptyField;
             }
-            else
+
+            if (!int.TryParse(sum, out int res))
             {
-                result = ResultOperations.WrongSumm;
+                return ResultOperations.WrongSumm;
+            }
+
+            if (res <= 0)
+            {
+                return ResultOperations.NegativeDigit;
+            }
+
+            if (!rem.Checked && !add.Checked)
+            {
+                return ResultOperations.NotChangedWhatToDo;
             }
 
             return result;

@@ -435,8 +435,9 @@ namespace CardsHandler.Database
         /// </summary>
         /// <param name="card">объект карты.</param>
         /// <param name="summ">Сумма к списанию.</param>
-        public void AddBonus(Card card, int summ)
+        public ResultOperations AddBonus(Card card, int summ)
         {
+            ResultOperations result = ResultOperations.None;
             using (NpgsqlConnection connection
                      = new NpgsqlConnection(_connectionString))
             {
@@ -463,15 +464,36 @@ namespace CardsHandler.Database
                 dateVol.Load(data);
 
                 int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
+                npgsqlCommand.CommandText =
+                       $"SELECT \"expirationDate\"  " +
+                       $"FROM CARDS " +
+                       $"WHERE cardnumber = {card.Number}; ";
 
-                currentBalance += summ;
-                npgsqlCommand.CommandText = $"" +
-                    $"UPDATE CARDS " +
-                    $"SET ballance = {currentBalance} " +
-                    $"WHERE cardnumber = {card.Number} ;";
+                dateVol = new DataTable();
+                dateVol.Load(data);
 
-                npgsqlCommand.ExecuteReader();
-                data.Close();
+                data = npgsqlCommand.ExecuteReader();
+                dateVol.Load(data);
+
+                DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
+
+                if (expirationDate < DateTime.Today)
+                {
+                    result = ResultOperations.CardExpired;
+                }
+                else
+                {
+                    currentBalance += summ;
+                    npgsqlCommand.CommandText = $"" +
+                        $"UPDATE CARDS " +
+                        $"SET ballance = {currentBalance} " +
+                        $"WHERE cardnumber = {card.Number} ;";
+
+                    npgsqlCommand.ExecuteReader();
+                    data.Close();
+                }
+
+                return result;
             }
         }
 

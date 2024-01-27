@@ -241,7 +241,7 @@ namespace CardsHandler
         /// </summary>
         /// <param name="box">окно для вывода результата.</param>
         /// <param name="result">Результат операции.</param>
-        public static void PrintinputedSummError(
+        public static void PrintErrorProcessCard(
             ref RichTextBox box,
             ResultOperations result)
         {
@@ -251,6 +251,9 @@ namespace CardsHandler
                 case ResultOperations.WrongSumm:
                     message = "Не венрно указана сумма к списанию.";
                     break;
+                case ResultOperations.EmptyField:
+                    message = "Не указана сумма к списанию.";
+                    break;
                 case ResultOperations.ChargeError:
                     message = "Нельзя списать такое количество бонусов.";
                     break;
@@ -258,10 +261,20 @@ namespace CardsHandler
                     message = "Введено отрицательное число";
                     break;
                 case ResultOperations.CardExpired:
-                    message = "Списание не возможно. " +
+                    message = "Списание/зачисление не возможно. " +
                         "Срок действия карты истек.";
                     break;
+                case ResultOperations.NotChangedWhatToDo:
+                    message = "Не указано что сделать с картой";
+                    break;
             }
+
+            const string CAPTION = "Ошибка";
+            MessageBox.Show(
+                  message,
+                  CAPTION,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Error);
 
             box.Text = message;
         }
@@ -298,6 +311,9 @@ namespace CardsHandler
                     break;
                 case CardsOperation.Change:
                     message = "Балан бонусов изменен.";
+                    break;
+                case CardsOperation.SeeBalance:
+                    message = "Карта найдена. Баланс в окне вывода.";
                     break;
             }
 

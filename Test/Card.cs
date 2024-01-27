@@ -13,6 +13,7 @@ namespace CardsHandler
     internal class Card
     {
         private const int DefaultSumm = 1000;
+
         /// <summary>
         /// Номер карты.
         /// </summary>

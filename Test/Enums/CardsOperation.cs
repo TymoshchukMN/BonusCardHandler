@@ -27,5 +27,10 @@ namespace CardsHandler.Enums
         /// Списание с карты.
         /// </summary>
         Change,
+
+        /// <summary>
+        /// Просмотр баланса на карте.
+        /// </summary>
+        SeeBalance,
     }
 }
