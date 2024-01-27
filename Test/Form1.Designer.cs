@@ -54,8 +54,9 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabSingleOper = new System.Windows.Forms.TabPage();
             this.tabBulkOper = new System.Windows.Forms.TabPage();
-            this.btGetAllCards = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.btGetAllCards = new System.Windows.Forms.Button();
+            this.btExpiredCards = new System.Windows.Forms.Button();
             this.gbSearch.SuspendLayout();
             this.gbCreation.SuspendLayout();
             this.gbCharge.SuspendLayout();
@@ -320,6 +321,7 @@
             // 
             // tabBulkOper
             // 
+            this.tabBulkOper.Controls.Add(this.btExpiredCards);
             this.tabBulkOper.Controls.Add(this.dataGridView);
             this.tabBulkOper.Controls.Add(this.btGetAllCards);
             this.tabBulkOper.Location = new System.Drawing.Point(4, 22);
@@ -329,16 +331,6 @@
             this.tabBulkOper.TabIndex = 1;
             this.tabBulkOper.Text = "Массовые операции";
             this.tabBulkOper.UseVisualStyleBackColor = true;
-            // 
-            // btGetAllCards
-            // 
-            this.btGetAllCards.Location = new System.Drawing.Point(6, 16);
-            this.btGetAllCards.Name = "btGetAllCards";
-            this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
-            this.btGetAllCards.TabIndex = 0;
-            this.btGetAllCards.Text = "Получить все карты базе";
-            this.btGetAllCards.UseVisualStyleBackColor = true;
-            this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
             // 
             // dataGridView
             // 
@@ -353,6 +345,26 @@
             this.dataGridView.ReadOnly = true;
             this.dataGridView.Size = new System.Drawing.Size(730, 382);
             this.dataGridView.TabIndex = 1;
+            // 
+            // btGetAllCards
+            // 
+            this.btGetAllCards.Location = new System.Drawing.Point(6, 16);
+            this.btGetAllCards.Name = "btGetAllCards";
+            this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
+            this.btGetAllCards.TabIndex = 0;
+            this.btGetAllCards.Text = "Получить все карты базе";
+            this.btGetAllCards.UseVisualStyleBackColor = true;
+            this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
+            // 
+            // btExpiredCards
+            // 
+            this.btExpiredCards.Location = new System.Drawing.Point(7, 46);
+            this.btExpiredCards.Name = "btExpiredCards";
+            this.btExpiredCards.Size = new System.Drawing.Size(182, 23);
+            this.btExpiredCards.TabIndex = 2;
+            this.btExpiredCards.Text = "Показать просроченные карты";
+            this.btExpiredCards.UseVisualStyleBackColor = true;
+            this.btExpiredCards.Click += new System.EventHandler(this.BtExpiredCards_Click);
             // 
             // FormHandlerCars
             // 
@@ -407,6 +419,7 @@
         private System.Windows.Forms.TabPage tabBulkOper;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.Button btGetAllCards;
+        private System.Windows.Forms.Button btExpiredCards;
     }
 }
 

@@ -535,5 +535,14 @@ namespace CardsHandler
             DataTable data = pgDB.GetAllCards();
             dataGridView.DataSource = data;
         }
+
+        private void BtExpiredCards_Click(object sender, EventArgs e)
+        {
+            dataGridView.Refresh();
+
+            PostgresDB pgDB = CreatePostrgesInstance();
+            DataTable data = pgDB.GetExpiredCards();
+            dataGridView.DataSource = data;
+        }
     }
 }
