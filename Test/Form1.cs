@@ -39,7 +39,7 @@ namespace CardsHandler
             }
             else
             {
-                ResultOperations chargeResult;
+                ResultOperations operResult;
 
                 PostgresDB pgDB;
 
@@ -48,13 +48,13 @@ namespace CardsHandler
                     #region СОЗДАНИЕ КАРТЫ
 
                     case CardsOperation.Create:
-                        chargeResult = BL.CheckCreationCompliance(
+                        operResult = BL.CheckCreationCompliance(
                             tbPhoneNumber.Text,
                             tbFirstName.Text,
                             tbMiddleName.Text,
                             tbLastName.Text);
 
-                        switch (chargeResult)
+                        switch (operResult)
                         {
                             case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
@@ -71,32 +71,49 @@ namespace CardsHandler
                             case ResultOperations.None:
 
                                 pgDB = CreatePostrgesInstance();
+                                long.TryParse(
+                                            tbPhoneNumber.Text,
+                                            out long phoneNumber);
 
-                                bool isCardExist;
-                                int newCardNumber;
+                                bool isPhoneExist =
+                                    pgDB.CheckIfPhone(phoneNumber);
 
-                                // проверка, существует ли в БД карта с таким номером.
-                                do
+                                if (isPhoneExist)
                                 {
-                                    BL.GenerateCardNumber(out newCardNumber);
-                                    isCardExist = pgDB.CheckIfCardExist(newCardNumber);
+                                    UI.PrintErrorPhoneExist();
+                                    UI.PrintCardElements(
+                                        ref tbResultForm,
+                                        pgDB.FindCardByPhone(phoneNumber));
                                 }
-                                while (isCardExist);
+                                else
+                                {
+                                    UI.PrintProcessing(ref tbResultForm);
 
-                                long.TryParse(tbPhoneNumber.Text, out long phoneNumber);
+                                    bool isCardExist;
+                                    int newCardNumber;
 
-                                Card card = new Card(
-                                    newCardNumber,
-                                    phoneNumber,
-                                    tbFirstName.Text,
-                                    tbMiddleName.Text,
-                                    tbLastName.Text);
+                                    // проверка, существует ли в БД карта с таким номером.
+                                    do
+                                    {
+                                        BL.GenerateCardNumber(out newCardNumber);
+                                        isCardExist = pgDB.CheckIfCardExist(newCardNumber);
+                                    }
+                                    while (isCardExist);
 
-                                pgDB.CreateCard(card);
+                                    Card card = new Card(
+                                        newCardNumber,
+                                        phoneNumber,
+                                        tbFirstName.Text,
+                                        tbMiddleName.Text,
+                                        tbLastName.Text);
 
-                                UI.PrintSuccess(ref tbResultForm);
+                                    pgDB.CreateCard(card);
 
-                                // создаем карту
+                                    UI.PrintCardElements(ref tbResultForm, card);
+                                    UI.PrintSuccess(cardsOperation);
+
+                                }
+
                                 break;
                         }
 
@@ -108,12 +125,12 @@ namespace CardsHandler
 
                     case CardsOperation.Find:
 
-                        chargeResult = BL.CheckSearchCompliance(
+                        operResult = BL.CheckSearchCompliance(
                             cbFindType.Text,
                             tbPhoneNumber.Text,
                             tbCardNumber.Text);
 
-                        switch (chargeResult)
+                        switch (operResult)
                         {
                             case ResultOperations.EmptyField:
                                 UI.ErrorEptyFields(ref tbResultForm);
@@ -130,7 +147,7 @@ namespace CardsHandler
                             case ResultOperations.None:
 
                                 pgDB = CreatePostrgesInstance();
-
+                                UI.PrintProcessing(ref tbResultForm);
                                 switch (searchType)
                                 {
                                     case SearchType.ByPhone:
@@ -146,6 +163,7 @@ namespace CardsHandler
                                         {
                                             Card card = pgDB.FindCardByPhone(phoneNumber);
                                             UI.PrintCardElements(ref tbResultForm, card);
+                                            UI.PrintSuccess(cardsOperation);
                                         }
                                         else
                                         {
@@ -171,6 +189,7 @@ namespace CardsHandler
                                         {
                                             Card card = pgDB.FindCardByCard(cardNumber);
                                             UI.PrintCardElements(ref tbResultForm, card);
+                                            UI.PrintSuccess(cardsOperation);
                                         }
                                         else
                                         {
@@ -216,6 +235,8 @@ namespace CardsHandler
 
                             case ResultOperations.None:
 
+                                UI.PrintProcessing(ref tbResultForm);
+
                                 int.TryParse(
                                     tbChargeSum.Text,
                                     out int changeSum);
@@ -243,13 +264,16 @@ namespace CardsHandler
                                             UI.PrintCardElements(
                                                 ref tbResultForm,
                                                 card);
+
+                                            UI.PrintSuccess(cardsOperation);
+
                                             break;
                                         case BonusOperations.Remove:
-                                            chargeResult = pgDB.Charge(
+                                            operResult = pgDB.Charge(
                                                card,
                                                changeSum);
 
-                                            switch (chargeResult)
+                                            switch (operResult)
                                             {
                                                 case ResultOperations.ChargeError:
 
@@ -263,7 +287,7 @@ namespace CardsHandler
 
                                                     UI.PrintinputedSummError(
                                                         ref tbResultForm,
-                                                        chargeResult);
+                                                        operResult);
                                                     break;
 
                                                 case ResultOperations.None:
@@ -274,6 +298,8 @@ namespace CardsHandler
                                                     UI.PrintCardElements(
                                                         ref tbResultForm,
                                                         card);
+
+                                                    UI.PrintSuccess(cardsOperation);
                                                     break;
                                             }
 
@@ -346,7 +372,7 @@ namespace CardsHandler
                     gbCharge.Enabled = false;
                     tbFirstName.Enabled = false;
                     tbMiddleName.Enabled = false;
-                    tbLastName.Enabled = false;
+                    tbPhoneNumber.Enabled = true;
                     UI.DryItems(tbFirstName, Color.White);
                     UI.DryItems(tbMiddleName, Color.White);
                     UI.DryItems(tbLastName, Color.White);
@@ -359,6 +385,7 @@ namespace CardsHandler
                     break;
 
                 case Charge:
+                    tbPhoneNumber.Enabled = false;
                     cardsOperation = CardsOperation.Change;
                     searchType = SearchType.None;
                     tbCardNumber.Enabled = true;

@@ -140,8 +140,9 @@ namespace CardsHandler
 
         public static DBConfigJSON GetDBConfig()
         {
-            // const string ConfFilePathDB = "N:\\Personal\\TymoshchukMN\\TitleProcessingConfigs\\DBconfigFile.json";
-            const string ConfFilePathDB = "..\\..\\JSON\\DBconfigFile.json";
+
+            // папка с конфигами JSON должна быть скопирована в каталоги debug\release.
+            const string ConfFilePathDB = @"\\172.16.112.40\share\TymoshchukMN\DBconfigFile.json";
             string dbConfigFile = File.ReadAllText(ConfFilePathDB);
             DBConfigJSON dbConfigJSON = JsonConvert.DeserializeObject<DBConfigJSON>(dbConfigFile);
 

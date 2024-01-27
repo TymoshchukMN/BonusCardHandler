@@ -265,5 +265,65 @@ namespace CardsHandler
 
             box.Text = message;
         }
+
+        /// <summary>
+        /// Печать сообщения о выполнении обработки.
+        /// </summary>
+        /// <param name="box">
+        /// Окно для вывода.
+        /// </param>
+        public static void PrintProcessing(ref RichTextBox box)
+        {
+            string message = "Обработка....";
+            box.Text = message;
+        }
+
+        /// <summary>
+        /// Вывод окна об успешном выполнении перации.
+        /// </summary>
+        /// <param name="operation">
+        /// Тип операции с картой.
+        /// </param>
+        public static void PrintSuccess(CardsOperation operation)
+        {
+            string message = string.Empty;
+
+            switch (operation)
+            {
+                case CardsOperation.Create:
+                    message = "Карта создана успешно.";
+                    break;
+                case CardsOperation.Find:
+                    message = "Карта найдена.";
+                    break;
+                case CardsOperation.Change:
+                    message = "Балан бонусов изменен.";
+                    break;
+            }
+
+            const string CAPTION = "Информация";
+
+            MessageBox.Show(
+                  message,
+                  CAPTION,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Вывод ошибки, что уже существует карта с таки номером тебефона.
+        /// </summary>
+        public static void PrintErrorPhoneExist()
+        {
+            const string Message = "В базе уже есть карта " +
+                "с таким номером телефона";
+            const string CAPTION = "Ошибка";
+
+            MessageBox.Show(
+                  Message,
+                  CAPTION,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Warning);
+        }
     }
 }
