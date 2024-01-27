@@ -54,9 +54,9 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabSingleOper = new System.Windows.Forms.TabPage();
             this.tabBulkOper = new System.Windows.Forms.TabPage();
+            this.btExpiredCards = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.btGetAllCards = new System.Windows.Forms.Button();
-            this.btExpiredCards = new System.Windows.Forms.Button();
             this.gbSearch.SuspendLayout();
             this.gbCreation.SuspendLayout();
             this.gbCharge.SuspendLayout();
@@ -332,6 +332,16 @@
             this.tabBulkOper.Text = "Массовые операции";
             this.tabBulkOper.UseVisualStyleBackColor = true;
             // 
+            // btExpiredCards
+            // 
+            this.btExpiredCards.Location = new System.Drawing.Point(7, 46);
+            this.btExpiredCards.Name = "btExpiredCards";
+            this.btExpiredCards.Size = new System.Drawing.Size(182, 23);
+            this.btExpiredCards.TabIndex = 2;
+            this.btExpiredCards.Text = "Показать просроченные карты";
+            this.btExpiredCards.UseVisualStyleBackColor = true;
+            this.btExpiredCards.Click += new System.EventHandler(this.BtExpiredCards_Click);
+            // 
             // dataGridView
             // 
             this.dataGridView.AllowUserToAddRows = false;
@@ -352,19 +362,9 @@
             this.btGetAllCards.Name = "btGetAllCards";
             this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
             this.btGetAllCards.TabIndex = 0;
-            this.btGetAllCards.Text = "Получить все карты базе";
+            this.btGetAllCards.Text = "Получить все карты в базе";
             this.btGetAllCards.UseVisualStyleBackColor = true;
             this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
-            // 
-            // btExpiredCards
-            // 
-            this.btExpiredCards.Location = new System.Drawing.Point(7, 46);
-            this.btExpiredCards.Name = "btExpiredCards";
-            this.btExpiredCards.Size = new System.Drawing.Size(182, 23);
-            this.btExpiredCards.TabIndex = 2;
-            this.btExpiredCards.Text = "Показать просроченные карты";
-            this.btExpiredCards.UseVisualStyleBackColor = true;
-            this.btExpiredCards.Click += new System.EventHandler(this.BtExpiredCards_Click);
             // 
             // FormHandlerCars
             // 
