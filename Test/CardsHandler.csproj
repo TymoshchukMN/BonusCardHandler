@@ -123,7 +123,6 @@
     <Compile Include="Enums\BonusOperations.cs" />
     <Compile Include="Enums\CardsOperation.cs" />
     <Compile Include="Enums\SearchType.cs" />
-    <Compile Include="Faker.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

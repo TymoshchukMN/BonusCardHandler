@@ -7,14 +7,7 @@
 //////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CardsHandler.Enums;
 using Npgsql;
 
 namespace CardsHandler.Database
@@ -101,29 +94,28 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText =
+                        $"SELECT EXISTS(" +
+                        $"  SELECT cardnumber " +
+                        $"  FROM cards " +
+                        $"  WHERE cardnumber = {cardNumber});";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    DataTable isAccessExist = new DataTable();
+                    isAccessExist.Load(data);
+
+                    isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
+
+                    data.Close();
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
                 }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText =
-                    $"SELECT EXISTS(" +
-                    $"  SELECT cardnumber " +
-                    $"  FROM cards " +
-                    $"  WHERE cardnumber = {cardNumber});";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                DataTable isAccessExist = new DataTable();
-                isAccessExist.Load(data);
-
-                isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
-
-                data.Close();
             }
 
             return isExist;
@@ -147,28 +139,27 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText = $"SELECT EXISTS(" +
+                        $"SELECT \"phoneNumber\" " +
+                        $"FROM clients " +
+                        $"WHERE \"phoneNumber\" = {phoneNumber})";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    DataTable isPhoneExist = new DataTable();
+                    isPhoneExist.Load(data);
+
+                    isExist = (bool)isPhoneExist.Rows[0].ItemArray[0];
+
+                    data.Close();
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
                 }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText = $"SELECT EXISTS(" +
-                    $"SELECT \"phoneNumber\" " +
-                    $"FROM clients " +
-                    $"WHERE \"phoneNumber\" = {phoneNumber})";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                DataTable isPhoneExist = new DataTable();
-                isPhoneExist.Load(data);
-
-                isExist = (bool)isPhoneExist.Rows[0].ItemArray[0];
-
-                data.Close();
             }
 
             return isExist;
@@ -188,33 +179,32 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    string expirationDate
+                        = DateTime.Today.AddMonths(12).Date.ToString("dd.MM.yyyy");
+
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+                    npgsqlCommand.CommandText =
+
+                        $"INSERT INTO public.cards(" +
+                        $" cardnumber, \"phoneNumber\", \"expirationDate\", ballance) " +
+                        $" VALUES({card.Number}, " +
+                        $" {card.PhoneNumber}, " +
+                        $" \'{expirationDate}\'," +
+                        $" {card.Ballance});" +
+                        $"INSERT INTO public.clients(" +
+                        $"  \"phoneNumber\", \"firstName\", \"middleName\", \"lastName\")" +
+                        $"  VALUES({card.PhoneNumber}," +
+                        $"  \'{card.OwnerFirstName}\'," +
+                        $"  \'{card.OwnerMiddleName}\'," +
+                        $"  \'{card.OwnerLastName}\'); ";
+
+                    npgsqlCommand.ExecuteNonQuery();
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
                     return;
                 }
-
-                string expirationDate
-                    = DateTime.Today.AddMonths(12).Date.ToString("dd.MM.yyyy");
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-                npgsqlCommand.CommandText =
-
-                    $"INSERT INTO public.cards(" +
-                    $" cardnumber, \"phoneNumber\", \"expirationDate\", ballance) " +
-                    $" VALUES({card.Number}, " +
-                    $" {card.PhoneNumber}, " +
-                    $" \'{expirationDate}\'," +
-                    $" {card.Ballance});" +
-                    $"INSERT INTO public.clients(" +
-                    $"  \"phoneNumber\", \"firstName\", \"middleName\", \"lastName\")" +
-                    $"  VALUES({card.PhoneNumber}," +
-                    $"  \'{card.OwnerFirstName}\'," +
-                    $"  \'{card.OwnerMiddleName}\'," +
-                    $"  \'{card.OwnerLastName}\'); ";
-
-                npgsqlCommand.ExecuteNonQuery();
 
                 // NpgsqlDataReader data;
             }
@@ -233,56 +223,58 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText =
+                        $"SELECT cl.\"phoneNumber\"," +
+                        $"      cl.\"firstName\"," +
+                        $"      cl.\"middleName\"," +
+                        $"      cl.\"lastName\"," +
+                        $"      cd.cardnumber," +
+                        $"      cd.ballance," +
+                        $"      cd.\"expirationDate\"" +
+                        $" FROM clients AS cl " +
+                        $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
+                        $" WHERE cl.\"phoneNumber\" = {number};";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    long phoneNumber = 0;
+                    string firstName = string.Empty;
+                    string middleName = string.Empty;
+                    string lastName = string.Empty;
+                    int cardnumber = 0;
+                    int ballance = 0;
+                    DateTime expirationDate = DateTime.Now;
+
+                    while (data.Read())
+                    {
+                        phoneNumber = (long)data["phoneNumber"];
+                        firstName = (string)data["firstName"];
+                        middleName = (string)data["middleName"];
+                        lastName = (string)data["lastName"];
+                        cardnumber = (int)data["cardnumber"];
+                        ballance = (int)data["ballance"];
+                        expirationDate = (DateTime)data["expirationDate"];
+                    }
+
+                    return new Card(
+                        cardnumber,
+                        phoneNumber,
+                        firstName,
+                        middleName,
+                        lastName,
+                        expirationDate,
+                        ballance);
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
                 }
 
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText =
-                    $"SELECT cl.\"phoneNumber\"," +
-                    $"      cl.\"firstName\"," +
-                    $"      cl.\"middleName\"," +
-                    $"      cl.\"lastName\"," +
-                    $"      cd.cardnumber," +
-                    $"      cd.ballance," +
-                    $"      cd.\"expirationDate\"" +
-                    $" FROM clients AS cl " +
-                    $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
-                    $" WHERE cl.\"phoneNumber\" = {number};";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                long phoneNumber = 0;
-                string firstName = string.Empty;
-                string middleName = string.Empty;
-                string lastName = string.Empty;
-                int cardnumber = 0;
-                int ballance = 0;
-                DateTime expirationDate = DateTime.Now;
-
-                while (data.Read())
-                {
-                    phoneNumber = (long)data["phoneNumber"];
-                    firstName = (string)data["firstName"];
-                    middleName = (string)data["middleName"];
-                    lastName = (string)data["lastName"];
-                    cardnumber = (int)data["cardnumber"];
-                    ballance = (int)data["ballance"];
-                    expirationDate = (DateTime)data["expirationDate"];
-                }
-
-                return new Card(
-                    cardnumber,
-                    phoneNumber,
-                    firstName,
-                    middleName,
-                    lastName,
-                    expirationDate,
-                    ballance);
+                return null;
             }
         }
 
@@ -299,56 +291,57 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText =
+                        $"SELECT cl.\"phoneNumber\"," +
+                        $"      cl.\"firstName\"," +
+                        $"      cl.\"middleName\"," +
+                        $"      cl.\"lastName\"," +
+                        $"      cd.cardnumber," +
+                        $"      cd.ballance," +
+                        $"      cd.\"expirationDate\"" +
+                        $" FROM clients AS cl " +
+                        $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\"  " +
+                        $" WHERE cd.cardnumber = {number};";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    long phoneNumber = 0;
+                    string firstName = string.Empty;
+                    string middleName = string.Empty;
+                    string lastName = string.Empty;
+                    int cardnumber = 0;
+                    int ballance = 0;
+                    DateTime expirationDate = DateTime.Now;
+
+                    while (data.Read())
+                    {
+                        phoneNumber = (long)data["phoneNumber"];
+                        firstName = (string)data["firstName"];
+                        middleName = (string)data["middleName"];
+                        lastName = (string)data["lastName"];
+                        cardnumber = (int)data["cardnumber"];
+                        ballance = (int)data["ballance"];
+                        expirationDate = (DateTime)data["expirationDate"];
+                    }
+
+                    return new Card(
+                        cardnumber,
+                        phoneNumber,
+                        firstName,
+                        middleName,
+                        lastName,
+                        expirationDate,
+                        ballance);
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
                 }
 
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText =
-                    $"SELECT cl.\"phoneNumber\"," +
-                    $"      cl.\"firstName\"," +
-                    $"      cl.\"middleName\"," +
-                    $"      cl.\"lastName\"," +
-                    $"      cd.cardnumber," +
-                    $"      cd.ballance," +
-                    $"      cd.\"expirationDate\"" +
-                    $" FROM clients AS cl " +
-                    $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\"  " +
-                    $" WHERE cd.cardnumber = {number};";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                long phoneNumber = 0;
-                string firstName = string.Empty;
-                string middleName = string.Empty;
-                string lastName = string.Empty;
-                int cardnumber = 0;
-                int ballance = 0;
-                DateTime expirationDate = DateTime.Now;
-
-                while (data.Read())
-                {
-                    phoneNumber = (long)data["phoneNumber"];
-                    firstName = (string)data["firstName"];
-                    middleName = (string)data["middleName"];
-                    lastName = (string)data["lastName"];
-                    cardnumber = (int)data["cardnumber"];
-                    ballance = (int)data["ballance"];
-                    expirationDate = (DateTime)data["expirationDate"];
-                }
-
-                return new Card(
-                    cardnumber,
-                    phoneNumber,
-                    firstName,
-                    middleName,
-                    lastName,
-                    expirationDate,
-                    ballance);
+                return null;
             }
         }
 
@@ -368,62 +361,61 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText =
+                        $"SELECT ballance " +
+                        $"FROM CARDS " +
+                        $"WHERE cardnumber = {card.Number}; ";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    DataTable dateVol = new DataTable();
+                    dateVol.Load(data);
+
+                    int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
+
+                    data.Close();
+
+                    if ((currentBalance - summ) < 0)
+                    {
+                        result = ResultOperations.ChargeError;
+                    }
+                    else
+                    {
+                        npgsqlCommand.CommandText =
+                           $"SELECT \"expirationDate\"  " +
+                           $"FROM CARDS " +
+                           $"WHERE cardnumber = {card.Number}; ";
+
+                        dateVol = new DataTable();
+                        dateVol.Load(data);
+
+                        data = npgsqlCommand.ExecuteReader();
+                        dateVol.Load(data);
+
+                        DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
+
+                        if (expirationDate < DateTime.Today)
+                        {
+                            result = ResultOperations.CardExpired;
+                        }
+                        else
+                        {
+                            currentBalance -= summ;
+                            npgsqlCommand.CommandText = $"" +
+                                $"UPDATE CARDS " +
+                                $"SET ballance = {currentBalance} " +
+                                $"WHERE cardnumber = {card.Number} ;";
+
+                            npgsqlCommand.ExecuteReader();
+                        }
+                    }
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
-                }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText =
-                    $"SELECT ballance " +
-                    $"FROM CARDS " +
-                    $"WHERE cardnumber = {card.Number}; ";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                DataTable dateVol = new DataTable();
-                dateVol.Load(data);
-
-                int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
-
-                data.Close();
-
-                if ((currentBalance - summ) < 0)
-                {
-                    result = ResultOperations.ChargeError;
-                }
-                else
-                {
-                    npgsqlCommand.CommandText =
-                       $"SELECT \"expirationDate\"  " +
-                       $"FROM CARDS " +
-                       $"WHERE cardnumber = {card.Number}; ";
-
-                    dateVol = new DataTable();
-                    dateVol.Load(data);
-
-                    data = npgsqlCommand.ExecuteReader();
-                    dateVol.Load(data);
-
-                    DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
-
-                    if (expirationDate < DateTime.Today)
-                    {
-                        result = ResultOperations.CardExpired;
-                    }
-                    else
-                    {
-                        currentBalance -= summ;
-                        npgsqlCommand.CommandText = $"" +
-                            $"UPDATE CARDS " +
-                            $"SET ballance = {currentBalance} " +
-                            $"WHERE cardnumber = {card.Number} ;";
-
-                        npgsqlCommand.ExecuteReader();
-                    }
                 }
             }
 
@@ -445,53 +437,53 @@ namespace CardsHandler.Database
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText =
+                        $"SELECT ballance " +
+                        $"FROM CARDS " +
+                        $"WHERE cardnumber = {card.Number}; ";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+
+                    DataTable dateVol = new DataTable();
+                    dateVol.Load(data);
+
+                    int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
+                    npgsqlCommand.CommandText =
+                           $"SELECT \"expirationDate\"  " +
+                           $"FROM CARDS " +
+                           $"WHERE cardnumber = {card.Number}; ";
+
+                    dateVol = new DataTable();
+                    dateVol.Load(data);
+
+                    data = npgsqlCommand.ExecuteReader();
+                    dateVol.Load(data);
+
+                    DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
+
+                    if (expirationDate < DateTime.Today)
+                    {
+                        result = ResultOperations.CardExpired;
+                    }
+                    else
+                    {
+                        currentBalance += summ;
+                        npgsqlCommand.CommandText = $"" +
+                            $"UPDATE CARDS " +
+                            $"SET ballance = {currentBalance} " +
+                            $"WHERE cardnumber = {card.Number} ;";
+
+                        npgsqlCommand.ExecuteReader();
+                        data.Close();
+                    }
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
-                }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText =
-                    $"SELECT ballance " +
-                    $"FROM CARDS " +
-                    $"WHERE cardnumber = {card.Number}; ";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-
-                DataTable dateVol = new DataTable();
-                dateVol.Load(data);
-
-                int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
-                npgsqlCommand.CommandText =
-                       $"SELECT \"expirationDate\"  " +
-                       $"FROM CARDS " +
-                       $"WHERE cardnumber = {card.Number}; ";
-
-                dateVol = new DataTable();
-                dateVol.Load(data);
-
-                data = npgsqlCommand.ExecuteReader();
-                dateVol.Load(data);
-
-                DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
-
-                if (expirationDate < DateTime.Today)
-                {
-                    result = ResultOperations.CardExpired;
-                }
-                else
-                {
-                    currentBalance += summ;
-                    npgsqlCommand.CommandText = $"" +
-                        $"UPDATE CARDS " +
-                        $"SET ballance = {currentBalance} " +
-                        $"WHERE cardnumber = {card.Number} ;";
-
-                    npgsqlCommand.ExecuteReader();
-                    data.Close();
+                    result = ResultOperations.CannontConnectToDB;
                 }
 
                 return result;
@@ -502,40 +494,43 @@ namespace CardsHandler.Database
         /// Получить все карты.
         /// </summary>
         /// <returns>Таблица с картами.</returns>
-        public DataTable GetAllCards()
+        public ResultOperations GetAllCards(out DataTable dataTable)
         {
-            DataTable dataTable = new DataTable();
+            ResultOperations resultOperations = ResultOperations.None;
+
+            dataTable = new DataTable();
             using (NpgsqlConnection connection
                  = new NpgsqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
+
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    npgsqlCommand.CommandText = $"" +
+                        $"SELECT cd.cardnumber," +
+                        $"  cl.\"phoneNumber\"," +
+                        $"  cl.\"firstName\"," +
+                        $"  cl.\"middleName\"," +
+                        $"  cl.\"lastName\"," +
+                        $"  cd.ballance," +
+                        $"  cd.\"expirationDate\"" +
+                        $" FROM clients AS cl " +
+                        $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" ;";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+                    dataTable.Load(data);
                 }
                 catch (Exception)
                 {
+                    resultOperations = ResultOperations.CannontConnectToDB;
                     UI.PrintErrorConnectionToDB(this);
                 }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                npgsqlCommand.CommandText = $"" +
-                    $"SELECT cd.cardnumber," +
-                    $"  cl.\"phoneNumber\"," +
-                    $"  cl.\"firstName\"," +
-                    $"  cl.\"middleName\"," +
-                    $"  cl.\"lastName\"," +
-                    $"  cd.ballance," +
-                    $"  cd.\"expirationDate\"" +
-                    $" FROM clients AS cl " +
-                    $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" ;";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-                dataTable.Load(data);
             }
 
-            return dataTable;
+            return resultOperations;
         }
 
         /// <summary>

@@ -33,38 +33,18 @@ namespace CardsHandler
         {
             ResultOperations statCompliante = ResultOperations.None;
 
-            if (string.IsNullOrEmpty(phone) ||
-                string.IsNullOrEmpty(firstName) ||
-                string.IsNullOrEmpty(firstName) ||
-                string.IsNullOrEmpty(firstName))
+            if (string.IsNullOrEmpty(phone))
             {
-                return ResultOperations.EmptyField;
-            }
-
-            if (IsPhoneCorrect(phone))
-            {
-                if (IsNameCorrect(firstName))
-                {
-                    if (IsNameCorrect(middleName))
-                    {
-                        if (!IsNameCorrect(lastName))
-                        {
-                            return ResultOperations.WrongName;
-                        }
-                    }
-                    else
-                    {
-                        return ResultOperations.WrongName;
-                    }
-                }
-                else
-                {
-                    return ResultOperations.WrongName;
-                }
+                return ResultOperations.WrongPhone;
             }
             else
             {
-                return ResultOperations.WrongPhone;
+                if (string.IsNullOrEmpty(firstName) ||
+                    string.IsNullOrEmpty(middleName) ||
+                    string.IsNullOrEmpty(lastName))
+                {
+                    return ResultOperations.WrongName;
+                }
             }
 
             return statCompliante;

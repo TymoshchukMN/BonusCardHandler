@@ -530,10 +530,20 @@ namespace CardsHandler
         private void BtGetAllCards_Click(object sender, EventArgs e)
         {
             dataGridView.Refresh();
-
+            DataTable data;
             PostgresDB pgDB = CreatePostrgesInstance();
-            DataTable data = pgDB.GetAllCards();
-            dataGridView.DataSource = data;
+
+            switch (pgDB.GetAllCards(out data))
+            {
+                case ResultOperations.None:
+                    dataGridView.DataSource = data;
+                    break;
+
+                case ResultOperations.CannontConnectToDB:
+
+                    UI.PrintErrorConnectionToDB(pgDB);
+                    break;
+            }
         }
 
         private void BtExpiredCards_Click(object sender, EventArgs e)

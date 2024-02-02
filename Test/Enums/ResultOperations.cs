@@ -62,5 +62,10 @@ namespace CardsHandler
         /// Не выбрано что сделать.
         /// </summary>
         NotChangedWhatToDo,
+
+        /// <summary>
+        /// Не удалось подключиться к БД.
+        /// </summary>
+        CannontConnectToDB,
     }
 }
