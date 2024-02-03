@@ -213,7 +213,7 @@ namespace CardsHandler
         /// <param name="number">телефон.</param>
         public static void PrintErrorPhoneDoesntExist(
             ref RichTextBox box,
-            long number)
+            string number)
         {
             string message = $"В базе нет клиентов с номером телефона " +
                 $"{number}";

@@ -86,19 +86,16 @@ namespace CardsHandler
                             case ResultOperations.None:
 
                                 pgDB = CreatePostrgesInstance();
-                                long.TryParse(
-                                            tbPhoneNumber.Text,
-                                            out long phoneNumber);
 
                                 bool isPhoneExist =
-                                    pgDB.CheckIfPhone(phoneNumber);
+                                    pgDB.CheckIfPhone(tbPhoneNumber.Text);
 
                                 if (isPhoneExist)
                                 {
                                     UI.PrintErrorPhoneExist();
                                     UI.PrintCardElements(
                                         ref tbResultForm,
-                                        pgDB.FindCardByPhone(phoneNumber));
+                                        pgDB.FindCardByPhone(tbPhoneNumber.Text));
                                 }
                                 else
                                 {
@@ -117,7 +114,7 @@ namespace CardsHandler
 
                                     Card card = new Card(
                                         newCardNumber,
-                                        phoneNumber,
+                                        tbPhoneNumber.Text,
                                         tbFirstName.Text,
                                         tbMiddleName.Text,
                                         tbLastName.Text);
@@ -166,16 +163,12 @@ namespace CardsHandler
                                 {
                                     case SearchType.ByPhone:
 
-                                        long.TryParse(
-                                            tbPhoneNumber.Text,
-                                            out long phoneNumber);
-
                                         bool isPhoneExist =
-                                            pgDB.CheckIfPhone(phoneNumber);
+                                            pgDB.CheckIfPhone(tbPhoneNumber.Text);
 
                                         if (isPhoneExist)
                                         {
-                                            Card card = pgDB.FindCardByPhone(phoneNumber);
+                                            Card card = pgDB.FindCardByPhone(tbPhoneNumber.Text);
                                             UI.PrintCardElements(ref tbResultForm, card);
                                             UI.PrintSuccess(cardsOperation);
                                         }
@@ -183,7 +176,7 @@ namespace CardsHandler
                                         {
                                             UI.PrintErrorPhoneDoesntExist(
                                                 ref tbResultForm,
-                                                phoneNumber);
+                                                tbPhoneNumber.Text);
                                         }
 
                                         break;
@@ -530,10 +523,9 @@ namespace CardsHandler
         private void BtGetAllCards_Click(object sender, EventArgs e)
         {
             dataGridView.Refresh();
-            DataTable data;
             PostgresDB pgDB = CreatePostrgesInstance();
 
-            switch (pgDB.GetAllCards(out data))
+            switch (pgDB.GetAllCards(out DataTable data))
             {
                 case ResultOperations.None:
                     dataGridView.DataSource = data;
@@ -549,9 +541,20 @@ namespace CardsHandler
         private void BtExpiredCards_Click(object sender, EventArgs e)
         {
             dataGridView.Refresh();
-
             PostgresDB pgDB = CreatePostrgesInstance();
-            DataTable data = pgDB.GetExpiredCards();
+
+            switch (pgDB.GetExpiredCards(out DataTable data))
+            {
+                case ResultOperations.None:
+                    dataGridView.DataSource = data;
+                    break;
+
+                case ResultOperations.CannontConnectToDB:
+
+                    UI.PrintErrorConnectionToDB(pgDB);
+                    break;
+            }
+
             dataGridView.DataSource = data;
         }
     }

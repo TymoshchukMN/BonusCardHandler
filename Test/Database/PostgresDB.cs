@@ -130,7 +130,7 @@ namespace CardsHandler.Database
         /// <returns>
         /// bool.
         /// </returns>
-        public bool CheckIfPhone(long phoneNumber)
+        public bool CheckIfPhone(string phoneNumber)
         {
             bool isExist = false;
             using (NpgsqlConnection connection
@@ -215,7 +215,7 @@ namespace CardsHandler.Database
         /// </summary>
         /// <param name="number">номер телефона/карты.</param>
         /// <returns>Объект карты.</returns>
-        public Card FindCardByPhone(long number)
+        public Card FindCardByPhone(string number)
         {
             using (NpgsqlConnection connection
                   = new NpgsqlConnection(_connectionString))
@@ -227,21 +227,12 @@ namespace CardsHandler.Database
                     NpgsqlCommand npgsqlCommand = connection.CreateCommand();
 
                     npgsqlCommand.CommandText =
-                        $"SELECT cl.\"phoneNumber\"," +
-                        $"      cl.\"firstName\"," +
-                        $"      cl.\"middleName\"," +
-                        $"      cl.\"lastName\"," +
-                        $"      cd.cardnumber," +
-                        $"      cd.ballance," +
-                        $"      cd.\"expirationDate\"" +
-                        $" FROM clients AS cl " +
-                        $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
-                        $" WHERE cl.\"phoneNumber\" = {number};";
+                        $"SELECT * FROM CARDS WHERE phoneNumber = \"{number}\";";
 
                     NpgsqlDataReader data;
                     data = npgsqlCommand.ExecuteReader();
 
-                    long phoneNumber = 0;
+                    string phoneNumber = string.Empty;
                     string firstName = string.Empty;
                     string middleName = string.Empty;
                     string lastName = string.Empty;
@@ -251,7 +242,7 @@ namespace CardsHandler.Database
 
                     while (data.Read())
                     {
-                        phoneNumber = (long)data["phoneNumber"];
+                        phoneNumber = (string)data["phoneNumber"];
                         firstName = (string)data["firstName"];
                         middleName = (string)data["middleName"];
                         lastName = (string)data["lastName"];
@@ -269,7 +260,7 @@ namespace CardsHandler.Database
                         expirationDate,
                         ballance);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     UI.PrintErrorConnectionToDB(this);
                 }
@@ -308,7 +299,7 @@ namespace CardsHandler.Database
                     NpgsqlDataReader data;
                     data = npgsqlCommand.ExecuteReader();
 
-                    long phoneNumber = 0;
+                    string phoneNumber = string.Empty;
                     string firstName = string.Empty;
                     string middleName = string.Empty;
                     string lastName = string.Empty;
@@ -318,7 +309,7 @@ namespace CardsHandler.Database
 
                     while (data.Read())
                     {
-                        phoneNumber = (long)data["phoneNumber"];
+                        phoneNumber = (string)data["phoneNumber"];
                         firstName = (string)data["firstName"];
                         middleName = (string)data["middleName"];
                         lastName = (string)data["lastName"];
@@ -537,44 +528,45 @@ namespace CardsHandler.Database
         /// Получить все карты.
         /// </summary>
         /// <returns>Таблица с картами.</returns>
-        public DataTable GetExpiredCards()
+        public ResultOperations GetExpiredCards(out DataTable dataTable)
         {
-            DataTable dataTable = new DataTable();
+            ResultOperations resultOperations = ResultOperations.None;
+            dataTable = new DataTable();
             using (NpgsqlConnection connection
                  = new NpgsqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
+                    NpgsqlCommand npgsqlCommand = connection.CreateCommand();
+
+                    string expirationDate
+                        = DateTime.Today.Date.ToString("dd.MM.yyyy");
+
+                    npgsqlCommand.CommandText = $"" +
+                        $"SELECT cd.cardnumber," +
+                        $"  cl.\"phoneNumber\"," +
+                        $"  cl.\"firstName\"," +
+                        $"  cl.\"middleName\"," +
+                        $"  cl.\"lastName\"," +
+                        $"  cd.ballance," +
+                        $"  cd.\"expirationDate\"" +
+                        $" FROM clients AS cl " +
+                        $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
+                        $" WHERE cd.\"expirationDate\"  < \'{expirationDate}\';;";
+
+                    NpgsqlDataReader data;
+                    data = npgsqlCommand.ExecuteReader();
+                    dataTable.Load(data);
                 }
                 catch (Exception)
                 {
                     UI.PrintErrorConnectionToDB(this);
+                    resultOperations = ResultOperations.CannontConnectToDB;
                 }
-
-                NpgsqlCommand npgsqlCommand = connection.CreateCommand();
-
-                string expirationDate
-                    = DateTime.Today.Date.ToString("dd.MM.yyyy");
-
-                npgsqlCommand.CommandText = $"" +
-                    $"SELECT cd.cardnumber," +
-                    $"  cl.\"phoneNumber\"," +
-                    $"  cl.\"firstName\"," +
-                    $"  cl.\"middleName\"," +
-                    $"  cl.\"lastName\"," +
-                    $"  cd.ballance," +
-                    $"  cd.\"expirationDate\"" +
-                    $" FROM clients AS cl " +
-                    $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" " +
-                    $" WHERE cd.\"expirationDate\"  < \'{expirationDate}\';;";
-
-                NpgsqlDataReader data;
-                data = npgsqlCommand.ExecuteReader();
-                dataTable.Load(data);
             }
 
-            return dataTable;
+            return resultOperations;
         }
 
         #endregion METHODS

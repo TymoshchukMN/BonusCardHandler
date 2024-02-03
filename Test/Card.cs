@@ -22,7 +22,7 @@ namespace CardsHandler
         /// <summary>
         /// Номер телефона.
         /// </summary>
-        private long _phoneNumber;
+        private string _phoneNumber;
 
         /// <summary>
         /// Срок действия карты.
@@ -63,7 +63,7 @@ namespace CardsHandler
         /// <param name="balance">Баланс.</param>
         public Card(
              int number,
-             long phone,
+             string phone,
              string firstName,
              string middleName,
              string lasName,
@@ -91,7 +91,7 @@ namespace CardsHandler
         /// <param name="lasName">фамилия клиента.</param>
         public Card(
             int number,
-            long phone,
+            string phone,
             string firstName,
             string middleName,
             string lasName)
@@ -111,7 +111,7 @@ namespace CardsHandler
             private set { _number = value; }
         }
 
-        public long PhoneNumber
+        public string PhoneNumber
         {
             get { return _phoneNumber; }
             set { _phoneNumber = value; }

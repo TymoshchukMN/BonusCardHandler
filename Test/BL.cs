@@ -39,9 +39,9 @@ namespace CardsHandler
             }
             else
             {
-                if (string.IsNullOrEmpty(firstName) ||
-                    string.IsNullOrEmpty(middleName) ||
-                    string.IsNullOrEmpty(lastName))
+                if (!(IsNameCorrect(firstName) &&
+                    IsNameCorrect(middleName) &&
+                    IsNameCorrect(lastName)))
                 {
                     return ResultOperations.WrongName;
                 }
@@ -109,28 +109,6 @@ namespace CardsHandler
             else
             {
                 if (!IsCardCorrect(cardNumber))
-                {
-                    statCompliante = ResultOperations.WrongCard;
-                }
-            }
-
-            return statCompliante;
-        }
-
-        public static ResultOperations ChechChargeCompliance(
-            string summ,
-            string card)
-        {
-            ResultOperations statCompliante = ResultOperations.None;
-
-            // проверка на коректность введенной суммы
-            if (!int.TryParse(summ, out int _))
-            {
-                statCompliante = ResultOperations.WrongSumm;
-            }
-            else
-            {
-                if (!IsCardCorrect(card))
                 {
                     statCompliante = ResultOperations.WrongCard;
                 }
@@ -253,6 +231,12 @@ namespace CardsHandler
         private static bool IsNameCorrect(string name)
         {
             bool isCorrect = true;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                isCorrect = false;
+                return isCorrect;
+            }
 
             for (ushort i = 0; i < name.Length; ++i)
             {
