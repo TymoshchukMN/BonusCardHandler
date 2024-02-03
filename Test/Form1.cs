@@ -38,7 +38,7 @@ namespace CardsHandler
         {
             DBConfigJSON dBConfig = BL.GetDBConfig();
 
-            PostgresDB pgDB = new PostgresDB(
+            PostgresDB pgDB = PostgresDB.GetInstance(
                dBConfig.DBConfig.Server,
                dBConfig.DBConfig.UserName,
                dBConfig.DBConfig.DBname,
