@@ -2,22 +2,25 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace Test
+namespace CardsHandler.Server
 {
-    internal class Server
+    internal class CardPoolServer
     {
         public static int RequestCardNum()
         {
-            const string ServerAddress = "127.0.0.1";
-            const string RequestCard = "CardRequest";
-            const int ServerPort = 49001;
+            // Получаем конфиг подключения к серверу.
+            SrvConfig srvConfig = BL.GetServerConfig();
 
-            TcpClient client = new TcpClient(ServerAddress, ServerPort);
+            string serverAddress = srvConfig.Server;
+            int serverPort = srvConfig.Port;
+
+            const string RequestCard = "CardRequest";
+
+            TcpClient client = new TcpClient(serverAddress, serverPort);
             NetworkStream stream = client.GetStream();
 
             byte[] data = Encoding.ASCII.GetBytes(RequestCard);
             stream.Write(data, 0, data.Length);
-            Console.WriteLine("Сообщение отправлено.");
 
             byte[] buffer = new byte[1024];
             int bytesRead = stream.Read(buffer, 0, buffer.Length);
@@ -29,5 +32,4 @@ namespace Test
             return cardNubber;
         }
     }
-
 }

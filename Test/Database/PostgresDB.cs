@@ -1,18 +1,19 @@
 ﻿//////////////////////////////////////////
 // Author : Tymoshchuk Maksym
 // Created On : 10/04/2023
-// Last Modified On : 26/01/2024
+// Last Modified On : 05/02/2024
 // Description: Workking with Postgres
 // Project: CardsHandler
 //////////////////////////////////////////
 
 using System;
 using System.Data;
+using CardsHandler.Interfaces;
 using Npgsql;
 
 namespace CardsHandler.Database
 {
-    internal class PostgresDB : IDisposable
+    internal class PostgresDB : IDisposable, IProcessCardsDB
     {
         #region FIELDS
 
@@ -43,6 +44,16 @@ namespace CardsHandler.Database
             _server = server;
             _dbName = dataBase;
             _port = port;
+
+            _connection = new NpgsqlConnection(_connectionString);
+            try
+            {
+                _connection.Open();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion CTORs

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using CardsHandler.JSON;
+using CardsHandler.Server;
 using Newtonsoft.Json;
 
 namespace CardsHandler
@@ -119,13 +120,24 @@ namespace CardsHandler
 
         public static DBConfigJSON GetDBConfig()
         {
-
-            // папка с конфигами JSON должна быть скопирована в каталоги debug\release.
             const string ConfFilePathDB = @"\\172.16.112.40\share\TymoshchukMN\DBconfigFile.json";
             string dbConfigFile = File.ReadAllText(ConfFilePathDB);
             DBConfigJSON dbConfigJSON = JsonConvert.DeserializeObject<DBConfigJSON>(dbConfigFile);
 
             return dbConfigJSON;
+        }
+
+        /// <summary>
+        ///  Получить конфиг подключениея к серверу.
+        /// </summary>
+        /// <returns>конфиг подключениея к серверу</returns>
+        public static SrvConfig GetServerConfig()
+        {
+            const string ConfFilePathSRV = @"\\172.16.112.40\share\TymoshchukMN\SRVconfigFile.json";
+            string srvConfigFile = File.ReadAllText(ConfFilePathSRV);
+            SrvConfig srvConfigJSON = JsonConvert.DeserializeObject<SrvConfig>(srvConfigFile);
+
+            return srvConfigJSON;
         }
 
         /// <summary>

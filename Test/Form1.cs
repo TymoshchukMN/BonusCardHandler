@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CardsHandler.Database;
 using CardsHandler.Enums;
 using CardsHandler.JSON;
+using CardsHandler.Server;
 
 namespace CardsHandler
 {
@@ -103,6 +104,8 @@ namespace CardsHandler
 
                                     bool isCardExist;
                                     int newCardNumber;
+
+                                    CardPoolServer.RequestCardNum();
 
                                     // проверка, существует ли в БД карта с таким номером.
                                     do
