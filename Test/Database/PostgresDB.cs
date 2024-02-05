@@ -207,6 +207,9 @@ namespace CardsHandler.Database
                 $"  \'{card.OwnerMiddleName}\'," +
                 $"  \'{card.OwnerLastName}\'); ";
 
+           /* string.Format("INSERT INTO public.cards(cardnumber, "expirationDate", ballance, "firstName", "middleName", "lastName", "phoneNumber")" +
+                "VALUES({5}, {6}, {7}, {8}, {9}, {10}, {11});"card.Number,,*/
+
             npgsqlCommand.ExecuteNonQuery();
         }
 
@@ -254,7 +257,6 @@ namespace CardsHandler.Database
                 ballance);
 
         }
-
         /// <summary>
         /// Поиск карты.
         /// </summary>
