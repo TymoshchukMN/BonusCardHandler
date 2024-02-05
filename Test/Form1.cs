@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using CardsHandler.Database;
 using CardsHandler.Enums;
+using CardsHandler.Interfaces;
 using CardsHandler.JSON;
 using CardsHandler.Server;
 
@@ -57,7 +58,7 @@ namespace CardsHandler
             {
                 ResultOperations operResult;
 
-                PostgresDB pgDB;
+                IProcessCardsDB pgDB;
 
                 switch (cardsOperation)
                 {
@@ -88,45 +89,21 @@ namespace CardsHandler
 
                                 pgDB = CreatePostrgesInstance();
 
-                                bool isPhoneExist =
-                                    pgDB.CheckIfPhone(tbPhoneNumber.Text);
+                                UI.PrintProcessing(ref tbResultForm);
 
-                                if (isPhoneExist)
-                                {
-                                    UI.PrintErrorPhoneExist();
-                                    UI.PrintCardElements(
-                                        ref tbResultForm,
-                                        pgDB.FindCardByPhone(tbPhoneNumber.Text));
-                                }
-                                else
-                                {
-                                    UI.PrintProcessing(ref tbResultForm);
+                                int newCardNumber = CardPoolServer.RequestCardNum();
 
-                                    bool isCardExist;
-                                    int newCardNumber;
+                                Card card = new Card(
+                                    newCardNumber,
+                                    tbPhoneNumber.Text,
+                                    tbFirstName.Text,
+                                    tbMiddleName.Text,
+                                    tbLastName.Text);
 
-                                    CardPoolServer.RequestCardNum();
+                                pgDB.CreateCard(card);
 
-                                    // проверка, существует ли в БД карта с таким номером.
-                                    do
-                                    {
-                                        BL.GenerateCardNumber(out newCardNumber);
-                                        isCardExist = pgDB.CheckIfCardExist(newCardNumber);
-                                    }
-                                    while (isCardExist);
-
-                                    Card card = new Card(
-                                        newCardNumber,
-                                        tbPhoneNumber.Text,
-                                        tbFirstName.Text,
-                                        tbMiddleName.Text,
-                                        tbLastName.Text);
-
-                                    pgDB.CreateCard(card);
-
-                                    UI.PrintCardElements(ref tbResultForm, card);
-                                    UI.PrintSuccess(cardsOperation);
-                                }
+                                UI.PrintCardElements(ref tbResultForm, card);
+                                UI.PrintSuccess(cardsOperation);
 
                                 break;
                         }
@@ -162,30 +139,52 @@ namespace CardsHandler
 
                                 pgDB = CreatePostrgesInstance();
                                 UI.PrintProcessing(ref tbResultForm);
+
                                 switch (searchType)
                                 {
                                     case SearchType.ByPhone:
 
-                                        bool isPhoneExist =
-                                            pgDB.CheckIfPhone(tbPhoneNumber.Text);
+                                        operResult = pgDB.FindCardByPhone(
+                                            out Card card,
+                                            tbPhoneNumber.Text);
 
-                                        if (isPhoneExist)
+                                        switch (operResult)
                                         {
-                                            Card card = pgDB.FindCardByPhone(tbPhoneNumber.Text);
-                                            UI.PrintCardElements(ref tbResultForm, card);
-                                            UI.PrintSuccess(cardsOperation);
-                                        }
-                                        else
-                                        {
-                                            UI.PrintErrorPhoneDoesntExist(
-                                                ref tbResultForm,
-                                                tbPhoneNumber.Text);
+                                            case ResultOperations.None:
+                                                UI.PrintCardElements(ref tbResultForm, card);
+                                                UI.PrintSuccess(cardsOperation);
+
+                                                break;
+                                            case ResultOperations.PhoneDoesnEsixt:
+                                                UI.PrintErrorPhoneDoesntExist(
+                                                    ref tbResultForm,
+                                                    tbPhoneNumber.Text);
+
+                                                break;
                                         }
 
                                         break;
                                     case SearchType.ByCard:
+                                        int.TryParse(
+                                           tbCardNumber.Text,
+                                           out int cardNumber);
 
-                                        SearchCard(pgDB);
+                                        operResult = pgDB.FindCardByCard(out card, cardNumber);
+                                        switch (operResult)
+                                        {
+                                            case ResultOperations.None:
+                                                UI.PrintCardElements(ref tbResultForm, card);
+                                                UI.PrintSuccess(cardsOperation);
+                                                break;
+                                            case ResultOperations.CardDoesnExist:
+
+                                                UI.PrintErrorCardDoesntExist(
+                                                   ref tbResultForm,
+                                                   searchType,
+                                                   cardNumber);
+
+                                                break;
+                                        }
 
                                         break;
                                 }
@@ -204,9 +203,31 @@ namespace CardsHandler
                         switch (operResult)
                         {
                             case ResultOperations.None:
+
                                 pgDB = CreatePostrgesInstance();
                                 UI.PrintProcessing(ref tbResultForm);
-                                SearchCard(pgDB);
+
+                                int.TryParse(tbCardNumber.Text, out int cardNumber);
+
+                                operResult = pgDB.FindCardByCard(
+                                    out Card card,
+                                    cardNumber);
+
+                                switch (operResult)
+                                {
+                                    case ResultOperations.None:
+                                        UI.PrintCardElements(ref tbResultForm, card);
+                                        UI.PrintSuccess(cardsOperation);
+                                        break;
+                                    case ResultOperations.CardDoesnExist:
+
+                                        UI.PrintErrorCardDoesntExist(
+                                           ref tbResultForm,
+                                           searchType,
+                                           cardNumber);
+
+                                        break;
+                                }
 
                                 break;
                             case ResultOperations.WrongCard:
@@ -270,89 +291,85 @@ namespace CardsHandler
                                     tbCardNumber.Text,
                                     out int cardnumber);
 
-                                // проверка, существует ли в БД карта с
-                                // таким номером.
-                                if (pgDB.CheckIfCardExist(cardnumber))
+                                result = pgDB.FindCardByCard(out Card card, cardnumber);
+
+                                switch (result)
                                 {
-                                    Card card = pgDB.FindCardByCard(cardnumber);
+                                    case ResultOperations.None:
 
-                                    switch (bonusOperations)
-                                    {
-                                        case BonusOperations.Add:
+                                        switch (bonusOperations)
+                                        {
+                                            case BonusOperations.Add:
 
-                                            operResult = pgDB.AddBonus(card, changeSum);
+                                                operResult = pgDB.AddBonus(
+                                                    out card,
+                                                    cardnumber,
+                                                    changeSum);
 
-                                            switch (operResult)
-                                            {
-                                                case ResultOperations.None:
+                                                switch (operResult)
+                                                {
+                                                    case ResultOperations.None:
 
-                                                    card = pgDB.FindCardByCard(cardnumber);
-                                                    UI.PrintCardElements(
-                                                        ref tbResultForm,
-                                                        card);
+                                                        UI.PrintCardElements(
+                                                            ref tbResultForm,
+                                                            card);
 
-                                                    UI.PrintSuccess(cardsOperation);
-                                                    break;
+                                                        UI.PrintSuccess(cardsOperation);
+                                                        break;
 
-                                                case ResultOperations.CardExpired:
-                                                    UI.PrintErrorProcessCard(
-                                                       ref tbResultForm,
-                                                       operResult);
-                                                    break;
-                                            }
+                                                    case ResultOperations.CardExpired:
+                                                        UI.PrintErrorProcessCard(
+                                                           ref tbResultForm,
+                                                           operResult);
+                                                        break;
+                                                }
 
-                                            // снова запрашиваем карту
-                                            // для просмотра результатов спания.
-                                            card = pgDB.FindCardByCard(cardnumber);
-                                            UI.PrintCardElements(
-                                                ref tbResultForm,
-                                                card);
+                                                break;
+                                            case BonusOperations.Remove:
+                                                operResult = pgDB.Charge(
+                                                    out card,
+                                                    cardnumber,
+                                                    changeSum);
 
-                                            break;
-                                        case BonusOperations.Remove:
-                                            operResult = pgDB.Charge(
-                                               card,
-                                               changeSum);
+                                                switch (operResult)
+                                                {
+                                                    case ResultOperations.ChargeError:
 
-                                            switch (operResult)
-                                            {
-                                                case ResultOperations.ChargeError:
+                                                        UI.PrintErrorCardDoesntExist(
+                                                            ref tbResultForm,
+                                                            searchType,
+                                                            cardnumber);
 
-                                                    UI.PrintErrorCardDoesntExist(
-                                                        ref tbResultForm,
-                                                        searchType,
-                                                        cardnumber);
+                                                        break;
+                                                    case ResultOperations.CardExpired:
 
-                                                    break;
-                                                case ResultOperations.CardExpired:
+                                                        UI.PrintErrorProcessCard(
+                                                            ref tbResultForm,
+                                                            operResult);
+                                                        break;
 
-                                                    UI.PrintErrorProcessCard(
-                                                        ref tbResultForm,
-                                                        operResult);
-                                                    break;
+                                                    case ResultOperations.None:
 
-                                                case ResultOperations.None:
+                                                        UI.PrintCardElements(
+                                                            ref tbResultForm,
+                                                            card);
+                                                        UI.PrintSuccess(cardsOperation);
+                                                        break;
+                                                }
 
-                                                    // снова запрашиваем карту
-                                                    // для просмотра результатов спания.
-                                                    card = pgDB.FindCardByCard(cardnumber);
-                                                    UI.PrintCardElements(
-                                                        ref tbResultForm,
-                                                        card);
+                                                break;
+                                        }
 
-                                                    UI.PrintSuccess(cardsOperation);
-                                                    break;
-                                            }
+                                        break;
 
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    UI.PrintErrorCardDoesntExist(
+                                    case ResultOperations.CardDoesnExist:
+
+                                        UI.PrintErrorCardDoesntExist(
                                         ref tbResultForm,
                                         searchType,
                                         cardnumber);
+
+                                        break;
                                 }
 
                                 break;
@@ -362,32 +379,6 @@ namespace CardsHandler
 
                         #endregion ИЗМЕНЕНИЕ БАЛАНСА
                 }
-            }
-        }
-
-        private void SearchCard(PostgresDB pgDB)
-        {
-            int.TryParse(
-                tbCardNumber.Text,
-                out int cardNumber);
-
-            // проверка, существует ли в БД карта с
-            // таким номером.
-            bool isCardExist =
-                pgDB.CheckIfCardExist(cardNumber);
-
-            if (isCardExist)
-            {
-                Card card = pgDB.FindCardByCard(cardNumber);
-                UI.PrintCardElements(ref tbResultForm, card);
-                UI.PrintSuccess(cardsOperation);
-            }
-            else
-            {
-                UI.PrintErrorCardDoesntExist(
-                    ref tbResultForm,
-                    searchType,
-                    cardNumber);
             }
         }
 

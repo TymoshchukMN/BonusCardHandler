@@ -7,8 +7,10 @@
 //////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using CardsHandler.Interfaces;
+using Dapper;
 using Npgsql;
 
 namespace CardsHandler.Database
@@ -126,23 +128,19 @@ namespace CardsHandler.Database
         {
             bool isExist = false;
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            var queryArguments = new
+            {
+                card = cardNumber,
+            };
 
-            npgsqlCommand.CommandText =
-                $"SELECT EXISTS(" +
-                $"  SELECT cardnumber " +
-                $"  FROM cards " +
-                $"  WHERE cardnumber = {cardNumber});";
+            string sqlCommand = "SELECT COUNT(*) FROM cards WHERE cardnumber = @card";
 
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
+            int count = _connection.QueryFirstOrDefault<int>(sqlCommand, queryArguments);
 
-            DataTable isAccessExist = new DataTable();
-            isAccessExist.Load(data);
-
-            isExist = (bool)isAccessExist.Rows[0].ItemArray[0];
-
-            data.Close();
+            if (count >= 1)
+            {
+                isExist = true;
+            }
 
             return isExist;
         }
@@ -160,22 +158,19 @@ namespace CardsHandler.Database
         {
             bool isExist = false;
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            var queryArguments = new
+            {
+                phone = phoneNumber,
+            };
 
-            npgsqlCommand.CommandText = $"SELECT EXISTS(" +
-                $"SELECT \"phoneNumber\" " +
-                $"FROM clients " +
-                $"WHERE \"phoneNumber\" = {phoneNumber})";
+            string sqlCommand = "SELECT COUNT(*) FROM cards WHERE \"phoneNumber\" = @phone";
 
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
+            int count = _connection.QueryFirstOrDefault<int>(sqlCommand, queryArguments);
 
-            DataTable isPhoneExist = new DataTable();
-            isPhoneExist.Load(data);
-
-            isExist = (bool)isPhoneExist.Rows[0].ItemArray[0];
-
-            data.Close();
+            if (count >= 1)
+            {
+                isExist = true;
+            }
 
             return isExist;
         }
@@ -188,252 +183,216 @@ namespace CardsHandler.Database
         /// </param>
         public void CreateCard(Card card)
         {
-            string expirationDate
-                = DateTime.Today.AddMonths(12).Date.ToString("dd.MM.yyyy");
+            DateTime expirationDate = DateTime.Today.AddMonths(12).Date;
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
-            npgsqlCommand.CommandText =
+            string sqlCommand = $"INSERT INTO public.cards(" +
+                $"cardnumber, \"expirationDate\", ballance, " +
+                $"\"firstName\", \"middleName\", \"lastName\", " +
+                $"\"phoneNumber\")" +
+                " VALUES(@cardNum, @expDate, @balance, @firstName, " +
+                "@middleName, @lastName, @phone);";
 
-                $"INSERT INTO public.cards(" +
-                $" cardnumber, \"phoneNumber\", \"expirationDate\", ballance) " +
-                $" VALUES({card.Number}, " +
-                $" {card.PhoneNumber}, " +
-                $" \'{expirationDate}\'," +
-                $" {card.Ballance});" +
-                $"INSERT INTO public.clients(" +
-                $"  \"phoneNumber\", \"firstName\", \"middleName\", \"lastName\")" +
-                $"  VALUES({card.PhoneNumber}," +
-                $"  \'{card.OwnerFirstName}\'," +
-                $"  \'{card.OwnerMiddleName}\'," +
-                $"  \'{card.OwnerLastName}\'); ";
+            var queryArguments = new
+            {
+                expirationDateCol = "expirationDate",
+                firstNameCol = "firstName",
+                middleNameCol = "middleName",
+                lastNameCol = "lastName",
+                phoneNumberCol = "phoneNumber",
+                cardNum = card.Cardnumber,
+                expDate = expirationDate,
+                balance = card.Ballance,
+                firstName = card.FirstName,
+                middleName = card.MiddleName,
+                lastName = card.LastName,
+                phone = card.PhoneNumber,
+            };
 
-           /* string.Format("INSERT INTO public.cards(cardnumber, "expirationDate", ballance, "firstName", "middleName", "lastName", "phoneNumber")" +
-                "VALUES({5}, {6}, {7}, {8}, {9}, {10}, {11});"card.Number,,*/
-
-            npgsqlCommand.ExecuteNonQuery();
+            try
+            {
+                _connection.Execute(sqlCommand, queryArguments);
+            }
+            catch (Exception ex)
+            {
+                UI.PrintErrorAdintCard(ex.Message);
+            }
         }
 
         /// <summary>
         /// Поиск карты.
         /// </summary>
+        /// <param name="card">Карта.</param>
         /// <param name="number">номер телефона/карты.</param>
         /// <returns>Объект карты.</returns>
-        public Card FindCardByPhone(string number)
+        public ResultOperations FindCardByPhone(out Card card, string number)
         {
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            ResultOperations resultOperations = ResultOperations.None;
 
-            npgsqlCommand.CommandText =
-                $"SELECT * FROM CARDS WHERE phoneNumber = \"{number}\";";
+            card = new Card();
 
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
-
-            string phoneNumber = string.Empty;
-            string firstName = string.Empty;
-            string middleName = string.Empty;
-            string lastName = string.Empty;
-            int cardnumber = 0;
-            int ballance = 0;
-            DateTime expirationDate = DateTime.Now;
-
-            while (data.Read())
+            if (CheckIfPhone(number))
             {
-                phoneNumber = (string)data["phoneNumber"];
-                firstName = (string)data["firstName"];
-                middleName = (string)data["middleName"];
-                lastName = (string)data["lastName"];
-                cardnumber = (int)data["cardnumber"];
-                ballance = (int)data["ballance"];
-                expirationDate = (DateTime)data["expirationDate"];
+                string sqlCommand = $"SELECT * FROM cards WHERE \"phoneNumber\" = @phone";
+
+                IEnumerable<Card> results = _connection.Query<Card>(sqlCommand, new { phone = number });
+                FillCard(card, results);
+            }
+            else
+            {
+                resultOperations = ResultOperations.PhoneDoesnEsixt;
             }
 
-            return new Card(
-                cardnumber,
-                phoneNumber,
-                firstName,
-                middleName,
-                lastName,
-                expirationDate,
-                ballance);
-
+            return resultOperations;
         }
+
         /// <summary>
         /// Поиск карты.
         /// </summary>
+        /// <param name="card">Карта.</param>
         /// <param name="number">карты.</param>
         /// <returns>Объект карты.</returns>
-        public Card FindCardByCard(int number)
+        public ResultOperations FindCardByCard(out Card card, int number)
         {
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            ResultOperations resultOperations = ResultOperations.None;
 
-            npgsqlCommand.CommandText =
-                $"SELECT cl.\"phoneNumber\"," +
-                $"      cl.\"firstName\"," +
-                $"      cl.\"middleName\"," +
-                $"      cl.\"lastName\"," +
-                $"      cd.cardnumber," +
-                $"      cd.ballance," +
-                $"      cd.\"expirationDate\"" +
-                $" FROM clients AS cl " +
-                $" INNER JOIN CARDS as cd  ON cl.\"phoneNumber\" = cd.\"phoneNumber\"  " +
-                $" WHERE cd.cardnumber = {number};";
+            card = new Card();
 
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
-
-            string phoneNumber = string.Empty;
-            string firstName = string.Empty;
-            string middleName = string.Empty;
-            string lastName = string.Empty;
-            int cardnumber = 0;
-            int ballance = 0;
-            DateTime expirationDate = DateTime.Now;
-
-            while (data.Read())
+            if (CheckIfCardExist(number))
             {
-                phoneNumber = (string)data["phoneNumber"];
-                firstName = (string)data["firstName"];
-                middleName = (string)data["middleName"];
-                lastName = (string)data["lastName"];
-                cardnumber = (int)data["cardnumber"];
-                ballance = (int)data["ballance"];
-                expirationDate = (DateTime)data["expirationDate"];
+                string sqlCommand =
+                    $"SELECT * FROM cards WHERE cardnumber = @cardNum";
+
+                IEnumerable<Card> results =
+                    _connection.Query<Card>(
+                        sqlCommand,
+                        new { cardNum = number });
+
+                FillCard(card, results);
+            }
+            else
+            {
+                resultOperations = ResultOperations.CardDoesnExist;
             }
 
-            return new Card(
-                cardnumber,
-                phoneNumber,
-                firstName,
-                middleName,
-                lastName,
-                expirationDate,
-                ballance);
+            return resultOperations;
         }
 
         /// <summary>
         /// Списание.
         /// </summary>
         /// <param name="card">объект карты.</param>
+        /// <param name="cardNum">номер карты.</param>
         /// <param name="summ">Сумма к списанию.</param>
         /// <returns>ResultOperations.</returns>
-        public ResultOperations Charge(Card card, int summ)
+        public ResultOperations Charge(out Card card, int cardNum, int summ)
         {
-            ResultOperations result = ResultOperations.None;
+            ResultOperations resultOperations = ResultOperations.None;
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            card = new Card();
 
-            npgsqlCommand.CommandText =
-                $"SELECT ballance " +
-                $"FROM CARDS " +
-                $"WHERE cardnumber = {card.Number}; ";
-
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
-
-            DataTable dateVol = new DataTable();
-            dateVol.Load(data);
-
-            int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
-
-            data.Close();
-
-            if ((currentBalance - summ) < 0)
+            if (CheckIfCardExist(cardNum))
             {
-                result = ResultOperations.ChargeError;
-            }
-            else
-            {
-                npgsqlCommand.CommandText =
-                    $"SELECT \"expirationDate\"  " +
-                    $"FROM CARDS " +
-                    $"WHERE cardnumber = {card.Number}; ";
+                string sqlCommand =
+                    $"SELECT * FROM cards WHERE cardnumber = @cardnumber";
 
-                dateVol = new DataTable();
-                dateVol.Load(data);
+                IEnumerable<Card> results =
+                    _connection.Query<Card>(
+                        sqlCommand,
+                        new { cardNum = cardNum });
 
-                data = npgsqlCommand.ExecuteReader();
-                dateVol.Load(data);
+                FillCard(card, results);
 
-                DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
-
-                if (expirationDate < DateTime.Today)
+                if (card.ExpirationDate < DateTime.Today)
                 {
-                    result = ResultOperations.CardExpired;
+                    resultOperations = ResultOperations.CardExpired;
                 }
                 else
                 {
-                    currentBalance -= summ;
-                    npgsqlCommand.CommandText = $"" +
-                        $"UPDATE CARDS " +
-                        $"SET ballance = {currentBalance} " +
-                        $"WHERE cardnumber = {card.Number} ;";
+                    if (card.Ballance - summ < 0)
+                    {
+                        resultOperations = ResultOperations.ChargeError;
+                    }
+                    else
+                    {
+                        int newVol = card.Ballance - summ;
+                        UpdateBallance(card, cardNum, out results, newVol);
 
-                    npgsqlCommand.ExecuteReader();
+                        FillCard(card, results);
+                    }
                 }
             }
+            else
+            {
+                resultOperations = ResultOperations.CardDoesnExist;
+            }
 
-            return result;
+            return resultOperations;
         }
 
         /// <summary>
         /// Начисление бонусов.
         /// </summary>
         /// <param name="card">объект карты.</param>
+        /// <param name="cardNum">Номер карты.</param>
         /// <param name="summ">Сумма к списанию.</param>
         /// <returns>Результат.</returns>
-        public ResultOperations AddBonus(Card card, int summ)
+        public ResultOperations AddBonus(out Card card, int cardNum, int summ)
         {
-            ResultOperations result = ResultOperations.None;
+            ResultOperations resultOperations = ResultOperations.None;
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            card = new Card();
 
-            npgsqlCommand.CommandText =
-                $"SELECT ballance " +
-                $"FROM CARDS " +
-                $"WHERE cardnumber = {card.Number}; ";
-
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
-
-            DataTable dateVol = new DataTable();
-            dateVol.Load(data);
-
-            int currentBalance = (int)dateVol.Rows[0].ItemArray[0];
-            npgsqlCommand.CommandText =
-                    $"SELECT \"expirationDate\"  " +
-                    $"FROM CARDS " +
-                    $"WHERE cardnumber = {card.Number}; ";
-
-            dateVol = new DataTable();
-            dateVol.Load(data);
-
-            data = npgsqlCommand.ExecuteReader();
-            dateVol.Load(data);
-
-            DateTime expirationDate = (DateTime)dateVol.Rows[0].ItemArray[0];
-
-            if (expirationDate < DateTime.Today)
+            if (CheckIfCardExist(cardNum))
             {
-                result = ResultOperations.CardExpired;
+                string sqlCommand =
+                    $"SELECT ballance FROM cards WHERE cardnumber = @cardnumber";
+
+                IEnumerable<Card> results =
+                    _connection.Query<Card>(
+                        sqlCommand,
+                        new { cardNum = cardNum });
+
+                FillCard(card, results);
+
+                if (card.ExpirationDate < DateTime.Today)
+                {
+                    resultOperations = ResultOperations.CardExpired;
+                }
+                else
+                {
+                    int newVol = card.Ballance + summ;
+                    UpdateBallance(card, cardNum, out results, newVol);
+                    //sqlCommand = "UPDATE cards SET ballance = @newVol WHERE  cardnumber = @cardnumber;";
+
+                    //_connection.Execute(sqlCommand, new
+                    //{
+                    //    newBallance = newVol,
+                    //    cardnumber = card.Cardnumber,
+                    //});
+
+                    //sqlCommand =
+                    //$"SELECT ballance FROM cards WHERE cardnumber = @cardnumber";
+
+                    //results =
+                    //    _connection.Query<Card>(
+                    //        sqlCommand,
+                    //        new { cardNum = cardNum });
+
+                    FillCard(card, results);
+                }
             }
             else
             {
-                currentBalance += summ;
-                npgsqlCommand.CommandText = $"" +
-                    $"UPDATE CARDS " +
-                    $"SET ballance = {currentBalance} " +
-                    $"WHERE cardnumber = {card.Number} ;";
-
-                npgsqlCommand.ExecuteReader();
-                data.Close();
+                resultOperations = ResultOperations.CardDoesnExist;
             }
 
-            return result;
+            return resultOperations;
         }
 
         /// <summary>
         /// Получить все карты.
         /// </summary>
+        /// <param name="dataTable">Таблица с данными.</param>
         /// <returns>Таблица с картами.</returns>
         public ResultOperations GetAllCards(out DataTable dataTable)
         {
@@ -441,22 +400,34 @@ namespace CardsHandler.Database
 
             dataTable = new DataTable();
 
-            NpgsqlCommand npgsqlCommand = _connection.CreateCommand();
+            string sqlCommand =
+                    $"SELECT * FROM cards;";
 
-            npgsqlCommand.CommandText = $"" +
-                $"SELECT cd.cardnumber," +
-                $"  cl.\"phoneNumber\"," +
-                $"  cl.\"firstName\"," +
-                $"  cl.\"middleName\"," +
-                $"  cl.\"lastName\"," +
-                $"  cd.ballance," +
-                $"  cd.\"expirationDate\"" +
-                $" FROM clients AS cl " +
-                $" INNER JOIN CARDS as cd ON cl.\"phoneNumber\" = cd.\"phoneNumber\" ;";
+            IEnumerable<Card> results =
+                _connection.Query<Card>(
+                    sqlCommand);
 
-            NpgsqlDataReader data;
-            data = npgsqlCommand.ExecuteReader();
-            dataTable.Load(data);
+            // Определяем структуру таблицы на основе класса Person
+            dataTable.Columns.Add("Cardnumber", typeof(int));
+            dataTable.Columns.Add("ExpirationDate", typeof(DateTime));
+            dataTable.Columns.Add("Ballance", typeof(int));
+            dataTable.Columns.Add("FirstName", typeof(string));
+            dataTable.Columns.Add("MiddleName", typeof(string));
+            dataTable.Columns.Add("LastName", typeof(string));
+            dataTable.Columns.Add("PhoneNumber", typeof(string));
+
+            // Заполняем DataTable из IEnumerable<T>
+            foreach (var item in results)
+            {
+                dataTable.Rows.Add(
+                    item.Cardnumber,
+                    item.ExpirationDate,
+                    item.Ballance,
+                    item.FirstName,
+                    item.MiddleName,
+                    item.LastName,
+                    item.PhoneNumber);
+            }
 
             return resultOperations;
         }
@@ -497,6 +468,39 @@ namespace CardsHandler.Database
         public void Dispose()
         {
             _connection.Close();
+        }
+
+        private static void FillCard(Card card, IEnumerable<Card> results)
+        {
+            foreach (var item in results)
+            {
+                card.Cardnumber = item.Cardnumber;
+                card.ExpirationDate = item.ExpirationDate;
+                card.Ballance = item.Ballance;
+                card.FirstName = item.FirstName;
+                card.MiddleName = item.MiddleName;
+                card.LastName = item.LastName;
+                card.PhoneNumber = item.PhoneNumber;
+            }
+        }
+
+        private void UpdateBallance(Card card, int cardNum, out IEnumerable<Card> results, int newVol)
+        {
+            string sqlCommand = "UPDATE cards SET ballance = @newBallance WHERE  cardnumber = @cardnumber;";
+
+            _connection.Execute(sqlCommand, new
+            {
+                newBallance = newVol,
+                cardnumber = card.Cardnumber,
+            });
+
+            sqlCommand =
+            $"SELECT ballance FROM cards WHERE cardnumber = @cardnumber";
+
+            results =
+                _connection.Query<Card>(
+                    sqlCommand,
+                    new { cardNum = cardNum });
         }
         #endregion METHODS
     }

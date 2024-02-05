@@ -49,6 +49,16 @@ namespace CardsHandler
         /// </summary>
         private string _ownerLastName;
 
+        #region CTORs
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Card"/> class.
+        /// Def ctor.
+        /// </summary>
+        public Card()
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Card"/> class.
         /// Конструктор, для получения объекта из БД.
@@ -105,10 +115,30 @@ namespace CardsHandler
             _ownerLastName = lasName;
         }
 
-        public int Number
+        public Card(
+            int cardnumber,
+            DateTime expirationDate,
+            int ballance,
+            string firstName,
+            string middleName,
+            string lastName,
+            string phoneNumber)
+        {
+            _number = cardnumber;
+            _expirationDate = expirationDate;
+            _ballance = ballance;
+            _ownerFirstName = firstName;
+            _ownerMiddleName = middleName;
+            _ownerLastName = lastName;
+            _phoneNumber = phoneNumber;
+        }
+
+        #endregion CTORs
+
+        public int Cardnumber
         {
             get { return _number; }
-            private set { _number = value; }
+            set { _number = value; }
         }
 
         public string PhoneNumber
@@ -129,22 +159,22 @@ namespace CardsHandler
             set { _ballance = value; }
         }
 
-        public string OwnerFirstName
+        public string FirstName
         {
             get { return _ownerFirstName; }
-            private set { _ownerFirstName = value; }
+            set { _ownerFirstName = value; }
         }
 
-        public string OwnerMiddleName
+        public string MiddleName
         {
             get { return _ownerMiddleName; }
-            private set { _ownerMiddleName = value; }
+            set { _ownerMiddleName = value; }
         }
 
-        public string OwnerLastName
+        public string LastName
         {
             get { return _ownerLastName; }
-            private set { _ownerLastName = value; }
+            set { _ownerLastName = value; }
         }
     }
 }
