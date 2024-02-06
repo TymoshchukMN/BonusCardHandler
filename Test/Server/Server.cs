@@ -60,7 +60,7 @@ namespace CardsHandler.Server
             return card;
         }
 
-        public ResultOperations GetCard(string request, out Card card)
+        public ResultOperations ProcessCard(string request, out Card card)
         {
             card = null;
             TcpClient client = new TcpClient(_serverAddress, _serverPort);
@@ -76,6 +76,21 @@ namespace CardsHandler.Server
             ResultOperations resultOperations = ResultOperations.None;
 
             const string Mask = "{\"Cardnumber";
+            if (responseMessage.ToString() == ResultOperations.CardExpired.ToString())
+            {
+                return ResultOperations.CardExpired;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.CardDoesnExist.ToString())
+            {
+                return ResultOperations.CardDoesnExist;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.ChargeError.ToString())
+            {
+                return ResultOperations.ChargeError;
+            }
+
             if (responseMessage.ToString().Substring(0, 12) == Mask)
             {
                 card = JsonConvert.DeserializeObject<Card>(responseMessage);

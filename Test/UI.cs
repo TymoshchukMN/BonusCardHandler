@@ -267,6 +267,9 @@ namespace CardsHandler
                 case ResultOperations.NotChangedWhatToDo:
                     message = "Не указано что сделать с картой";
                     break;
+                case ResultOperations.CardDoesnExist:
+                    message = "Карта не существует";
+                    break;
             }
 
             const string CAPTION = "Ошибка";

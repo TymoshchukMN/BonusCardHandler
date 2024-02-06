@@ -362,21 +362,6 @@ namespace CardsHandler.Database
                 {
                     int newVol = card.Ballance + summ;
                     UpdateBallance(card, cardNum, out results, newVol);
-                    //sqlCommand = "UPDATE cards SET ballance = @newVol WHERE  cardnumber = @cardnumber;";
-
-                    //_connection.Execute(sqlCommand, new
-                    //{
-                    //    newBallance = newVol,
-                    //    cardnumber = card.Cardnumber,
-                    //});
-
-                    //sqlCommand =
-                    //$"SELECT ballance FROM cards WHERE cardnumber = @cardnumber";
-
-                    //results =
-                    //    _connection.Query<Card>(
-                    //        sqlCommand,
-                    //        new { cardNum = cardNum });
 
                     FillCard(card, results);
                 }

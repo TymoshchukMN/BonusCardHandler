@@ -152,7 +152,6 @@ namespace CardsHandler
                                 pgDB = CreatePostrgesInstance();
                                 UI.PrintProcessing(ref tbResultForm);
 
-
                                 switch (searchType)
                                 {
                                     case SearchType.ByPhone:
@@ -162,7 +161,7 @@ namespace CardsHandler
                                           $"{searchType};" +
                                           $"{tbPhoneNumber.Text};");
 
-                                        operResult = server.GetCard(request, out Card card);
+                                        operResult = server.ProcessCard(request, out Card card);
 ;
                                         switch (operResult)
                                         {
@@ -191,7 +190,7 @@ namespace CardsHandler
                                             $"{searchType};" +
                                             $"{cardNumber};");
 
-                                        operResult = server.GetCard(request, out card);
+                                        operResult = server.ProcessCard(request, out card);
                                         switch (operResult)
                                         {
                                             case ResultOperations.None:
@@ -231,7 +230,7 @@ namespace CardsHandler
                                 string request = string.Format(
                                     $"{cardsOperation};{cardNumber}");
 
-                                operResult = server.GetCard(request, out Card card);
+                                operResult = server.ProcessCard(request, out Card card);
                                 switch (operResult)
                                 {
                                     case ResultOperations.None:
@@ -278,7 +277,6 @@ namespace CardsHandler
                                     ref tbResultForm,
                                     result);
                                 break;
-
                             case ResultOperations.EmptyField:
 
                                 UI.PrintErrorProcessCard(
@@ -302,14 +300,20 @@ namespace CardsHandler
 
                                 int.TryParse(
                                     tbChargeSum.Text,
-                                    out int changeSum);
+                                    out int summ);
 
-                                pgDB = CreatePostrgesInstance();
-                                int.TryParse(
-                                    tbCardNumber.Text,
-                                    out int cardnumber);
 
-                                result = pgDB.FindCardByCard(out Card card, cardnumber);
+                                if (rbAddBonuses.Checked)
+                                {
+                                    bonusOperations = BonusOperations.Add;
+                                }
+                                else
+                                {
+                                    if (rbRemoveBonuses.Checked)
+                                    {
+                                        bonusOperations = BonusOperations.Remove;
+                                    }
+                                }
 
                                 switch (result)
                                 {
@@ -319,10 +323,12 @@ namespace CardsHandler
                                         {
                                             case BonusOperations.Add:
 
-                                                operResult = pgDB.AddBonus(
-                                                    out card,
-                                                    cardnumber,
-                                                    changeSum);
+                                                int.TryParse(tbCardNumber.Text, out int cardNumber);
+
+                                                string request = string.Format(
+                                                    $"{cardsOperation};{bonusOperations};{cardNumber};{summ}");
+
+                                                operResult = server.ProcessCard(request, out Card card);
 
                                                 switch (operResult)
                                                 {
@@ -331,23 +337,33 @@ namespace CardsHandler
                                                         UI.PrintCardElements(
                                                             ref tbResultForm,
                                                             card);
-
                                                         UI.PrintSuccess(cardsOperation);
+
                                                         break;
 
                                                     case ResultOperations.CardExpired:
                                                         UI.PrintErrorProcessCard(
-                                                           ref tbResultForm,
-                                                           operResult);
+                                                            ref tbResultForm,
+                                                            operResult);
+                                                        break;
+                                                    case ResultOperations.CardDoesnExist:
+                                                        UI.PrintErrorProcessCard(
+                                                            ref tbResultForm,
+                                                            operResult);
+
                                                         break;
                                                 }
 
                                                 break;
+
                                             case BonusOperations.Remove:
-                                                operResult = pgDB.Charge(
-                                                    out card,
-                                                    cardnumber,
-                                                    changeSum);
+                                                int.TryParse(tbCardNumber.Text, out cardNumber);
+
+
+                                                request = string.Format(
+                                                    $"{cardsOperation};{bonusOperations};{cardNumber};{summ}");
+
+                                                operResult = server.ProcessCard(request, out card);
 
                                                 switch (operResult)
                                                 {
@@ -381,10 +397,9 @@ namespace CardsHandler
 
                                     case ResultOperations.CardDoesnExist:
 
-                                        UI.PrintErrorCardDoesntExist(
-                                        ref tbResultForm,
-                                        searchType,
-                                        cardnumber);
+                                        UI.PrintErrorProcessCard(
+                                            ref tbResultForm,
+                                            result);
 
                                         break;
                                 }
