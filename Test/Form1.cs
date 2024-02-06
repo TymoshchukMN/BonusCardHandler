@@ -19,6 +19,7 @@ namespace CardsHandler
         private const string SeeBalance = "Помотреть баланс";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
+        private static FormHandlerCars _instance;
         private readonly Color markerColor = Color.FromArgb(214, 254, 216);
         private SearchType searchType;
         private CardsOperation cardsOperation;
@@ -34,6 +35,16 @@ namespace CardsHandler
             tbFirstName.Enabled = false;
             tbMiddleName.Enabled = false;
             tbLastName.Enabled = false;
+        }
+
+        public static FormHandlerCars GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new FormHandlerCars();
+            }
+
+            return _instance;
         }
 
         private static PostgresDB CreatePostrgesInstance()
@@ -335,10 +346,9 @@ namespace CardsHandler
                                                 {
                                                     case ResultOperations.ChargeError:
 
-                                                        UI.PrintErrorCardDoesntExist(
+                                                        UI.PrintErrorProcessCard(
                                                             ref tbResultForm,
-                                                            searchType,
-                                                            cardnumber);
+                                                            operResult);
 
                                                         break;
                                                     case ResultOperations.CardExpired:
