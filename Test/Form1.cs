@@ -25,6 +25,10 @@ namespace CardsHandler
         private CardsOperation cardsOperation;
         private BonusOperations bonusOperations;
 
+        //
+        // !!!!!!!ветка[serverJson] создана от[develope]>, мерджить в[develope]>
+        // 
+
         public FormHandlerCars()
         {
             InitializeComponent();
@@ -70,6 +74,9 @@ namespace CardsHandler
                 ResultOperations operResult;
 
                 IProcessCardsDB pgDB;
+                SrvConfig srvConfig = BL.GetServerConfig();
+                //ServerInstance server = new ServerInstance(srvConfig.Server, srvConfig.Port);
+                ServerInstance server = new ServerInstance();
 
                 switch (cardsOperation)
                 {
@@ -98,20 +105,14 @@ namespace CardsHandler
 
                             case ResultOperations.None:
 
-                                pgDB = CreatePostrgesInstance();
+                                string request = string.Format(
+                                    $"{cardsOperation};" +
+                                    $"{tbPhoneNumber.Text};" +
+                                    $"{tbFirstName.Text};" +
+                                    $"{tbMiddleName.Text};" +
+                                    $"{tbLastName.Text}");
 
-                                UI.PrintProcessing(ref tbResultForm);
-
-                                int newCardNumber = CardPoolServer.RequestCardNum();
-
-                                Card card = new Card(
-                                    newCardNumber,
-                                    tbPhoneNumber.Text,
-                                    tbFirstName.Text,
-                                    tbMiddleName.Text,
-                                    tbLastName.Text);
-
-                                pgDB.CreateCard(card);
+                                Card card = server.CreateCard(request);
 
                                 UI.PrintCardElements(ref tbResultForm, card);
                                 UI.PrintSuccess(cardsOperation);
@@ -151,14 +152,18 @@ namespace CardsHandler
                                 pgDB = CreatePostrgesInstance();
                                 UI.PrintProcessing(ref tbResultForm);
 
+
                                 switch (searchType)
                                 {
                                     case SearchType.ByPhone:
 
-                                        operResult = pgDB.FindCardByPhone(
-                                            out Card card,
-                                            tbPhoneNumber.Text);
+                                        string request = string.Format(
+                                          $"{cardsOperation};" +
+                                          $"{searchType};" +
+                                          $"{tbPhoneNumber.Text};");
 
+                                        operResult = server.GetCard(request, out Card card);
+;
                                         switch (operResult)
                                         {
                                             case ResultOperations.None:
@@ -175,12 +180,18 @@ namespace CardsHandler
                                         }
 
                                         break;
+
                                     case SearchType.ByCard:
                                         int.TryParse(
                                            tbCardNumber.Text,
                                            out int cardNumber);
 
-                                        operResult = pgDB.FindCardByCard(out card, cardNumber);
+                                        request = string.Format(
+                                            $"{cardsOperation};" +
+                                            $"{searchType};" +
+                                            $"{cardNumber};");
+
+                                        operResult = server.GetCard(request, out card);
                                         switch (operResult)
                                         {
                                             case ResultOperations.None:
@@ -215,15 +226,12 @@ namespace CardsHandler
                         {
                             case ResultOperations.None:
 
-                                pgDB = CreatePostrgesInstance();
-                                UI.PrintProcessing(ref tbResultForm);
-
                                 int.TryParse(tbCardNumber.Text, out int cardNumber);
 
-                                operResult = pgDB.FindCardByCard(
-                                    out Card card,
-                                    cardNumber);
+                                string request = string.Format(
+                                    $"{cardsOperation};{cardNumber}");
 
+                                operResult = server.GetCard(request, out Card card);
                                 switch (operResult)
                                 {
                                     case ResultOperations.None:
@@ -232,10 +240,9 @@ namespace CardsHandler
                                         break;
                                     case ResultOperations.CardDoesnExist:
 
-                                        UI.PrintErrorCardDoesntExist(
+                                        UI.PrintErrorProcessCard(
                                            ref tbResultForm,
-                                           searchType,
-                                           cardNumber);
+                                           operResult);
 
                                         break;
                                 }

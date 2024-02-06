@@ -195,7 +195,7 @@
     <Compile Include="JSON\DBConfigJSON.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\CardPoolServer.cs" />
+    <Compile Include="Server\Server.cs" />
     <Compile Include="Server\SrvConfig.cs" />
     <Compile Include="UI.cs" />
     <Compile Include="Enums\ResultOperations.cs" />
