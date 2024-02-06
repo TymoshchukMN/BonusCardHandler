@@ -433,6 +433,8 @@ namespace CardsHandler
                     tbMiddleName.Enabled = true;
                     tbLastName.Enabled = true;
                     tbPhoneNumber.Enabled = true;
+                    tbCardNumber.Text = string.Empty;
+                    tbCardNumber.Enabled = false;
                     UI.PrintMessageCreationCard(ref tbResultForm);
                     UI.DryItems(tbFirstName, markerColor);
                     UI.DryItems(tbMiddleName, markerColor);
