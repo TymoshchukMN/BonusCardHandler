@@ -9,7 +9,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using CardsHandler.Database;
 using CardsHandler.JSON;
 using CardsHandler.Server;
 using Newtonsoft.Json;
@@ -138,20 +140,6 @@ namespace CardsHandler
             SrvConfig srvConfigJSON = JsonConvert.DeserializeObject<SrvConfig>(srvConfigFile);
 
             return srvConfigJSON;
-        }
-
-        /// <summary>
-        /// Генерация нромера карты.
-        /// </summary>
-        /// <param name="number">номер карты.</param>
-        /// <returns>номер карты.</returns>
-        public static int GenerateCardNumber(out int number)
-        {
-            number = 0;
-            Random random = new Random();
-            number = random.Next(99999, 1000000);
-
-            return number;
         }
 
         /// <summary>
@@ -293,5 +281,6 @@ namespace CardsHandler
 
             return isCorrect;
         }
+
     }
 }
