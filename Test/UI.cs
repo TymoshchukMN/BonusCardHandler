@@ -227,10 +227,10 @@ namespace CardsHandler
         /// <param name="card">Карта.</param>
         public static void PrintCardElements(ref RichTextBox box, Card card)
         {
-            string message = $"Номер карты:\t{card.Number}\n" +
+            string message = $"Номер карты:\t{card.Cardnumber}\n" +
                 $"Баланс:\t\t{card.Ballance}\n" +
                 $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
-                $"Владелец:\t{card.OwnerLastName} {card.OwnerFirstName} {card.OwnerMiddleName}\n" +
+                $"Владелец:\t{card.LastName} {card.FirstName} {card.MiddleName}\n" +
                 $"Номер телефона:\t{card.PhoneNumber}\n";
 
             box.Text = message;
@@ -337,6 +337,21 @@ namespace CardsHandler
 
             MessageBox.Show(
                   Message,
+                  CAPTION,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Warning);
+        }
+
+        /// <summary>
+        /// Вывод ошибки, что уже существует карта с таки номером.
+        /// </summary>
+        /// <param name="str">Строка с ошибкой. </param>
+        public static void PrintErrorAdintCard(string str)
+        {
+            const string CAPTION = "Ошибка";
+
+            MessageBox.Show(
+                  str,
                   CAPTION,
                   MessageBoxButtons.OK,
                   MessageBoxIcon.Warning);

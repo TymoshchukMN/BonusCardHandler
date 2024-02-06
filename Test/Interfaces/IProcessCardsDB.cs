@@ -10,13 +10,13 @@ namespace CardsHandler.Interfaces
 
         void CreateCard(Card card);
 
-        Card FindCardByPhone(string number);
+        ResultOperations FindCardByPhone(out Card card, string number);
 
-        Card FindCardByCard(int number);
+        ResultOperations FindCardByCard(out Card card, int number);
 
-        ResultOperations Charge(Card card, int summ);
+        ResultOperations Charge(out Card card, int cardNum, int summ);
 
-        ResultOperations AddBonus(Card card, int summ);
+        ResultOperations AddBonus(out Card card, int cardNum, int summ);
 
         ResultOperations GetAllCards(out DataTable dataTable);
 

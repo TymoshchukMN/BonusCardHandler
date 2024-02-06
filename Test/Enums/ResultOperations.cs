@@ -24,9 +24,19 @@ namespace CardsHandler
         WrongPhone,
 
         /// <summary>
+        /// Телефон не существует.
+        /// </summary>
+        PhoneDoesnEsixt,
+
+        /// <summary>
         /// не верный номер карты.
         /// </summary>
         WrongCard,
+
+        /// <summary>
+        /// Карта не существует.
+        /// </summary>
+        CardDoesnExist,
 
         /// <summary>
         /// Не верное имя.
