@@ -75,8 +75,8 @@ namespace CardsHandler
 
                 IProcessCardsDB pgDB;
                 SrvConfig srvConfig = BL.GetServerConfig();
-                //ServerInstance server = new ServerInstance(srvConfig.Server, srvConfig.Port);
-                ServerInstance server = new ServerInstance();
+                ServerInstance server = new ServerInstance(srvConfig.Server, srvConfig.Port);
+                //ServerInstance server = new ServerInstance();
 
                 switch (cardsOperation)
                 {
@@ -301,7 +301,6 @@ namespace CardsHandler
                                 int.TryParse(
                                     tbChargeSum.Text,
                                     out int summ);
-
 
                                 if (rbAddBonuses.Checked)
                                 {
