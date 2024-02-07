@@ -1,45 +1,24 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Data;
 using System.Net.Sockets;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace CardsHandler.Server
 {
     internal class ServerInstance
     {
-        private string _serverAddress = "127.0.0.1";
-        private int _serverPort = 49001;
+        private string _serverAddress;
+        private int _serverPort;
 
         public ServerInstance()
         {
-
         }
 
         public ServerInstance(string serverAddress, int serverPort)
         {
             _serverAddress = serverAddress;
             _serverPort = serverPort;
-        }
-
-        public int RequestCardNum()
-        {
-            // Получаем конфиг подключения к серверу.
-            const string RequestCard = "CardRequest";
-
-            TcpClient client = new TcpClient(_serverAddress, _serverPort);
-            NetworkStream stream = client.GetStream();
-
-            byte[] data = Encoding.ASCII.GetBytes(RequestCard);
-            stream.Write(data, 0, data.Length);
-
-            byte[] buffer = new byte[1024];
-            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-            string responseMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            Console.WriteLine($"Ответ от сервера: {responseMessage}");
-            int.TryParse(responseMessage, out int cardNubber);
-            client.Close();
-
-            return cardNubber;
         }
 
         public Card CreateCard(string request)
@@ -103,6 +82,24 @@ namespace CardsHandler.Server
             client.Close();
 
             return resultOperations;
+        }
+
+        public DataTable GetDatatable(string request)
+        {
+            TcpClient client = new TcpClient(_serverAddress, _serverPort);
+            NetworkStream stream = client.GetStream();
+
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            stream.Write(data, 0, data.Length);
+
+            byte[] buffer = new byte[103072];
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            string jsonReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            // Десериализация JSON в DataTable
+            DataTable receivedTable = JsonConvert.DeserializeObject<DataTable>(jsonReceived);
+
+            return receivedTable;
         }
     }
 }

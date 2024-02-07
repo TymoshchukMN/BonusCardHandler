@@ -19,7 +19,5 @@ namespace CardsHandler.Interfaces
         ResultOperations AddBonus(out Card card, int cardNum, int summ);
 
         ResultOperations GetAllCards(out DataTable dataTable);
-
-        ResultOperations GetExpiredCards(out DataTable dataTable);
     }
 }

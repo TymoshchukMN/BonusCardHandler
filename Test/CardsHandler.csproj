@@ -181,7 +181,6 @@
     <Compile Include="BL.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="Database\DBConfig.cs" />
-    <Compile Include="Database\PostgresDB.cs" />
     <Compile Include="Enums\BonusOperations.cs" />
     <Compile Include="Enums\CardsOperation.cs" />
     <Compile Include="Enums\SearchType.cs" />
@@ -191,11 +190,10 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IProcessCardsDB.cs" />
     <Compile Include="JSON\DBConfigJSON.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\Server.cs" />
+    <Compile Include="Server\ServerInstance.cs" />
     <Compile Include="Server\SrvConfig.cs" />
     <Compile Include="UI.cs" />
     <Compile Include="Enums\ResultOperations.cs" />

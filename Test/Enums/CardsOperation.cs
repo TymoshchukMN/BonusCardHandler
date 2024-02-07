@@ -32,5 +32,10 @@ namespace CardsHandler.Enums
         /// Просмотр баланса на карте.
         /// </summary>
         SeeBalance,
+
+        /// <summary>
+        /// Получить все карты в базе.
+        /// </summary>
+        GetAllCards,
     }
 }

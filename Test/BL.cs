@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CardsHandler.Database;
 using CardsHandler.JSON;
 using CardsHandler.Server;
 using Newtonsoft.Json;

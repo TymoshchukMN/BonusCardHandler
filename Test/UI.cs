@@ -32,25 +32,6 @@ namespace CardsHandler
         }
 
         /// <summary>
-        /// Вывод ошибки подключения к БД.
-        /// </summary>
-        /// <param name="pgInstance">Экземпляр объекта БД.</param>
-        public static void PrintErrorConnectionToDB(PostgresDB pgInstance)
-        {
-            string message =
-                       $"Не удается подключиться к БД {pgInstance.Server}\n" +
-                       $"база {pgInstance.DBname}\n" +
-                       $"порт:{pgInstance.Port}";
-            const string CAPTION = "Attention";
-
-            MessageBox.Show(
-                  message,
-                  CAPTION,
-                  MessageBoxButtons.OK,
-                  MessageBoxIcon.Error);
-        }
-
-        /// <summary>
         /// Запрос ввода карты.
         /// </summary>
         /// <param name="box">окно вывода результата.</param>

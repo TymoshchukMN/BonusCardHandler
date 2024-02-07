@@ -54,7 +54,6 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabSingleOper = new System.Windows.Forms.TabPage();
             this.tabBulkOper = new System.Windows.Forms.TabPage();
-            this.btExpiredCards = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.btGetAllCards = new System.Windows.Forms.Button();
             this.gbSearch.SuspendLayout();
@@ -321,7 +320,6 @@
             // 
             // tabBulkOper
             // 
-            this.tabBulkOper.Controls.Add(this.btExpiredCards);
             this.tabBulkOper.Controls.Add(this.dataGridView);
             this.tabBulkOper.Controls.Add(this.btGetAllCards);
             this.tabBulkOper.Location = new System.Drawing.Point(4, 22);
@@ -331,16 +329,6 @@
             this.tabBulkOper.TabIndex = 1;
             this.tabBulkOper.Text = "Массовые операции";
             this.tabBulkOper.UseVisualStyleBackColor = true;
-            // 
-            // btExpiredCards
-            // 
-            this.btExpiredCards.Location = new System.Drawing.Point(7, 46);
-            this.btExpiredCards.Name = "btExpiredCards";
-            this.btExpiredCards.Size = new System.Drawing.Size(182, 23);
-            this.btExpiredCards.TabIndex = 2;
-            this.btExpiredCards.Text = "Показать просроченные карты";
-            this.btExpiredCards.UseVisualStyleBackColor = true;
-            this.btExpiredCards.Click += new System.EventHandler(this.BtExpiredCards_Click);
             // 
             // dataGridView
             // 
@@ -419,7 +407,6 @@
         private System.Windows.Forms.TabPage tabBulkOper;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.Button btGetAllCards;
-        private System.Windows.Forms.Button btExpiredCards;
     }
 }
 

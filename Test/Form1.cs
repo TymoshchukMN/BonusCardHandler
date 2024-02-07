@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using CardsHandler.Database;
 using CardsHandler.Enums;
-using CardsHandler.Interfaces;
-using CardsHandler.JSON;
 using CardsHandler.Server;
 
 namespace CardsHandler
@@ -24,10 +21,6 @@ namespace CardsHandler
         private SearchType searchType;
         private CardsOperation cardsOperation;
         private BonusOperations bonusOperations;
-
-        //
-        // !!!!!!!ветка[serverJson] создана от[develope]>, мерджить в[develope]>
-        // 
 
         public FormHandlerCars()
         {
@@ -51,18 +44,6 @@ namespace CardsHandler
             return _instance;
         }
 
-        private static PostgresDB CreatePostrgesInstance()
-        {
-            DBConfigJSON dBConfig = BL.GetDBConfig();
-
-            PostgresDB pgDB = PostgresDB.GetInstance(
-               dBConfig.DBConfig.Server,
-               dBConfig.DBConfig.UserName,
-               dBConfig.DBConfig.DBname,
-               dBConfig.DBConfig.Port);
-            return pgDB;
-        }
-
         private void BtProcess_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(cbOperations.Text))
@@ -72,11 +53,8 @@ namespace CardsHandler
             else
             {
                 ResultOperations operResult;
-
-                IProcessCardsDB pgDB;
                 SrvConfig srvConfig = BL.GetServerConfig();
                 ServerInstance server = new ServerInstance(srvConfig.Server, srvConfig.Port);
-                //ServerInstance server = new ServerInstance();
 
                 switch (cardsOperation)
                 {
@@ -149,7 +127,6 @@ namespace CardsHandler
 
                             case ResultOperations.None:
 
-                                pgDB = CreatePostrgesInstance();
                                 UI.PrintProcessing(ref tbResultForm);
 
                                 switch (searchType)
@@ -162,7 +139,6 @@ namespace CardsHandler
                                           $"{tbPhoneNumber.Text};");
 
                                         operResult = server.ProcessCard(request, out Card card);
-;
                                         switch (operResult)
                                         {
                                             case ResultOperations.None:
@@ -358,7 +334,6 @@ namespace CardsHandler
                                             case BonusOperations.Remove:
                                                 int.TryParse(tbCardNumber.Text, out cardNumber);
 
-
                                                 request = string.Format(
                                                     $"{cardsOperation};{bonusOperations};{cardNumber};{summ}");
 
@@ -550,38 +525,16 @@ namespace CardsHandler
         private void BtGetAllCards_Click(object sender, EventArgs e)
         {
             dataGridView.Refresh();
-            PostgresDB pgDB = CreatePostrgesInstance();
 
-            switch (pgDB.GetAllCards(out DataTable data))
-            {
-                case ResultOperations.None:
-                    dataGridView.DataSource = data;
-                    break;
+            string request = string.Format(
+                                   $"{CardsOperation.GetAllCards};");
 
-                case ResultOperations.CannontConnectToDB:
+            SrvConfig srvConfig = BL.GetServerConfig();
+            ServerInstance server = new ServerInstance(
+                srvConfig.Server,
+                srvConfig.Port);
 
-                    UI.PrintErrorConnectionToDB(pgDB);
-                    break;
-            }
-        }
-
-        private void BtExpiredCards_Click(object sender, EventArgs e)
-        {
-            dataGridView.Refresh();
-            PostgresDB pgDB = CreatePostrgesInstance();
-
-            switch (pgDB.GetExpiredCards(out DataTable data))
-            {
-                case ResultOperations.None:
-                    dataGridView.DataSource = data;
-                    break;
-
-                case ResultOperations.CannontConnectToDB:
-
-                    UI.PrintErrorConnectionToDB(pgDB);
-                    break;
-            }
-
+            DataTable data = server.GetDatatable(request);
             dataGridView.DataSource = data;
         }
     }
