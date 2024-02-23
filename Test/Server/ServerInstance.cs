@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
 
 namespace CardsHandler.Server
 {
-    internal class ServerInstance
+    public class ServerInstance
     {
-        private string _serverAddress;
-        private int _serverPort;
+        private const string ConfFilePathSRV = @"\\172.16.112.40\share\TymoshchukMN\SRVconfigFile.json";
 
-        public ServerInstance()
-        {
-        }
+        private readonly string _serverAddress;
+        private readonly int _serverPort;
 
         public ServerInstance(string serverAddress, int serverPort)
         {
-            _serverAddress = serverAddress;
-            _serverPort = serverPort;
+            /*_serverAddress = serverAddress;
+            _serverPort = serverPort;*/
+            _serverAddress = "127.0.0.1";
+            _serverPort = 49001;
+        }
+
+        public ServerInstance()
+        {
+            SrvConfig srvConfig = GetServerConfig();
+            _serverAddress = srvConfig.Server;
+            _serverPort = srvConfig.Port;
         }
 
         public Card CreateCard(string request)
@@ -100,6 +108,14 @@ namespace CardsHandler.Server
             DataTable receivedTable = JsonConvert.DeserializeObject<DataTable>(jsonReceived);
 
             return receivedTable;
+        }
+
+        private static SrvConfig GetServerConfig()
+        {
+            string srvConfigFile = File.ReadAllText(ConfFilePathSRV);
+            SrvConfig srvConfigJSON = JsonConvert.DeserializeObject<SrvConfig>(srvConfigFile);
+
+            return srvConfigJSON;
         }
     }
 }

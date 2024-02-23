@@ -8,7 +8,6 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using CardsHandler.Database;
 using CardsHandler.Enums;
 
 namespace CardsHandler
@@ -111,129 +110,25 @@ namespace CardsHandler
         }
 
         /// <summary>
-        /// Ошибка введен не правильный номер.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void ErrorInPhoneNumber(ref RichTextBox box)
-        {
-            const string MessageErrorInNUmber = "Ошибка в номере телефона.\n" +
-                "формат ввода 380XXXXXXXXXX";
-
-            box.Text = MessageErrorInNUmber;
-        }
-
-        /// <summary>
-        /// Ошибка ввода имени.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void ErrorWrongName(ref RichTextBox box)
-        {
-            const string MessageErrorInNUmber = "Не правильное указано ФИО пользователя." +
-                "Должны быть только БУКВЫ";
-            box.Text = MessageErrorInNUmber;
-        }
-
-        /// <summary>
-        /// Ошибка ввода карты.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void ErrorWrongCard(ref RichTextBox box)
-        {
-            const string MessageErrorInNUmber = "Не правильно указан номер карты. ";
-            box.Text = MessageErrorInNUmber;
-        }
-
-        /// <summary>
-        /// Ошибка ввода полей. Указано пустое поле.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void ErrorEptyFields(ref RichTextBox box)
-        {
-            const string MessageErrorInNUmber = "ОШИБКА. Не все поля заполнены.\n" +
-                "Нужное поле подсвечено зеленым цветом.";
-            box.Text = MessageErrorInNUmber;
-        }
-
-        public static void PrintSuccess(ref RichTextBox box)
-        {
-            const string MessageSuccess = "УСПЕХ";
-            box.Text = MessageSuccess;
-        }
-
-        /// <summary>
-        /// Вывод ошибки об отсутствии карты в базе.
-        /// </summary>
-        /// <param name="box">Окно вывода результата.</param>
-        /// <param name="searchType">тип поиска.</param>
-        /// <param name="number">номер карты или телефона.</param>
-        public static void PrintErrorCardDoesntExist(
-            ref RichTextBox box,
-            SearchType searchType,
-            int number)
-        {
-            string messageSuccess = string.Empty;
-            switch (searchType)
-            {
-                case SearchType.ByPhone:
-                    messageSuccess = $"В базе нет карты привязанных к номеру {number}.\n" +
-                        $"Проверьте правильность ввода";
-                    break;
-                case SearchType.ByCard:
-                    messageSuccess = $"В базе нет карты с номером {number}.\n" +
-                      $"Проверьте правильность ввода";
-                    break;
-            }
-
-            box.Text = messageSuccess;
-        }
-
-        /// <summary>
-        /// Печать ошибки "Телефон не существует".
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        /// <param name="number">телефон.</param>
-        public static void PrintErrorPhoneDoesntExist(
-            ref RichTextBox box,
-            string number)
-        {
-            string message = $"В базе нет клиентов с номером телефона " +
-                $"{number}";
-            box.Text = message;
-        }
-
-        /// <summary>
-        /// Вывод информации о карте.
-        /// </summary>
-        /// <param name="box">Окнов вывода.</param>
-        /// <param name="card">Карта.</param>
-        public static void PrintCardElements(ref RichTextBox box, Card card)
-        {
-            string message = $"Номер карты:\t{card.Cardnumber}\n" +
-                $"Баланс:\t\t{card.Ballance}\n" +
-                $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
-                $"Владелец:\t{card.LastName} {card.FirstName} {card.MiddleName}\n" +
-                $"Номер телефона:\t{card.PhoneNumber}\n";
-
-            box.Text = message;
-        }
-
-        /// <summary>
         /// Печать ошибки о не верной сумме к списанию.
         /// </summary>
-        /// <param name="box">окно для вывода результата.</param>
         /// <param name="result">Результат операции.</param>
-        public static void PrintErrorProcessCard(
-            ref RichTextBox box,
-            ResultOperations result)
+        public static void PrintErrorProcessCard(ResultOperations result)
         {
             string message = string.Empty;
             switch (result)
             {
+                case ResultOperations.WrongName:
+                    message = "Не верно указан ФИО.";
+                    break;
+                case ResultOperations.WrongPhone:
+                    message = "Не верно указан номер телефона.";
+                    break;
                 case ResultOperations.WrongSumm:
                     message = "Не венрно указана сумма к списанию.";
                     break;
                 case ResultOperations.EmptyField:
-                    message = "Не указана сумма к списанию.";
+                    message = "Заполнены не все поля.";
                     break;
                 case ResultOperations.ChargeError:
                     message = "Нельзя списать такое количество бонусов.";
@@ -251,6 +146,9 @@ namespace CardsHandler
                 case ResultOperations.CardDoesnExist:
                     message = "Карта не существует";
                     break;
+                case ResultOperations.WrongCard:
+                    message = "не верно указан номер карты";
+                    break;
             }
 
             const string CAPTION = "Ошибка";
@@ -259,86 +157,16 @@ namespace CardsHandler
                   CAPTION,
                   MessageBoxButtons.OK,
                   MessageBoxIcon.Error);
-
-            box.Text = message;
         }
 
-        /// <summary>
-        /// Печать сообщения о выполнении обработки.
-        /// </summary>
-        /// <param name="box">
-        /// Окно для вывода.
-        /// </param>
-        public static void PrintProcessing(ref RichTextBox box)
-        {
-            string message = "Обработка....";
-            box.Text = message;
-        }
-
-        /// <summary>
-        /// Вывод окна об успешном выполнении перации.
-        /// </summary>
-        /// <param name="operation">
-        /// Тип операции с картой.
-        /// </param>
-        public static void PrintSuccess(CardsOperation operation)
-        {
-            string message = string.Empty;
-
-            switch (operation)
-            {
-                case CardsOperation.Create:
-                    message = "Карта создана успешно.";
-                    break;
-                case CardsOperation.Find:
-                    message = "Карта найдена.";
-                    break;
-                case CardsOperation.Change:
-                    message = "Балан бонусов изменен.";
-                    break;
-                case CardsOperation.SeeBalance:
-                    message = "Карта найдена. Баланс в окне вывода.";
-                    break;
-            }
-
-            const string CAPTION = "Информация";
-
-            MessageBox.Show(
-                  message,
-                  CAPTION,
-                  MessageBoxButtons.OK,
-                  MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Вывод ошибки, что уже существует карта с таки номером тебефона.
-        /// </summary>
-        public static void PrintErrorPhoneExist()
-        {
-            const string Message = "В базе уже есть карта " +
-                "с таким номером телефона";
-            const string CAPTION = "Ошибка";
-
-            MessageBox.Show(
-                  Message,
-                  CAPTION,
-                  MessageBoxButtons.OK,
-                  MessageBoxIcon.Warning);
-        }
-
-        /// <summary>
-        /// Вывод ошибки, что уже существует карта с таки номером.
-        /// </summary>
-        /// <param name="str">Строка с ошибкой. </param>
-        public static void PrintErrorAdintCard(string str)
+        public static void PrintError(string message)
         {
             const string CAPTION = "Ошибка";
-
             MessageBox.Show(
-                  str,
-                  CAPTION,
-                  MessageBoxButtons.OK,
-                  MessageBoxIcon.Warning);
+                      message,
+                      CAPTION,
+                      MessageBoxButtons.OK,
+                      MessageBoxIcon.Error);
         }
     }
 }

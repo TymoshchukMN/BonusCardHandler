@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CardsHandler.Database;
 
-namespace CardsHandler.JSON
+namespace CardsHandler
 {
-    public class DBConfigJSON
+    public class StreamProcessor
     {
-        public DBConfig DBConfig { get; set; }
     }
 }

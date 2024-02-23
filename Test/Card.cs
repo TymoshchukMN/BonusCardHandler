@@ -10,14 +10,14 @@ using System;
 
 namespace CardsHandler
 {
-    internal class Card
+    public class Card
     {
         private const int DefaultSumm = 1000;
 
         /// <summary>
         /// Номер карты.
         /// </summary>
-        private int _number;
+        private int _cardNumber;
 
         /// <summary>
         /// Номер телефона.
@@ -80,7 +80,7 @@ namespace CardsHandler
              DateTime date,
              int balance)
         {
-            _number = number;
+            _cardNumber = number;
             _phoneNumber = phone;
             _expirationDate = date;
             _ballance = DefaultSumm;
@@ -106,7 +106,7 @@ namespace CardsHandler
             string middleName,
             string lasName)
         {
-            _number = number;
+            _cardNumber = number;
             _phoneNumber = phone;
             _expirationDate = DateTime.Today;
             _ballance = DefaultSumm;
@@ -124,7 +124,7 @@ namespace CardsHandler
             string lastName,
             string phoneNumber)
         {
-            _number = cardnumber;
+            _cardNumber = cardnumber;
             _expirationDate = expirationDate;
             _ballance = ballance;
             _ownerFirstName = firstName;
@@ -137,8 +137,8 @@ namespace CardsHandler
 
         public int Cardnumber
         {
-            get { return _number; }
-            set { _number = value; }
+            get { return _cardNumber; }
+            set { _cardNumber = value; }
         }
 
         public string PhoneNumber

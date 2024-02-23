@@ -1,6 +1,6 @@
 ﻿namespace CardsHandler
 {
-    partial class FormHandlerCars
+    partial class FormHandlerCards
     {
         /// <summary>
         /// Required designer variable.

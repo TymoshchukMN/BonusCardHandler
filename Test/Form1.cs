@@ -8,7 +8,7 @@ using CardsHandler.Server;
 
 namespace CardsHandler
 {
-    public partial class FormHandlerCars : Form
+    public partial class FormHandlerCards : Form
     {
         private const string CreateCard = "Создать";
         private const string FindCard = "Найти";
@@ -16,13 +16,14 @@ namespace CardsHandler
         private const string SeeBalance = "Помотреть баланс";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
-        private static FormHandlerCars _instance;
-        private readonly Color markerColor = Color.FromArgb(214, 254, 216);
-        private SearchType searchType;
-        private CardsOperation cardsOperation;
-        private BonusOperations bonusOperations;
 
-        public FormHandlerCars()
+        private readonly Color markerColor = Color.FromArgb(214, 254, 216);
+        private SearchType _searchType;
+        private FieldValues _fieldValues;
+
+        private Controller _controller;
+
+        public FormHandlerCards()
         {
             InitializeComponent();
             tbPhoneNumber.Enabled = false;
@@ -32,358 +33,24 @@ namespace CardsHandler
             tbFirstName.Enabled = false;
             tbMiddleName.Enabled = false;
             tbLastName.Enabled = false;
-        }
-
-        public static FormHandlerCars GetInstance()
-        {
-            if (_instance == null)
-            {
-                _instance = new FormHandlerCars();
-            }
-
-            return _instance;
+            _controller = new Controller();
+            _fieldValues = default(FieldValues);
         }
 
         private void BtProcess_Click(object sender, EventArgs e)
         {
+            FillFieldValues();
+
             if (string.IsNullOrEmpty(cbOperations.Text))
             {
                 UI.PrintErrorChoosedOperation();
             }
             else
             {
-                ResultOperations operResult;
-                SrvConfig srvConfig = BL.GetServerConfig();
-                ServerInstance server = new ServerInstance(srvConfig.Server, srvConfig.Port);
-
-                switch (cardsOperation)
+                Card card = _controller.Process(_fieldValues);
+                if (card != null)
                 {
-                    #region СОЗДАНИЕ КАРТЫ
-
-                    case CardsOperation.Create:
-                        operResult = BL.CheckCreationCompliance(
-                            tbPhoneNumber.Text,
-                            tbFirstName.Text,
-                            tbMiddleName.Text,
-                            tbLastName.Text);
-
-                        switch (operResult)
-                        {
-                            case ResultOperations.EmptyField:
-                                UI.ErrorEptyFields(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.WrongPhone:
-                                UI.ErrorInPhoneNumber(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.WrongName:
-                                UI.ErrorWrongName(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.None:
-
-                                string request = string.Format(
-                                    $"{cardsOperation};" +
-                                    $"{tbPhoneNumber.Text};" +
-                                    $"{tbFirstName.Text};" +
-                                    $"{tbMiddleName.Text};" +
-                                    $"{tbLastName.Text}");
-
-                                Card card = server.CreateCard(request);
-
-                                UI.PrintCardElements(ref tbResultForm, card);
-                                UI.PrintSuccess(cardsOperation);
-
-                                break;
-                        }
-
-                        break;
-
-                    #endregion СОЗДАНИЕ КАРТЫ
-
-                    #region ПОИСК КАРТЫ/БАЛАНС на карте
-
-                    case CardsOperation.Find:
-
-                        operResult = BL.CheckSearchCompliance(
-                            cbFindType.Text,
-                            tbPhoneNumber.Text,
-                            tbCardNumber.Text);
-
-                        switch (operResult)
-                        {
-                            case ResultOperations.EmptyField:
-                                UI.ErrorEptyFields(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.WrongPhone:
-                                UI.ErrorInPhoneNumber(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.WrongCard:
-                                UI.ErrorWrongCard(ref tbResultForm);
-                                break;
-
-                            case ResultOperations.None:
-
-                                UI.PrintProcessing(ref tbResultForm);
-
-                                switch (searchType)
-                                {
-                                    case SearchType.ByPhone:
-
-                                        string request = string.Format(
-                                          $"{cardsOperation};" +
-                                          $"{searchType};" +
-                                          $"{tbPhoneNumber.Text};");
-
-                                        operResult = server.ProcessCard(request, out Card card);
-                                        switch (operResult)
-                                        {
-                                            case ResultOperations.None:
-                                                UI.PrintCardElements(ref tbResultForm, card);
-                                                UI.PrintSuccess(cardsOperation);
-
-                                                break;
-                                            case ResultOperations.PhoneDoesnEsixt:
-                                                UI.PrintErrorPhoneDoesntExist(
-                                                    ref tbResultForm,
-                                                    tbPhoneNumber.Text);
-
-                                                break;
-                                        }
-
-                                        break;
-
-                                    case SearchType.ByCard:
-                                        int.TryParse(
-                                           tbCardNumber.Text,
-                                           out int cardNumber);
-
-                                        request = string.Format(
-                                            $"{cardsOperation};" +
-                                            $"{searchType};" +
-                                            $"{cardNumber};");
-
-                                        operResult = server.ProcessCard(request, out card);
-                                        switch (operResult)
-                                        {
-                                            case ResultOperations.None:
-                                                UI.PrintCardElements(ref tbResultForm, card);
-                                                UI.PrintSuccess(cardsOperation);
-                                                break;
-                                            case ResultOperations.CardDoesnExist:
-
-                                                UI.PrintErrorCardDoesntExist(
-                                                   ref tbResultForm,
-                                                   searchType,
-                                                   cardNumber);
-
-                                                break;
-                                        }
-
-                                        break;
-                                }
-
-                                break;
-                        }
-
-                        break;
-                    #endregion ПОИСК КАРТЫ
-
-                    #region ПРОСМОТР БАЛАНСА
-
-                    case CardsOperation.SeeBalance:
-                        operResult = BL.CheckKardCompliance(tbCardNumber.Text);
-
-                        switch (operResult)
-                        {
-                            case ResultOperations.None:
-
-                                int.TryParse(tbCardNumber.Text, out int cardNumber);
-
-                                string request = string.Format(
-                                    $"{cardsOperation};{cardNumber}");
-
-                                operResult = server.ProcessCard(request, out Card card);
-                                switch (operResult)
-                                {
-                                    case ResultOperations.None:
-                                        UI.PrintCardElements(ref tbResultForm, card);
-                                        UI.PrintSuccess(cardsOperation);
-                                        break;
-                                    case ResultOperations.CardDoesnExist:
-
-                                        UI.PrintErrorProcessCard(
-                                           ref tbResultForm,
-                                           operResult);
-
-                                        break;
-                                }
-
-                                break;
-                            case ResultOperations.WrongCard:
-                                UI.ErrorWrongCard(ref tbResultForm);
-                                break;
-                            case ResultOperations.EmptyField:
-                                UI.ErrorEptyFields(ref tbResultForm);
-                                break;
-                        }
-
-                        break;
-
-                    #endregion ПРОСМОТР БАЛАНСА
-
-                    #region ИЗМЕНЕНИЕ БАЛАНСА
-
-                    case CardsOperation.Change:
-
-                        ResultOperations result =
-                            BL.CheckChargeCompliance(
-                                tbChargeSum.Text,
-                                rbRemoveBonuses,
-                                rbAddBonuses);
-
-                        switch (result)
-                        {
-                            case ResultOperations.WrongSumm:
-
-                                UI.PrintErrorProcessCard(
-                                    ref tbResultForm,
-                                    result);
-                                break;
-                            case ResultOperations.EmptyField:
-
-                                UI.PrintErrorProcessCard(
-                                    ref tbResultForm,
-                                    result);
-                                break;
-                            case ResultOperations.NegativeDigit:
-
-                                UI.PrintErrorProcessCard(
-                                   ref tbResultForm,
-                                   result);
-                                break;
-                            case ResultOperations.NotChangedWhatToDo:
-                                UI.PrintErrorProcessCard(
-                                  ref tbResultForm,
-                                  result);
-                                break;
-                            case ResultOperations.None:
-
-                                UI.PrintProcessing(ref tbResultForm);
-
-                                int.TryParse(
-                                    tbChargeSum.Text,
-                                    out int summ);
-
-                                if (rbAddBonuses.Checked)
-                                {
-                                    bonusOperations = BonusOperations.Add;
-                                }
-                                else
-                                {
-                                    if (rbRemoveBonuses.Checked)
-                                    {
-                                        bonusOperations = BonusOperations.Remove;
-                                    }
-                                }
-
-                                switch (result)
-                                {
-                                    case ResultOperations.None:
-
-                                        switch (bonusOperations)
-                                        {
-                                            case BonusOperations.Add:
-
-                                                int.TryParse(tbCardNumber.Text, out int cardNumber);
-
-                                                string request = string.Format(
-                                                    $"{cardsOperation};{bonusOperations};{cardNumber};{summ}");
-
-                                                operResult = server.ProcessCard(request, out Card card);
-
-                                                switch (operResult)
-                                                {
-                                                    case ResultOperations.None:
-
-                                                        UI.PrintCardElements(
-                                                            ref tbResultForm,
-                                                            card);
-                                                        UI.PrintSuccess(cardsOperation);
-
-                                                        break;
-
-                                                    case ResultOperations.CardExpired:
-                                                        UI.PrintErrorProcessCard(
-                                                            ref tbResultForm,
-                                                            operResult);
-                                                        break;
-                                                    case ResultOperations.CardDoesnExist:
-                                                        UI.PrintErrorProcessCard(
-                                                            ref tbResultForm,
-                                                            operResult);
-
-                                                        break;
-                                                }
-
-                                                break;
-
-                                            case BonusOperations.Remove:
-                                                int.TryParse(tbCardNumber.Text, out cardNumber);
-
-                                                request = string.Format(
-                                                    $"{cardsOperation};{bonusOperations};{cardNumber};{summ}");
-
-                                                operResult = server.ProcessCard(request, out card);
-
-                                                switch (operResult)
-                                                {
-                                                    case ResultOperations.ChargeError:
-
-                                                        UI.PrintErrorProcessCard(
-                                                            ref tbResultForm,
-                                                            operResult);
-
-                                                        break;
-                                                    case ResultOperations.CardExpired:
-
-                                                        UI.PrintErrorProcessCard(
-                                                            ref tbResultForm,
-                                                            operResult);
-                                                        break;
-
-                                                    case ResultOperations.None:
-
-                                                        UI.PrintCardElements(
-                                                            ref tbResultForm,
-                                                            card);
-                                                        UI.PrintSuccess(cardsOperation);
-                                                        break;
-                                                }
-
-                                                break;
-                                        }
-
-                                        break;
-
-                                    case ResultOperations.CardDoesnExist:
-
-                                        UI.PrintErrorProcessCard(
-                                            ref tbResultForm,
-                                            result);
-
-                                        break;
-                                }
-
-                                break;
-                        }
-
-                        break;
-
-                        #endregion ИЗМЕНЕНИЕ БАЛАНСА
+                    FillResultTextBox(card);
                 }
             }
         }
@@ -398,8 +65,8 @@ namespace CardsHandler
             switch (cbOperations.Text)
             {
                 case CreateCard:
-                    cardsOperation = CardsOperation.Create;
-                    searchType = SearchType.None;
+                    _controller.CardOperation = CardsOperation.Create;
+                    _searchType = SearchType.None;
                     cbFindType.Enabled = false;
                     gbCreation.Enabled = true;
                     gbSearch.Enabled = false;
@@ -415,11 +82,10 @@ namespace CardsHandler
                     UI.DryItems(tbMiddleName, markerColor);
                     UI.DryItems(tbLastName, markerColor);
                     UI.DryItems(tbPhoneNumber, markerColor);
-                    bonusOperations = BonusOperations.None;
                     break;
 
                 case FindCard:
-                    cardsOperation = CardsOperation.Find;
+                    _controller.CardOperation = CardsOperation.Find;
                     cbFindType.Enabled = true;
                     gbSearch.Enabled = true;
                     gbCreation.Enabled = false;
@@ -434,14 +100,14 @@ namespace CardsHandler
                     UI.DryItems(tbChargeSum, Color.White);
                     UI.DryItems(cbFindType, markerColor);
                     UI.PrintMessageSearchingCard(ref tbResultForm);
-                    bonusOperations = BonusOperations.None;
 
                     break;
 
                 case Charge:
+                    rbAddBonuses.Checked = true;
                     tbPhoneNumber.Enabled = false;
-                    cardsOperation = CardsOperation.Change;
-                    searchType = SearchType.None;
+                    _controller.CardOperation = CardsOperation.Change;
+                    _searchType = SearchType.None;
                     tbCardNumber.Enabled = true;
                     gbCharge.Enabled = true;
                     tbChargeSum.Enabled = true;
@@ -462,7 +128,7 @@ namespace CardsHandler
                     break;
 
                 case SeeBalance:
-                    cardsOperation = CardsOperation.SeeBalance;
+                    _controller.CardOperation = CardsOperation.SeeBalance;
                     cbFindType.Enabled = false;
                     gbSearch.Enabled = true;
                     gbCreation.Enabled = false;
@@ -478,7 +144,7 @@ namespace CardsHandler
                     UI.DryItems(tbChargeSum, Color.White);
                     UI.DryItems(tbCardNumber, markerColor);
                     UI.PrintMessageEnterCard(ref tbResultForm);
-                    bonusOperations = BonusOperations.None;
+                    _controller.BonusOperations = BonusOperations.None;
 
                     break;
             }
@@ -489,7 +155,8 @@ namespace CardsHandler
             switch (cbFindType.Text)
             {
                 case SearchByPhone:
-                    searchType = SearchType.ByPhone;
+                    _controller.SearchType = SearchType.ByPhone;
+                    _searchType = SearchType.ByPhone;
                     tbCardNumber.Enabled = false;
                     tbCardNumber.Text = string.Empty;
                     tbPhoneNumber.Enabled = true;
@@ -500,7 +167,8 @@ namespace CardsHandler
                     break;
 
                 case SearchByCard:
-                    searchType = SearchType.ByCard;
+                    _controller.SearchType = SearchType.ByCard;
+                    _searchType = SearchType.ByCard;
                     tbPhoneNumber.Enabled = false;
                     tbPhoneNumber.Text = string.Empty;
                     tbCardNumber.Enabled = true;
@@ -514,12 +182,14 @@ namespace CardsHandler
 
         private void RbRemoveBonuses_CheckedChanged(object sender, EventArgs e)
         {
-            bonusOperations = BonusOperations.Remove;
+            _controller.BonusOperations = BonusOperations.Remove;
+            _fieldValues.BonusOperations = BonusOperations.Remove;
         }
 
         private void RbAddBonuses_CheckedChanged(object sender, EventArgs e)
         {
-            bonusOperations = BonusOperations.Add;
+            _controller.BonusOperations = BonusOperations.Add;
+            _fieldValues.BonusOperations = BonusOperations.Add;
         }
 
         private void BtGetAllCards_Click(object sender, EventArgs e)
@@ -536,6 +206,35 @@ namespace CardsHandler
 
             DataTable data = server.GetDatatable(request);
             dataGridView.DataSource = data;
+        }
+
+        /// <summary>
+        /// Заполнение структуры, содержащей значениея полей формы.
+        /// </summary>
+        private void FillFieldValues()
+        {
+            _fieldValues.FirstName = tbFirstName.Text;
+            _fieldValues.MiddleName = tbMiddleName.Text;
+            _fieldValues.LastName = tbLastName.Text;
+            _fieldValues.PhoneNumber = tbPhoneNumber.Text;
+            _fieldValues.CardNumber = tbCardNumber.Text;
+            _fieldValues.Summ = tbChargeSum.Text;
+            _fieldValues.SearchType = _searchType;
+        }
+
+        /// <summary>
+        /// Заполнение окна резульата.
+        /// </summary>
+        /// <param name="card">Полученная Карта.</param>
+        private void FillResultTextBox(Card card)
+        {
+            string message = $"Номер карты:\t{card.Cardnumber}\n" +
+               $"Баланс:\t\t{card.Ballance}\n" +
+               $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
+               $"Владелец:\t{card.LastName} {card.FirstName} {card.MiddleName}\n" +
+               $"Номер телефона:\t{card.PhoneNumber}\n";
+
+            tbResultForm.Text = message;
         }
     }
 }

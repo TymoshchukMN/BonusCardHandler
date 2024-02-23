@@ -1,6 +1,6 @@
 ﻿namespace CardsHandler.Server
 {
-    internal class SrvConfig
+    public class SrvConfig
     {
         public string Server { get; set; }
 
