@@ -199,10 +199,7 @@ namespace CardsHandler
             string request = string.Format(
                                    $"{CardsOperation.GetAllCards};");
 
-            SrvConfig srvConfig = BL.GetServerConfig();
-            ServerInstance server = new ServerInstance(
-                srvConfig.Server,
-                srvConfig.Port);
+            ServerInstance server = new ServerInstance();
 
             DataTable data = server.GetDatatable(request);
             dataGridView.DataSource = data;

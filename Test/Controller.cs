@@ -58,9 +58,7 @@ namespace CardsHandler
         public Card Process(FieldValues fieldValues)
         {
             Card card = null;
-            SrvConfig srvConfig = BL.GetServerConfig();
-            ServerInstance server =
-                new ServerInstance(srvConfig.Server, srvConfig.Port);
+            ServerInstance server = new ServerInstance();
             ResultOperations operResult =
               Compliance.CheckCompliance(_cardsOperation, fieldValues, server);
 

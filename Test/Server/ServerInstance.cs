@@ -16,10 +16,11 @@ namespace CardsHandler.Server
 
         public ServerInstance(string serverAddress, int serverPort)
         {
-            /*_serverAddress = serverAddress;
-            _serverPort = serverPort;*/
-            _serverAddress = "127.0.0.1";
-            _serverPort = 49001;
+            _serverAddress = serverAddress;
+            _serverPort = serverPort;
+
+            //_serverAddress = "127.0.0.1";
+            //_serverPort = 49001;
         }
 
         public ServerInstance()
@@ -66,6 +67,11 @@ namespace CardsHandler.Server
             if (responseMessage.ToString() == ResultOperations.CardExpired.ToString())
             {
                 return ResultOperations.CardExpired;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.PhoneDoesnEsixt.ToString())
+            {
+                return ResultOperations.ChargeError;
             }
 
             if (responseMessage.ToString() == ResultOperations.CardDoesnExist.ToString())

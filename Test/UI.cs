@@ -149,6 +149,9 @@ namespace CardsHandler
                 case ResultOperations.WrongCard:
                     message = "не верно указан номер карты";
                     break;
+                case ResultOperations.PhoneDoesnEsixt:
+                    message = "Карты с таким номером не найдены.";
+                    break;
             }
 
             const string CAPTION = "Ошибка";

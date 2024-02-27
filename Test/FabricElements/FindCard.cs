@@ -35,7 +35,13 @@ namespace CardsHandler.FabricElements
 
             if (!string.IsNullOrEmpty(request))
             {
-                server.ProcessCard(request, out card);
+                ResultOperations operations =
+                    server.ProcessCard(request, out card);
+
+                if (operations != ResultOperations.None)
+                {
+                    UI.PrintErrorProcessCard(operations);
+                }
             }
         }
     }
