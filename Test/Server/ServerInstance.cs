@@ -71,7 +71,7 @@ namespace CardsHandler.Server
 
             if (responseMessage.ToString() == ResultOperations.PhoneDoesnEsixt.ToString())
             {
-                return ResultOperations.ChargeError;
+                return ResultOperations.PhoneDoesnEsixt;
             }
 
             if (responseMessage.ToString() == ResultOperations.CardDoesnExist.ToString())
