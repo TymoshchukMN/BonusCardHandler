@@ -16,7 +16,8 @@ namespace CardsHandler
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormHandlerCards());
+            // Application.Run(new FormHandlerCards());
+            Application.Run(FormHandlerCards.Instance);
         }
     }
 }

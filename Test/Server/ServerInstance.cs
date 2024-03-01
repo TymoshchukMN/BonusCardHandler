@@ -19,15 +19,18 @@ namespace CardsHandler.Server
             _serverAddress = serverAddress;
             _serverPort = serverPort;
 
-            //_serverAddress = "127.0.0.1";
-            //_serverPort = 49001;
+            _serverAddress = "127.0.0.1";
+            _serverPort = 49001;
         }
 
         public ServerInstance()
         {
             SrvConfig srvConfig = GetServerConfig();
-            _serverAddress = srvConfig.Server;
-            _serverPort = srvConfig.Port;
+            //_serverAddress = srvConfig.Server;
+            //_serverPort = srvConfig.Port;
+
+            _serverAddress = "127.0.0.1";
+            _serverPort = 49001;
         }
 
         public Card CreateCard(string request)

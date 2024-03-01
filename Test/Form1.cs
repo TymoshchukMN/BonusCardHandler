@@ -16,14 +16,14 @@ namespace CardsHandler
         private const string SeeBalance = "Помотреть баланс";
         private const string SearchByPhone = "Телефону";
         private const string SearchByCard = "Номеру карты";
-
+        private static FormHandlerCards _instance;
         private readonly Color markerColor = Color.FromArgb(214, 254, 216);
         private SearchType _searchType;
         private FieldValues _fieldValues;
 
         private Controller _controller;
 
-        public FormHandlerCards()
+        private FormHandlerCards()
         {
             InitializeComponent();
             tbPhoneNumber.Enabled = false;
@@ -35,6 +35,19 @@ namespace CardsHandler
             tbLastName.Enabled = false;
             _controller = new Controller();
             _fieldValues = default(FieldValues);
+        }
+
+        public static FormHandlerCards Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new FormHandlerCards();
+                }
+
+                return _instance;
+            }
         }
 
         private void BtProcess_Click(object sender, EventArgs e)
@@ -229,7 +242,8 @@ namespace CardsHandler
                $"Баланс:\t\t{card.Ballance}\n" +
                $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
                $"Владелец:\t{card.LastName} {card.FirstName} {card.MiddleName}\n" +
-               $"Номер телефона:\t{card.PhoneNumber}\n";
+               $"Номер телефона:\t{card.PhoneNumber}\n" +
+               $"Активна:\t\t{card.ActivityFlag}";
 
             tbResultForm.Text = message;
         }

@@ -22,6 +22,7 @@ namespace CardsHandler.FabricElements
                         $"{fields.SearchType};" +
                         $"{fields.PhoneNumber};");
 
+                    // FindCardByPhone.ProcessCard(request, server);
                     break;
                 case SearchType.ByCard:
 

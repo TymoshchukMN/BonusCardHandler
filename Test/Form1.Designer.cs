@@ -341,7 +341,7 @@
             this.dataGridView.Location = new System.Drawing.Point(6, 186);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
-            this.dataGridView.Size = new System.Drawing.Size(730, 382);
+            this.dataGridView.Size = new System.Drawing.Size(831, 392);
             this.dataGridView.TabIndex = 1;
             // 
             // btGetAllCards
@@ -354,13 +354,13 @@
             this.btGetAllCards.UseVisualStyleBackColor = true;
             this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
             // 
-            // FormHandlerCars
+            // FormHandlerCards
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(774, 618);
+            this.ClientSize = new System.Drawing.Size(780, 647);
             this.Controls.Add(this.tabs);
-            this.Name = "FormHandlerCars";
+            this.Name = "FormHandlerCards";
             this.Text = "Heandler cards";
             this.gbSearch.ResumeLayout(false);
             this.gbSearch.PerformLayout();
@@ -399,7 +399,6 @@
         private System.Windows.Forms.GroupBox gbCharge;
         private System.Windows.Forms.TextBox tbChargeSum;
         private System.Windows.Forms.Label lbChargeSum;
-        private System.Windows.Forms.RichTextBox tbResultForm;
         private System.Windows.Forms.RadioButton rbAddBonuses;
         private System.Windows.Forms.RadioButton rbRemoveBonuses;
         private System.Windows.Forms.TabControl tabs;
@@ -407,6 +406,7 @@
         private System.Windows.Forms.TabPage tabBulkOper;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.Button btGetAllCards;
+        public System.Windows.Forms.RichTextBox tbResultForm;
     }
 }
 

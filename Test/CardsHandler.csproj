@@ -188,6 +188,7 @@
     <Compile Include="FabricElements\CommandFactory.cs" />
     <Compile Include="FabricElements\CreateCard.cs" />
     <Compile Include="FabricElements\FindCard.cs" />
+    <Compile Include="FabricElements\FindCardByPhone.cs" />
     <Compile Include="FabricElements\GetAllCards.cs" />
     <Compile Include="FabricElements\SeeBalance.cs" />
     <Compile Include="FieldValues.cs" />

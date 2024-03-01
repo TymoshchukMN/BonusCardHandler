@@ -6,9 +6,10 @@
 // Project: CardsHandler
 //////////////////////////////
 
+using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
-using CardsHandler.Enums;
 
 namespace CardsHandler
 {
@@ -144,13 +145,13 @@ namespace CardsHandler
                     message = "Не указано что сделать с картой";
                     break;
                 case ResultOperations.CardDoesnExist:
-                    message = "Карта не существует";
+                    message = "Карта с таким нномером не существует";
                     break;
                 case ResultOperations.WrongCard:
                     message = "не верно указан номер карты";
                     break;
                 case ResultOperations.PhoneDoesnEsixt:
-                    message = "Карты с таким номером не найдены.";
+                    message = "Карты с таким номером телефона не найдены.";
                     break;
             }
 
@@ -170,6 +171,33 @@ namespace CardsHandler
                       CAPTION,
                       MessageBoxButtons.OK,
                       MessageBoxIcon.Error);
+        }
+
+        public static void PrintCardsFindedByPhone(DataTable datatable)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            const int CardNumIndex = 0;
+            const int ExpirationDateOndex = 1;
+            const int BallanceIndex = 2;
+            const int FirstNameIndex = 3;
+            const int MiddleNameIndex = 4;
+            const int LastNameIndex = 5;
+            const int PhoneNumberIndex = 6;
+
+            for (int i = 0; i < datatable.Rows.Count; i++)
+            {
+                stringBuilder.Append($"Номер карты:\t{datatable.Rows[i].ItemArray[CardNumIndex].ToString()}\n");
+                stringBuilder.Append($"Активна до:\t{datatable.Rows[i].ItemArray[ExpirationDateOndex].ToString()}\n");
+                stringBuilder.Append($"Баланс:\t\t{datatable.Rows[i].ItemArray[BallanceIndex].ToString()}\n");
+                stringBuilder.Append($"Имя:\t\t{datatable.Rows[i].ItemArray[FirstNameIndex].ToString()}\n");
+                stringBuilder.Append($"Отчество:\t{datatable.Rows[i].ItemArray[MiddleNameIndex].ToString()}\n");
+                stringBuilder.Append($"Фамилия:\t{datatable.Rows[i].ItemArray[LastNameIndex].ToString()}\n");
+                stringBuilder.Append($"Телефон:\t{datatable.Rows[i].ItemArray[PhoneNumberIndex].ToString()}\n");
+                stringBuilder.Append($"{new string('=',30)}\n");
+            }
+
+            FormHandlerCards.Instance.Controls[0].Controls[0].Controls["tbResultForm"].Text =
+                stringBuilder.ToString();
         }
     }
 }
