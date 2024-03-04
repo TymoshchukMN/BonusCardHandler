@@ -9,7 +9,6 @@ namespace CardsHandler.FabricElements
             string request, ServerInstance server)
         {
             DataTable data = server.GetDatatable(request);
-            UI.PrintCardsFindedByPhone(data);
         }
     }
 }

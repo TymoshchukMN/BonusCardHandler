@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace CardsHandler.Server
@@ -26,14 +27,14 @@ namespace CardsHandler.Server
         public ServerInstance()
         {
             SrvConfig srvConfig = GetServerConfig();
-            //_serverAddress = srvConfig.Server;
-            //_serverPort = srvConfig.Port;
 
+            // _serverAddress = srvConfig.Server;
+            // _serverPort = srvConfig.Port;
             _serverAddress = "127.0.0.1";
             _serverPort = 49001;
         }
 
-        public Card CreateCard(string request)
+        public DataTable CreateCard(string request)
         {
             TcpClient client = new TcpClient(_serverAddress, _serverPort);
             NetworkStream stream = client.GetStream();
@@ -44,14 +45,14 @@ namespace CardsHandler.Server
             byte[] buffer = new byte[1024];
             int bytesRead = stream.Read(buffer, 0, buffer.Length);
             string responseMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            Console.WriteLine($"Ответ от сервера: {responseMessage}");
-            Card card = JsonConvert.DeserializeObject<Card>(responseMessage);
+
+            DataTable gottenData = JsonConvert.DeserializeObject<DataTable>(responseMessage);
             client.Close();
 
-            return card;
+            return gottenData;
         }
 
-        public ResultOperations ProcessCard(string request, out Card card)
+        /*public ResultOperations ProcessCard(string request, out Card card)
         {
             card = null;
             TcpClient client = new TcpClient(_serverAddress, _serverPort);
@@ -90,6 +91,58 @@ namespace CardsHandler.Server
             if (responseMessage.ToString().Substring(0, 12) == Mask)
             {
                 card = JsonConvert.DeserializeObject<Card>(responseMessage);
+            }
+            else
+            {
+                resultOperations = (ResultOperations)Enum.Parse(typeof(ResultOperations), responseMessage);
+            }
+
+            client.Close();
+
+            return resultOperations;
+        }
+*/
+
+        public ResultOperations ProcessCard(string request, out DataTable dataTable)
+        {
+            dataTable = null;
+            TcpClient client = new TcpClient(_serverAddress, _serverPort);
+            NetworkStream stream = client.GetStream();
+
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            stream.Write(data, 0, data.Length);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            string responseMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            ResultOperations resultOperations = ResultOperations.None;
+
+            const string Mask = "[{\"Cardnumbe";
+
+            if (responseMessage.ToString() == ResultOperations.CardExpired.ToString())
+            {
+                return ResultOperations.CardExpired;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.PhoneDoesnEsixt.ToString())
+            {
+                return ResultOperations.PhoneDoesnEsixt;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.CardDoesnExist.ToString())
+            {
+                return ResultOperations.CardDoesnExist;
+            }
+
+            if (responseMessage.ToString() == ResultOperations.ChargeError.ToString())
+            {
+                return ResultOperations.ChargeError;
+            }
+
+            if (responseMessage.ToString().Substring(0, 12) == Mask)
+            {
+                dataTable = JsonConvert.DeserializeObject<DataTable>(responseMessage);
             }
             else
             {

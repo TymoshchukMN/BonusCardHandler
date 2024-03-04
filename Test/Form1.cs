@@ -60,11 +60,10 @@ namespace CardsHandler
             }
             else
             {
-                Card card = _controller.Process(_fieldValues);
-                if (card != null)
-                {
-                    FillResultTextBox(card);
-                }
+                //Card card = _controller.Process(_fieldValues);
+
+                dataGridView.Refresh();
+                dataGridView.DataSource = _controller.Process(_fieldValues);
             }
         }
 
@@ -90,7 +89,6 @@ namespace CardsHandler
                     tbPhoneNumber.Enabled = true;
                     tbCardNumber.Text = string.Empty;
                     tbCardNumber.Enabled = false;
-                    UI.PrintMessageCreationCard(ref tbResultForm);
                     UI.DryItems(tbFirstName, markerColor);
                     UI.DryItems(tbMiddleName, markerColor);
                     UI.DryItems(tbLastName, markerColor);
@@ -112,7 +110,6 @@ namespace CardsHandler
                     UI.DryItems(tbCardNumber, Color.White);
                     UI.DryItems(tbChargeSum, Color.White);
                     UI.DryItems(cbFindType, markerColor);
-                    UI.PrintMessageSearchingCard(ref tbResultForm);
 
                     break;
 
@@ -136,7 +133,6 @@ namespace CardsHandler
                     UI.DryItems(tbLastName, Color.White);
                     UI.DryItems(tbCardNumber, markerColor);
                     UI.DryItems(tbChargeSum, markerColor);
-                    UI.PrintMessageCharhingCard(ref tbResultForm);
 
                     break;
 
@@ -156,7 +152,6 @@ namespace CardsHandler
                     UI.DryItems(tbCardNumber, Color.White);
                     UI.DryItems(tbChargeSum, Color.White);
                     UI.DryItems(tbCardNumber, markerColor);
-                    UI.PrintMessageEnterCard(ref tbResultForm);
                     _controller.BonusOperations = BonusOperations.None;
 
                     break;
@@ -175,7 +170,6 @@ namespace CardsHandler
                     tbPhoneNumber.Enabled = true;
                     UI.DryItems(tbPhoneNumber, Color.FromArgb(214, 254, 216));
                     UI.DryItems(tbCardNumber, Color.White);
-                    UI.PrintMessageEnterPhone(ref tbResultForm);
                     UI.DryItems(cbFindType, Color.White);
                     break;
 
@@ -187,7 +181,6 @@ namespace CardsHandler
                     tbCardNumber.Enabled = true;
                     UI.DryItems(tbCardNumber, Color.FromArgb(214, 254, 216));
                     UI.DryItems(tbPhoneNumber, Color.White);
-                    UI.PrintMessageEnterCard(ref tbResultForm);
                     UI.DryItems(cbFindType, Color.White);
                     break;
             }
@@ -205,19 +198,6 @@ namespace CardsHandler
             _fieldValues.BonusOperations = BonusOperations.Add;
         }
 
-        private void BtGetAllCards_Click(object sender, EventArgs e)
-        {
-            dataGridView.Refresh();
-
-            string request = string.Format(
-                                   $"{CardsOperation.GetAllCards};");
-
-            ServerInstance server = new ServerInstance();
-
-            DataTable data = server.GetDatatable(request);
-            dataGridView.DataSource = data;
-        }
-
         /// <summary>
         /// Заполнение структуры, содержащей значениея полей формы.
         /// </summary>
@@ -232,20 +212,17 @@ namespace CardsHandler
             _fieldValues.SearchType = _searchType;
         }
 
-        /// <summary>
-        /// Заполнение окна резульата.
-        /// </summary>
-        /// <param name="card">Полученная Карта.</param>
-        private void FillResultTextBox(Card card)
+        private void BtGetAllCards_Click(object sender, EventArgs e)
         {
-            string message = $"Номер карты:\t{card.Cardnumber}\n" +
-               $"Баланс:\t\t{card.Ballance}\n" +
-               $"Истекает:\t{card.ExpirationDate.ToShortDateString()}\n" +
-               $"Владелец:\t{card.LastName} {card.FirstName} {card.MiddleName}\n" +
-               $"Номер телефона:\t{card.PhoneNumber}\n" +
-               $"Активна:\t\t{card.ActivityFlag}";
+            dataGridView.Refresh();
 
-            tbResultForm.Text = message;
+            string request = string.Format(
+                                   $"{CardsOperation.GetAllCards};");
+
+            ServerInstance server = new ServerInstance();
+
+            DataTable data = server.GetDatatable(request);
+            dataGridView.DataSource = data;
         }
     }
 }

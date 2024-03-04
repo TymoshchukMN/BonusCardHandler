@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CardsHandler.Enums;
+﻿using CardsHandler.Enums;
 using CardsHandler.Server;
 
 namespace CardsHandler
@@ -36,15 +31,6 @@ namespace CardsHandler
                            fieldsValues.PhoneNumber,
                            fieldsValues.CardNumber);
 
-                    //if (resultOperations == ResultOperations.None)
-                    //{
-                    //    if (fieldsValues.SearchType == SearchType.ByCard)
-                    //    {
-                    //        resultOperations =
-                    //            IsCardExist(fieldsValues.CardNumber, server);
-                    //    }
-                    //}
-
                     break;
                 case CardsOperation.Change:
 
@@ -63,12 +49,6 @@ namespace CardsHandler
 
                     resultOperations =
                         CheckCardCompliance(fieldsValues.CardNumber);
-
-                    //if (resultOperations == ResultOperations.None)
-                    //{
-                    //    resultOperations =
-                    //        IsCardExist(fieldsValues.CardNumber, server);
-                    //}
 
                     break;
             }
@@ -139,18 +119,6 @@ namespace CardsHandler
             return isCorrect;
         }
 
-        /// <summary>
-        /// Метод для проверки валидности введенных данных на ПОИСК карты.
-        /// </summary>
-        /// <param name="choice">
-        /// Поле с Типом поиска.
-        /// </param>
-        /// <param name="phone">
-        /// Поле с Телефоном.
-        /// </param>
-        /// <param name="card">
-        /// Поле с номером карты.</param>
-        /// <returns>номер ошибки.</returns>
         private static ResultOperations CheckSearchCompliance(
            SearchType searchType,
            string phone,
@@ -178,8 +146,6 @@ namespace CardsHandler
                     {
                         if (!IsCardCorrect(card))
                         {
-                            
-                            
                             statCompliante = ResultOperations.WrongCard;
                         }
                     }
@@ -294,22 +260,6 @@ namespace CardsHandler
             }
 
             return statCompliante;
-        }
-
-        private static ResultOperations IsCardExist(
-            string cardNumber,
-            ServerInstance server)
-        {
-            ResultOperations resultOperations = ResultOperations.None;
-
-            int.TryParse(cardNumber, out int number);
-
-            string request = string.Format(
-                $"{CardsOperation.Find};{SearchType.ByCard};{number}");
-
-            resultOperations = server.ProcessCard(request, out Card card);
-
-            return resultOperations;
         }
     }
 }

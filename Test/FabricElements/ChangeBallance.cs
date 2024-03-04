@@ -1,4 +1,5 @@
-﻿using CardsHandler.Enums;
+﻿using System.Data;
+using CardsHandler.Enums;
 using CardsHandler.Interfaces;
 using CardsHandler.Server;
 
@@ -7,9 +8,7 @@ namespace CardsHandler.FabricElements
     public class ChangeBallance : IProcessCard
     {
         public void ProcessCard(
-            FieldValues fields,
-            out Card card,
-            ServerInstance server)
+            FieldValues fields, out DataTable dataTable, ServerInstance server)
         {
             int.TryParse(fields.Summ, out int summ);
             int.TryParse(fields.CardNumber, out int cardNumber);
@@ -19,11 +18,11 @@ namespace CardsHandler.FabricElements
                      $"{cardNumber};{summ}");
 
             ResultOperations operations =
-                server.ProcessCard(request, out card);
+                server.ProcessCard(request, out dataTable);
 
             if (operations != ResultOperations.None)
             {
-                UI.PrintErrorProcessCard(operations);
+                UI.PrintResultProcessCard(operations);
             }
         }
     }

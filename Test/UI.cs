@@ -32,57 +32,6 @@ namespace CardsHandler
         }
 
         /// <summary>
-        /// Запрос ввода карты.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void PrintMessageEnterCard(ref RichTextBox box)
-        {
-            const string EnterCardMessage = "Введите номер карты";
-            box.Text = EnterCardMessage;
-        }
-
-        /// <summary>
-        /// Запрос ввода телефона.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void PrintMessageEnterPhone(ref RichTextBox box)
-        {
-            const string EnterPhoneMessage = "Введите номер телефона\nв формате 380XXXXXXXXXX";
-            box.Text = EnterPhoneMessage;
-        }
-
-        /// <summary>
-        /// Запрос данных для создания карты.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void PrintMessageCreationCard(ref RichTextBox box)
-        {
-            const string EnterPhoneMessage = "Для создания карты введите номер телефона и ФИО\n" +
-                "!!!!! телефон указывать в формате 380XXXXXXXXXX";
-            box.Text = EnterPhoneMessage;
-        }
-
-        /// <summary>
-        /// Запрос критериев поиска карты.
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void PrintMessageSearchingCard(ref RichTextBox box)
-        {
-            const string EnterPhoneMessage = "Выберите критерий поиска карты";
-            box.Text = EnterPhoneMessage;
-        }
-
-        /// <summary>
-        /// Запрос ввода суммы для списания..
-        /// </summary>
-        /// <param name="box">окно вывода результата.</param>
-        public static void PrintMessageCharhingCard(ref RichTextBox box)
-        {
-            const string EnterPhoneMessage = "Укажите сумму для списания бонусов и номер карты";
-            box.Text = EnterPhoneMessage;
-        }
-
-        /// <summary>
         /// Подсвечиваем поле для ввода.
         /// </summary>
         /// <param name="box">
@@ -114,11 +63,16 @@ namespace CardsHandler
         /// Печать ошибки о не верной сумме к списанию.
         /// </summary>
         /// <param name="result">Результат операции.</param>
-        public static void PrintErrorProcessCard(ResultOperations result)
+        public static void PrintResultProcessCard(ResultOperations result)
         {
             string message = string.Empty;
+            string caption = "Ошибка";
             switch (result)
             {
+                case ResultOperations.None:
+                    message = "Операция выполнена успешно.";
+                    caption = "Инфо.";
+                    break;
                 case ResultOperations.WrongName:
                     message = "Не верно указан ФИО.";
                     break;
@@ -155,10 +109,9 @@ namespace CardsHandler
                     break;
             }
 
-            const string CAPTION = "Ошибка";
             MessageBox.Show(
                   message,
-                  CAPTION,
+                  caption,
                   MessageBoxButtons.OK,
                   MessageBoxIcon.Error);
         }
@@ -171,33 +124,6 @@ namespace CardsHandler
                       CAPTION,
                       MessageBoxButtons.OK,
                       MessageBoxIcon.Error);
-        }
-
-        public static void PrintCardsFindedByPhone(DataTable datatable)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            const int CardNumIndex = 0;
-            const int ExpirationDateOndex = 1;
-            const int BallanceIndex = 2;
-            const int FirstNameIndex = 3;
-            const int MiddleNameIndex = 4;
-            const int LastNameIndex = 5;
-            const int PhoneNumberIndex = 6;
-
-            for (int i = 0; i < datatable.Rows.Count; i++)
-            {
-                stringBuilder.Append($"Номер карты:\t{datatable.Rows[i].ItemArray[CardNumIndex].ToString()}\n");
-                stringBuilder.Append($"Активна до:\t{datatable.Rows[i].ItemArray[ExpirationDateOndex].ToString()}\n");
-                stringBuilder.Append($"Баланс:\t\t{datatable.Rows[i].ItemArray[BallanceIndex].ToString()}\n");
-                stringBuilder.Append($"Имя:\t\t{datatable.Rows[i].ItemArray[FirstNameIndex].ToString()}\n");
-                stringBuilder.Append($"Отчество:\t{datatable.Rows[i].ItemArray[MiddleNameIndex].ToString()}\n");
-                stringBuilder.Append($"Фамилия:\t{datatable.Rows[i].ItemArray[LastNameIndex].ToString()}\n");
-                stringBuilder.Append($"Телефон:\t{datatable.Rows[i].ItemArray[PhoneNumberIndex].ToString()}\n");
-                stringBuilder.Append($"{new string('=',30)}\n");
-            }
-
-            FormHandlerCards.Instance.Controls[0].Controls[0].Controls["tbResultForm"].Text =
-                stringBuilder.ToString();
         }
     }
 }

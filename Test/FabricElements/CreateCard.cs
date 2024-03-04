@@ -1,4 +1,5 @@
-﻿using CardsHandler.Enums;
+﻿using System.Data;
+using CardsHandler.Enums;
 using CardsHandler.Interfaces;
 using CardsHandler.Server;
 
@@ -8,7 +9,7 @@ namespace CardsHandler.FabricElements
     {
         public void ProcessCard(
             FieldValues fieldsValues,
-            out Card card,
+            out DataTable dataTable,
             ServerInstance server)
         {
             string request = string.Format(
@@ -18,7 +19,7 @@ namespace CardsHandler.FabricElements
                 $"{fieldsValues.MiddleName};" +
                 $"{fieldsValues.LastName}");
 
-            card = server.CreateCard(request);
+            dataTable = server.CreateCard(request);
         }
     }
 }

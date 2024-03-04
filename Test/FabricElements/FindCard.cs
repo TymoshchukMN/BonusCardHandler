@@ -1,4 +1,5 @@
-﻿using CardsHandler.Enums;
+﻿using System.Data;
+using CardsHandler.Enums;
 using CardsHandler.Interfaces;
 using CardsHandler.Server;
 
@@ -6,13 +7,11 @@ namespace CardsHandler.FabricElements
 {
     public class FindCard : IProcessCard
     {
-        public void ProcessCard(
-            FieldValues fields,
-            out Card card,
-            ServerInstance server)
+        public void ProcessCard(FieldValues fields, out DataTable dataTable, ServerInstance server)
         {
-            card = null;
             string request = string.Empty;
+            dataTable = null;
+
             switch (fields.SearchType)
             {
                 case SearchType.ByPhone:
@@ -22,7 +21,6 @@ namespace CardsHandler.FabricElements
                         $"{fields.SearchType};" +
                         $"{fields.PhoneNumber};");
 
-                    // FindCardByPhone.ProcessCard(request, server);
                     break;
                 case SearchType.ByCard:
 
@@ -37,11 +35,11 @@ namespace CardsHandler.FabricElements
             if (!string.IsNullOrEmpty(request))
             {
                 ResultOperations operations =
-                    server.ProcessCard(request, out card);
+                    server.ProcessCard(request, out dataTable);
 
                 if (operations != ResultOperations.None)
                 {
-                    UI.PrintErrorProcessCard(operations);
+                    UI.PrintResultProcessCard(operations);
                 }
             }
         }

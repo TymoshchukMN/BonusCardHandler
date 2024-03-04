@@ -28,16 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbCardNumber = new System.Windows.Forms.Label();
-            this.tbCardNumber = new System.Windows.Forms.TextBox();
-            this.lbPhoneNumber = new System.Windows.Forms.Label();
-            this.tbPhoneNumber = new System.Windows.Forms.TextBox();
-            this.lbSearchType = new System.Windows.Forms.Label();
-            this.btProcess = new System.Windows.Forms.Button();
+            this.tabSingleOper = new System.Windows.Forms.TabPage();
+            this.btGetAllCards = new System.Windows.Forms.Button();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.gbCharge = new System.Windows.Forms.GroupBox();
+            this.rbAddBonuses = new System.Windows.Forms.RadioButton();
+            this.rbRemoveBonuses = new System.Windows.Forms.RadioButton();
+            this.tbChargeSum = new System.Windows.Forms.TextBox();
+            this.lbChargeSum = new System.Windows.Forms.Label();
             this.cbOperations = new System.Windows.Forms.ComboBox();
+            this.tbCardNumber = new System.Windows.Forms.TextBox();
+            this.tbPhoneNumber = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.cbFindType = new System.Windows.Forms.ComboBox();
-            this.gbSearch = new System.Windows.Forms.GroupBox();
+            this.btProcess = new System.Windows.Forms.Button();
+            this.lbCardNumber = new System.Windows.Forms.Label();
+            this.lbPhoneNumber = new System.Windows.Forms.Label();
             this.gbCreation = new System.Windows.Forms.GroupBox();
             this.tbLastName = new System.Windows.Forms.TextBox();
             this.tbMiddleName = new System.Windows.Forms.TextBox();
@@ -45,77 +50,116 @@
             this.lbLastName = new System.Windows.Forms.Label();
             this.lbMiddleName = new System.Windows.Forms.Label();
             this.lbFirstName = new System.Windows.Forms.Label();
-            this.gbCharge = new System.Windows.Forms.GroupBox();
-            this.rbAddBonuses = new System.Windows.Forms.RadioButton();
-            this.rbRemoveBonuses = new System.Windows.Forms.RadioButton();
-            this.tbChargeSum = new System.Windows.Forms.TextBox();
-            this.lbChargeSum = new System.Windows.Forms.Label();
-            this.tbResultForm = new System.Windows.Forms.RichTextBox();
+            this.gbSearch = new System.Windows.Forms.GroupBox();
+            this.cbFindType = new System.Windows.Forms.ComboBox();
+            this.lbSearchType = new System.Windows.Forms.Label();
             this.tabs = new System.Windows.Forms.TabControl();
-            this.tabSingleOper = new System.Windows.Forms.TabPage();
-            this.tabBulkOper = new System.Windows.Forms.TabPage();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.btGetAllCards = new System.Windows.Forms.Button();
-            this.gbSearch.SuspendLayout();
-            this.gbCreation.SuspendLayout();
-            this.gbCharge.SuspendLayout();
-            this.tabs.SuspendLayout();
             this.tabSingleOper.SuspendLayout();
-            this.tabBulkOper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            this.gbCharge.SuspendLayout();
+            this.gbCreation.SuspendLayout();
+            this.gbSearch.SuspendLayout();
+            this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // lbCardNumber
+            // tabSingleOper
             // 
-            this.lbCardNumber.AutoSize = true;
-            this.lbCardNumber.Location = new System.Drawing.Point(18, 91);
-            this.lbCardNumber.Name = "lbCardNumber";
-            this.lbCardNumber.Size = new System.Drawing.Size(78, 13);
-            this.lbCardNumber.TabIndex = 0;
-            this.lbCardNumber.Text = "Номер карты:";
+            this.tabSingleOper.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabSingleOper.Controls.Add(this.btGetAllCards);
+            this.tabSingleOper.Controls.Add(this.dataGridView);
+            this.tabSingleOper.Controls.Add(this.gbCharge);
+            this.tabSingleOper.Controls.Add(this.cbOperations);
+            this.tabSingleOper.Controls.Add(this.tbCardNumber);
+            this.tabSingleOper.Controls.Add(this.tbPhoneNumber);
+            this.tabSingleOper.Controls.Add(this.label1);
+            this.tabSingleOper.Controls.Add(this.btProcess);
+            this.tabSingleOper.Controls.Add(this.lbCardNumber);
+            this.tabSingleOper.Controls.Add(this.lbPhoneNumber);
+            this.tabSingleOper.Controls.Add(this.gbCreation);
+            this.tabSingleOper.Controls.Add(this.gbSearch);
+            this.tabSingleOper.Location = new System.Drawing.Point(4, 22);
+            this.tabSingleOper.Name = "tabSingleOper";
+            this.tabSingleOper.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSingleOper.Size = new System.Drawing.Size(831, 574);
+            this.tabSingleOper.TabIndex = 0;
+            this.tabSingleOper.Text = "Одиночные операции";
             // 
-            // tbCardNumber
+            // btGetAllCards
             // 
-            this.tbCardNumber.Location = new System.Drawing.Point(154, 88);
-            this.tbCardNumber.Name = "tbCardNumber";
-            this.tbCardNumber.Size = new System.Drawing.Size(132, 20);
-            this.tbCardNumber.TabIndex = 1;
+            this.btGetAllCards.Location = new System.Drawing.Point(592, 21);
+            this.btGetAllCards.Name = "btGetAllCards";
+            this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
+            this.btGetAllCards.TabIndex = 14;
+            this.btGetAllCards.Text = "Получить все карты в базе";
+            this.btGetAllCards.UseVisualStyleBackColor = true;
+            this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
             // 
-            // lbPhoneNumber
+            // dataGridView
             // 
-            this.lbPhoneNumber.AutoSize = true;
-            this.lbPhoneNumber.Location = new System.Drawing.Point(19, 57);
-            this.lbPhoneNumber.Name = "lbPhoneNumber";
-            this.lbPhoneNumber.Size = new System.Drawing.Size(93, 13);
-            this.lbPhoneNumber.TabIndex = 2;
-            this.lbPhoneNumber.Text = "Номер телефона";
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToDeleteRows = false;
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(1, 331);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.ReadOnly = true;
+            this.dataGridView.Size = new System.Drawing.Size(829, 247);
+            this.dataGridView.TabIndex = 13;
             // 
-            // tbPhoneNumber
+            // gbCharge
             // 
-            this.tbPhoneNumber.Location = new System.Drawing.Point(154, 54);
-            this.tbPhoneNumber.Name = "tbPhoneNumber";
-            this.tbPhoneNumber.Size = new System.Drawing.Size(132, 20);
-            this.tbPhoneNumber.TabIndex = 3;
+            this.gbCharge.Controls.Add(this.rbAddBonuses);
+            this.gbCharge.Controls.Add(this.rbRemoveBonuses);
+            this.gbCharge.Controls.Add(this.tbChargeSum);
+            this.gbCharge.Controls.Add(this.lbChargeSum);
+            this.gbCharge.Location = new System.Drawing.Point(386, 128);
+            this.gbCharge.Name = "gbCharge";
+            this.gbCharge.Size = new System.Drawing.Size(290, 197);
+            this.gbCharge.TabIndex = 11;
+            this.gbCharge.TabStop = false;
+            this.gbCharge.Text = "Операции с бонусами";
             // 
-            // lbSearchType
+            // rbAddBonuses
             // 
-            this.lbSearchType.AutoSize = true;
-            this.lbSearchType.Location = new System.Drawing.Point(15, 25);
-            this.lbSearchType.Name = "lbSearchType";
-            this.lbSearchType.Size = new System.Drawing.Size(57, 13);
-            this.lbSearchType.TabIndex = 4;
-            this.lbSearchType.Text = "Поиск по:";
+            this.rbAddBonuses.AutoSize = true;
+            this.rbAddBonuses.Location = new System.Drawing.Point(13, 47);
+            this.rbAddBonuses.Name = "rbAddBonuses";
+            this.rbAddBonuses.Size = new System.Drawing.Size(84, 17);
+            this.rbAddBonuses.TabIndex = 21;
+            this.rbAddBonuses.TabStop = true;
+            this.rbAddBonuses.Text = "Зачислисть";
+            this.rbAddBonuses.UseVisualStyleBackColor = true;
+            this.rbAddBonuses.CheckedChanged += new System.EventHandler(this.RbAddBonuses_CheckedChanged);
             // 
-            // btProcess
+            // rbRemoveBonuses
             // 
-            this.btProcess.BackColor = System.Drawing.Color.Lime;
-            this.btProcess.Location = new System.Drawing.Point(365, 21);
-            this.btProcess.Name = "btProcess";
-            this.btProcess.Size = new System.Drawing.Size(125, 65);
-            this.btProcess.TabIndex = 7;
-            this.btProcess.Text = "Обработать";
-            this.btProcess.UseVisualStyleBackColor = false;
-            this.btProcess.Click += new System.EventHandler(this.BtProcess_Click);
+            this.rbRemoveBonuses.AutoSize = true;
+            this.rbRemoveBonuses.Location = new System.Drawing.Point(13, 21);
+            this.rbRemoveBonuses.Name = "rbRemoveBonuses";
+            this.rbRemoveBonuses.Size = new System.Drawing.Size(67, 17);
+            this.rbRemoveBonuses.TabIndex = 20;
+            this.rbRemoveBonuses.TabStop = true;
+            this.rbRemoveBonuses.Text = "Списать";
+            this.rbRemoveBonuses.UseVisualStyleBackColor = true;
+            this.rbRemoveBonuses.CheckedChanged += new System.EventHandler(this.RbRemoveBonuses_CheckedChanged);
+            // 
+            // tbChargeSum
+            // 
+            this.tbChargeSum.Location = new System.Drawing.Point(75, 95);
+            this.tbChargeSum.Name = "tbChargeSum";
+            this.tbChargeSum.Size = new System.Drawing.Size(155, 20);
+            this.tbChargeSum.TabIndex = 17;
+            // 
+            // lbChargeSum
+            // 
+            this.lbChargeSum.AutoSize = true;
+            this.lbChargeSum.Location = new System.Drawing.Point(10, 102);
+            this.lbChargeSum.Name = "lbChargeSum";
+            this.lbChargeSum.Size = new System.Drawing.Size(41, 13);
+            this.lbChargeSum.TabIndex = 16;
+            this.lbChargeSum.Text = "Сумма";
             // 
             // cbOperations
             // 
@@ -131,6 +175,20 @@
             this.cbOperations.TabIndex = 4;
             this.cbOperations.SelectedIndexChanged += new System.EventHandler(this.CbOperations_SelectedIndexChanged);
             // 
+            // tbCardNumber
+            // 
+            this.tbCardNumber.Location = new System.Drawing.Point(154, 88);
+            this.tbCardNumber.Name = "tbCardNumber";
+            this.tbCardNumber.Size = new System.Drawing.Size(132, 20);
+            this.tbCardNumber.TabIndex = 1;
+            // 
+            // tbPhoneNumber
+            // 
+            this.tbPhoneNumber.Location = new System.Drawing.Point(154, 54);
+            this.tbPhoneNumber.Name = "tbPhoneNumber";
+            this.tbPhoneNumber.Size = new System.Drawing.Size(132, 20);
+            this.tbPhoneNumber.TabIndex = 3;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -140,28 +198,34 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Вид операции";
             // 
-            // cbFindType
+            // btProcess
             // 
-            this.cbFindType.FormattingEnabled = true;
-            this.cbFindType.Items.AddRange(new object[] {
-            "Телефону",
-            "Номеру карты"});
-            this.cbFindType.Location = new System.Drawing.Point(101, 20);
-            this.cbFindType.Name = "cbFindType";
-            this.cbFindType.Size = new System.Drawing.Size(155, 21);
-            this.cbFindType.TabIndex = 8;
-            this.cbFindType.SelectedIndexChanged += new System.EventHandler(this.CbFindType_SelectedIndexChanged);
+            this.btProcess.BackColor = System.Drawing.Color.Lime;
+            this.btProcess.Location = new System.Drawing.Point(365, 21);
+            this.btProcess.Name = "btProcess";
+            this.btProcess.Size = new System.Drawing.Size(125, 65);
+            this.btProcess.TabIndex = 7;
+            this.btProcess.Text = "Обработать";
+            this.btProcess.UseVisualStyleBackColor = false;
+            this.btProcess.Click += new System.EventHandler(this.BtProcess_Click);
             // 
-            // gbSearch
+            // lbCardNumber
             // 
-            this.gbSearch.Controls.Add(this.cbFindType);
-            this.gbSearch.Controls.Add(this.lbSearchType);
-            this.gbSearch.Location = new System.Drawing.Point(22, 126);
-            this.gbSearch.Name = "gbSearch";
-            this.gbSearch.Size = new System.Drawing.Size(337, 66);
-            this.gbSearch.TabIndex = 9;
-            this.gbSearch.TabStop = false;
-            this.gbSearch.Text = "Поиск";
+            this.lbCardNumber.AutoSize = true;
+            this.lbCardNumber.Location = new System.Drawing.Point(18, 91);
+            this.lbCardNumber.Name = "lbCardNumber";
+            this.lbCardNumber.Size = new System.Drawing.Size(78, 13);
+            this.lbCardNumber.TabIndex = 0;
+            this.lbCardNumber.Text = "Номер карты:";
+            // 
+            // lbPhoneNumber
+            // 
+            this.lbPhoneNumber.AutoSize = true;
+            this.lbPhoneNumber.Location = new System.Drawing.Point(19, 57);
+            this.lbPhoneNumber.Name = "lbPhoneNumber";
+            this.lbPhoneNumber.Size = new System.Drawing.Size(93, 13);
+            this.lbPhoneNumber.TabIndex = 2;
+            this.lbPhoneNumber.Text = "Номер телефона";
             // 
             // gbCreation
             // 
@@ -173,7 +237,7 @@
             this.gbCreation.Controls.Add(this.lbFirstName);
             this.gbCreation.Location = new System.Drawing.Point(24, 203);
             this.gbCreation.Name = "gbCreation";
-            this.gbCreation.Size = new System.Drawing.Size(337, 143);
+            this.gbCreation.Size = new System.Drawing.Size(337, 122);
             this.gbCreation.TabIndex = 10;
             this.gbCreation.TabStop = false;
             this.gbCreation.Text = "Создание";
@@ -226,169 +290,86 @@
             this.lbFirstName.TabIndex = 9;
             this.lbFirstName.Text = "Имя";
             // 
-            // gbCharge
+            // gbSearch
             // 
-            this.gbCharge.Controls.Add(this.rbAddBonuses);
-            this.gbCharge.Controls.Add(this.rbRemoveBonuses);
-            this.gbCharge.Controls.Add(this.tbChargeSum);
-            this.gbCharge.Controls.Add(this.lbChargeSum);
-            this.gbCharge.Location = new System.Drawing.Point(386, 128);
-            this.gbCharge.Name = "gbCharge";
-            this.gbCharge.Size = new System.Drawing.Size(290, 218);
-            this.gbCharge.TabIndex = 11;
-            this.gbCharge.TabStop = false;
-            this.gbCharge.Text = "Операции с бонусами";
+            this.gbSearch.Controls.Add(this.cbFindType);
+            this.gbSearch.Controls.Add(this.lbSearchType);
+            this.gbSearch.Location = new System.Drawing.Point(22, 126);
+            this.gbSearch.Name = "gbSearch";
+            this.gbSearch.Size = new System.Drawing.Size(337, 66);
+            this.gbSearch.TabIndex = 9;
+            this.gbSearch.TabStop = false;
+            this.gbSearch.Text = "Поиск";
             // 
-            // rbAddBonuses
+            // cbFindType
             // 
-            this.rbAddBonuses.AutoSize = true;
-            this.rbAddBonuses.Location = new System.Drawing.Point(13, 47);
-            this.rbAddBonuses.Name = "rbAddBonuses";
-            this.rbAddBonuses.Size = new System.Drawing.Size(84, 17);
-            this.rbAddBonuses.TabIndex = 21;
-            this.rbAddBonuses.TabStop = true;
-            this.rbAddBonuses.Text = "Зачислисть";
-            this.rbAddBonuses.UseVisualStyleBackColor = true;
-            this.rbAddBonuses.CheckedChanged += new System.EventHandler(this.RbAddBonuses_CheckedChanged);
+            this.cbFindType.FormattingEnabled = true;
+            this.cbFindType.Items.AddRange(new object[] {
+            "Телефону",
+            "Номеру карты"});
+            this.cbFindType.Location = new System.Drawing.Point(101, 20);
+            this.cbFindType.Name = "cbFindType";
+            this.cbFindType.Size = new System.Drawing.Size(155, 21);
+            this.cbFindType.TabIndex = 8;
+            this.cbFindType.SelectedIndexChanged += new System.EventHandler(this.CbFindType_SelectedIndexChanged);
             // 
-            // rbRemoveBonuses
+            // lbSearchType
             // 
-            this.rbRemoveBonuses.AutoSize = true;
-            this.rbRemoveBonuses.Location = new System.Drawing.Point(13, 21);
-            this.rbRemoveBonuses.Name = "rbRemoveBonuses";
-            this.rbRemoveBonuses.Size = new System.Drawing.Size(67, 17);
-            this.rbRemoveBonuses.TabIndex = 20;
-            this.rbRemoveBonuses.TabStop = true;
-            this.rbRemoveBonuses.Text = "Списать";
-            this.rbRemoveBonuses.UseVisualStyleBackColor = true;
-            this.rbRemoveBonuses.CheckedChanged += new System.EventHandler(this.RbRemoveBonuses_CheckedChanged);
-            // 
-            // tbChargeSum
-            // 
-            this.tbChargeSum.Location = new System.Drawing.Point(75, 95);
-            this.tbChargeSum.Name = "tbChargeSum";
-            this.tbChargeSum.Size = new System.Drawing.Size(155, 20);
-            this.tbChargeSum.TabIndex = 17;
-            // 
-            // lbChargeSum
-            // 
-            this.lbChargeSum.AutoSize = true;
-            this.lbChargeSum.Location = new System.Drawing.Point(10, 102);
-            this.lbChargeSum.Name = "lbChargeSum";
-            this.lbChargeSum.Size = new System.Drawing.Size(41, 13);
-            this.lbChargeSum.TabIndex = 16;
-            this.lbChargeSum.Text = "Сумма";
-            // 
-            // tbResultForm
-            // 
-            this.tbResultForm.Location = new System.Drawing.Point(22, 374);
-            this.tbResultForm.Name = "tbResultForm";
-            this.tbResultForm.Size = new System.Drawing.Size(678, 183);
-            this.tbResultForm.TabIndex = 12;
-            this.tbResultForm.Text = "";
+            this.lbSearchType.AutoSize = true;
+            this.lbSearchType.Location = new System.Drawing.Point(15, 25);
+            this.lbSearchType.Name = "lbSearchType";
+            this.lbSearchType.Size = new System.Drawing.Size(57, 13);
+            this.lbSearchType.TabIndex = 4;
+            this.lbSearchType.Text = "Поиск по:";
             // 
             // tabs
             // 
             this.tabs.Controls.Add(this.tabSingleOper);
-            this.tabs.Controls.Add(this.tabBulkOper);
             this.tabs.Location = new System.Drawing.Point(12, 13);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(750, 600);
+            this.tabs.Size = new System.Drawing.Size(839, 600);
             this.tabs.TabIndex = 13;
-            // 
-            // tabSingleOper
-            // 
-            this.tabSingleOper.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.tabSingleOper.Controls.Add(this.gbCharge);
-            this.tabSingleOper.Controls.Add(this.tbResultForm);
-            this.tabSingleOper.Controls.Add(this.cbOperations);
-            this.tabSingleOper.Controls.Add(this.tbCardNumber);
-            this.tabSingleOper.Controls.Add(this.label1);
-            this.tabSingleOper.Controls.Add(this.btProcess);
-            this.tabSingleOper.Controls.Add(this.lbCardNumber);
-            this.tabSingleOper.Controls.Add(this.lbPhoneNumber);
-            this.tabSingleOper.Controls.Add(this.gbCreation);
-            this.tabSingleOper.Controls.Add(this.tbPhoneNumber);
-            this.tabSingleOper.Controls.Add(this.gbSearch);
-            this.tabSingleOper.Location = new System.Drawing.Point(4, 22);
-            this.tabSingleOper.Name = "tabSingleOper";
-            this.tabSingleOper.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSingleOper.Size = new System.Drawing.Size(742, 574);
-            this.tabSingleOper.TabIndex = 0;
-            this.tabSingleOper.Text = "Одиночные операции";
-            // 
-            // tabBulkOper
-            // 
-            this.tabBulkOper.Controls.Add(this.dataGridView);
-            this.tabBulkOper.Controls.Add(this.btGetAllCards);
-            this.tabBulkOper.Location = new System.Drawing.Point(4, 22);
-            this.tabBulkOper.Name = "tabBulkOper";
-            this.tabBulkOper.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBulkOper.Size = new System.Drawing.Size(742, 574);
-            this.tabBulkOper.TabIndex = 1;
-            this.tabBulkOper.Text = "Массовые операции";
-            this.tabBulkOper.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView
-            // 
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new System.Drawing.Point(6, 186);
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.ReadOnly = true;
-            this.dataGridView.Size = new System.Drawing.Size(831, 392);
-            this.dataGridView.TabIndex = 1;
-            // 
-            // btGetAllCards
-            // 
-            this.btGetAllCards.Location = new System.Drawing.Point(6, 16);
-            this.btGetAllCards.Name = "btGetAllCards";
-            this.btGetAllCards.Size = new System.Drawing.Size(183, 23);
-            this.btGetAllCards.TabIndex = 0;
-            this.btGetAllCards.Text = "Получить все карты в базе";
-            this.btGetAllCards.UseVisualStyleBackColor = true;
-            this.btGetAllCards.Click += new System.EventHandler(this.BtGetAllCards_Click);
             // 
             // FormHandlerCards
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(780, 647);
+            this.ClientSize = new System.Drawing.Size(863, 647);
             this.Controls.Add(this.tabs);
             this.Name = "FormHandlerCards";
             this.Text = "Heandler cards";
-            this.gbSearch.ResumeLayout(false);
-            this.gbSearch.PerformLayout();
-            this.gbCreation.ResumeLayout(false);
-            this.gbCreation.PerformLayout();
-            this.gbCharge.ResumeLayout(false);
-            this.gbCharge.PerformLayout();
-            this.tabs.ResumeLayout(false);
             this.tabSingleOper.ResumeLayout(false);
             this.tabSingleOper.PerformLayout();
-            this.tabBulkOper.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            this.gbCharge.ResumeLayout(false);
+            this.gbCharge.PerformLayout();
+            this.gbCreation.ResumeLayout(false);
+            this.gbCreation.PerformLayout();
+            this.gbSearch.ResumeLayout(false);
+            this.gbSearch.PerformLayout();
+            this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label lbCardNumber;
-        private System.Windows.Forms.TextBox tbCardNumber;
-        private System.Windows.Forms.Label lbPhoneNumber;
-        private System.Windows.Forms.TextBox tbPhoneNumber;
-        private System.Windows.Forms.Label lbSearchType;
-        private System.Windows.Forms.Button btProcess;
+        private System.Windows.Forms.TabPage tabSingleOper;
+        private System.Windows.Forms.Button btGetAllCards;
+        private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.GroupBox gbCharge;
+        private System.Windows.Forms.RadioButton rbAddBonuses;
+        private System.Windows.Forms.RadioButton rbRemoveBonuses;
+        private System.Windows.Forms.TextBox tbChargeSum;
+        private System.Windows.Forms.Label lbChargeSum;
         private System.Windows.Forms.ComboBox cbOperations;
+        private System.Windows.Forms.TextBox tbCardNumber;
+        private System.Windows.Forms.TextBox tbPhoneNumber;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cbFindType;
-        private System.Windows.Forms.GroupBox gbSearch;
+        private System.Windows.Forms.Button btProcess;
+        private System.Windows.Forms.Label lbCardNumber;
+        private System.Windows.Forms.Label lbPhoneNumber;
         private System.Windows.Forms.GroupBox gbCreation;
         private System.Windows.Forms.TextBox tbLastName;
         private System.Windows.Forms.TextBox tbMiddleName;
@@ -396,17 +377,10 @@
         private System.Windows.Forms.Label lbLastName;
         private System.Windows.Forms.Label lbMiddleName;
         private System.Windows.Forms.Label lbFirstName;
-        private System.Windows.Forms.GroupBox gbCharge;
-        private System.Windows.Forms.TextBox tbChargeSum;
-        private System.Windows.Forms.Label lbChargeSum;
-        private System.Windows.Forms.RadioButton rbAddBonuses;
-        private System.Windows.Forms.RadioButton rbRemoveBonuses;
+        private System.Windows.Forms.GroupBox gbSearch;
+        private System.Windows.Forms.ComboBox cbFindType;
+        private System.Windows.Forms.Label lbSearchType;
         private System.Windows.Forms.TabControl tabs;
-        private System.Windows.Forms.TabPage tabSingleOper;
-        private System.Windows.Forms.TabPage tabBulkOper;
-        private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.Button btGetAllCards;
-        public System.Windows.Forms.RichTextBox tbResultForm;
     }
 }
 

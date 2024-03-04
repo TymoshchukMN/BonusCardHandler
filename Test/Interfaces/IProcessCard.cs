@@ -1,4 +1,5 @@
-﻿using CardsHandler.Server;
+﻿using System.Data;
+using CardsHandler.Server;
 
 namespace CardsHandler.Interfaces
 {
@@ -6,7 +7,7 @@ namespace CardsHandler.Interfaces
     {
         void ProcessCard(
             FieldValues fields,
-            out Card card,
+            out DataTable dataTable,
             ServerInstance server);
     }
 }

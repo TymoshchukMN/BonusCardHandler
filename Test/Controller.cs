@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using CardsHandler.Enums;
 using CardsHandler.FabricElements;
 using CardsHandler.Interfaces;
@@ -55,9 +56,9 @@ namespace CardsHandler
 
         #endregion PROPERTIES
 
-        public Card Process(FieldValues fieldValues)
+        public DataTable Process(FieldValues fieldValues)
         {
-            Card card = null;
+            DataTable dataTable = null;
             ServerInstance server = new ServerInstance();
             ResultOperations operResult =
               Compliance.CheckCompliance(_cardsOperation, fieldValues, server);
@@ -67,7 +68,7 @@ namespace CardsHandler
                 IProcessCard cardCommand = CommandFactory.GetClass(_cardsOperation);
                 try
                 {
-                    cardCommand.ProcessCard(fieldValues, out card, server);
+                    cardCommand.ProcessCard(fieldValues, out dataTable, server);
                 }
                 catch (Exception ex)
                 {
@@ -76,10 +77,10 @@ namespace CardsHandler
             }
             else
             {
-                UI.PrintErrorProcessCard(operResult);
+                UI.PrintResultProcessCard(operResult);
             }
 
-            return card;
+            return dataTable;
         }
     }
 }
